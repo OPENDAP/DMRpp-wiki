@@ -32,8 +32,8 @@ echo "${index_html}" | tee index.html
 
 # Now we set up the git repo
 git init
-git config --global user.name "${GH_USER_NAME}"
-git config --global user.email "{GH_USER_EMAIL}"
+git config user.name "${GH_USER_NAME}"
+git config user.email "{GH_USER_EMAIL}"
 
 # Add and commit the content
 git add .
@@ -41,5 +41,5 @@ git status
 git commit -m "COMMIT Deploying update to GitHub Pages"
 git status
 # Push to GitHub Pages
-git push --force --quiet "https://${GH_TOKEN}@${GH_REF}" main:gh-pages
+git push --force -v "https://${GH_TOKEN}@${GH_REF}" main:gh-pages; echo $?
 git status
