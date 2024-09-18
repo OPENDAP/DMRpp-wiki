@@ -1,23 +1,39 @@
 sudo: required
 
+# whitelist
+branches:
+  only:
+    - main
+
+notifications:
+  email:
+    - mjimenez@opendap.org
+env:
+  global:
+    # DOCKER_HUB_UID for our DockerHub account
+    - secure: "ZftSYLtJ7JUrajD2vW8GTYOpiOQXYf4Qtjcp8NWyWvCW0PlXR0UtyILAdZGIAip3DNhPWiJGjTCAwENhbkrjdhwY+SChBzIGylEq8flaerzN1jJ6yBAzVCKS1pB71QWHKNWDC2TwIMS1qWnXO5Q/t+4CoytoCIqGQdaTEwDnkHAG/zg+VFjynIC5MBlY3UBKXvy17mLBJJZdwoJojWZAP2QEHcPHn8e9RRWTD658Y355mppHXds2/gdWPqwFIY5qqnZyYWmZJ3/pG7nmpjrS9BoEdCanRrKcc50mheBpaEhcoiIS4b1aMfq/pVqX9r7Pn3KnFL+29fuWKLHjZoqrYHELQIcDgwkkxtzMVSxRA0swrN2GwVdD7M9lTdTZW0vOziglYSV83+wie8Hyi752V4mB6AzPzL6dAk0aZZge5ibStJPz7lLTiBPGcYSVFpQy7fMkgrTKwefnZi0Zor8TbBHzhK6Im3QAy31rwmyJE29YMpjk5/xdJ4edcbI+/30ADXUwwASj2nYLl6860WPrxwqKMyDM5UzzuD1EwfdlT9z6yTpSGJe0D8OFracfYc+UheD7EbcI9pOxTDo7CwnhEvTFhwRYsZ2B7dpd4bT+ViqjZxt94meYd6aAXa5t1lTXI2MqDUkb7t40FPazWf0AjNx+0w2KBdpT0tkO7COiOOM="
+    # DOCKER_HUB_PSWD for our DockerHub account
+    - secure: "SR2drAEGlDi7F7yVAflRKsBamSRNdDQWA8yffmPqx3tmOpASwdNx7qzELSyScAs8wTHes5ZiyaAh9Xc4lEUQAwS0528hC48E8XCPvEruQp0AEJc3to9sNffwFQjJ7fFDxtc1kCihrIR4+HjYZKX0VSoSlgi307lbrhU5+F9n8NyDiG6qLpGGFpcJQc9tUBBveIwkFpBn92pHFs8pfwHw+m+4RkpanmhYKAyUuYLScRWprFsOLevGF31gtaRs/VVRXotmEta44ENud6odGiVLHsyA9CL6MH+OyE2srfu4WMNgSOairUZCDusbl0RQNVw+qHknoILSFTI6gOmCEYDQU6iVn0LB3VRf58zAzr4eYr1a/Ik2Z7raJ9EOrsDb1dnuzeXc8gJzSb4CxU8mQBCxnhd+Gc0EiIAQ2WHeCF3YtuQK2bIoXDrM02ACqWqIJSVBBLTWxvHGIFaZA5l2ZALIL0EKdLLz9K77PzdNN7zzkn+h3VGOXUVUcrtZv411/OoZrFRHS+qkmwumdtoi68xLwBZibEci2b59jb904CaSmotG+JmuoYr9dVHo1E7ZRSJw1wCNAsxKUpqPzvS8S8mw4wyqILvJ20AFT/b5tb+9tab390gZEy0kYK+bkkGceJyF0OKY6NAAnhOkxhZ94lfg9I+mi3TE51vE0RXIYTaVDcY="
+    # GIT_UID
+    - secure: "mdJZfmb5eoyoRVkd7wJBKwHH1glNfLm6VHUKPzIByw+0W6xf1Ru9BiYPgI/s6LdGSy5w3ggwjWjWzJjrnOdjNqOSTgpfd5JibgRRmW/s047i1p7j+mxKXWdkzAUtB0rCycE4pqRL6G7RRMLMtbb9QwVfdCVrWLVT9K/VooM240BZ2fjnWngJ8Tm9hpZsUuHMGgZ4xWjnK8zahIcb4u2p0B5QEwgLQH/eDyIFrP12VO2ffFBYSBQy/0De7r1E60zpzuZVrLsVwkY5NHh/MkV9MS12qzGatvMVlSLhzLPk7cjj4BP10uyNun5+w9jYkz/zQ7sd3Ukta++KHmxQnRVSkNbN9xCnX5uNwi6/TP3MysiSB3mr4KJQxGQzo4cuci5+RaUalvntAkZrzpNBapxTJi6Oa2fCi4wtvhj7cWVPxLVySNRKp+cYCxkW7W0ILMpDlnptxYx8Gx4YJNIJDORFGeKRb8fdQCjQw+AQWy/bacDsnWb6sAYwb8/asMDygk3M3gLr2lRLwjaax4M3zgvrxS0aErCthmfYKxXzr3uWbwddbJPF3FsVWEBbcJ5/VihG6p1F+ASLuM0zmZWvqrGgvLGe6oj2Y1bKwG8WL+JZqFIPdwF0oK5ddk0iQNLQlNM051yWrK2kmYxMX24saYROJtyQLZUrmiMHDgnWK+3eT20="
+    # GIT_TOKEN
+    - secure: "Ee8x6gPumMFPBTlxDb0NlmkI+kRDMYU9C/3G/dNlrcnk8Mq38NV4cuTZNIetcuQ3KSHVPTAww8bvoNsi5wc5vUIov9nXq+DIe4hQk9CTPyzhq89gU0WyEuYuuodmLjxu6BJbmR+u8JrI4f+qj1oYWuEN7HW38IUOcq18oCppxPG3Y0QlMQ6AKF3lDcXk2zT1hT9y8v8rToFS7wFPJ1rqJI7qmtBCiiV0QwVHAmCH0ZL5pHxWASl4ZTGHoYT9WmGuCb2W1HL+/HET8rwUsnexHWjYzCDUdKDr2cnevO1b1R+OKIPe+GC+2mcQYjybndkdxADS6MZODwujfFFKcTp/3T+H8O0+sZBJfvhdb+WAYJMUe3OC9ywVCn/75dHqYCHnxcMz6gwd8Ks9aeq7d34Po0HTsXxmvExHH8ar0d5uHXjYTcWF2WV3hVtlOJamnbLSLfgCU6qmZ2bW3XzO0+aOJjxHo0H8+3txKQebXEBV/DLdmkvS+DLwjhX86yMY7E1G8iqyLDAtQBMzIoDH/BTti26T1InFX6HjuVUa0kazEMrGUmBFqK5EMTkXIbQ9UR7pBwfLoU6ayJZ51le5+fdOYda/CswHteMFz4j8h3u5TzZCQ/jFNaeqYMIbY4nOal54hhm07uCjlRwIHaZ4XypPHJIeTTckmHoyq5pj9K1lrAg="
+
 services:
   - docker                  
 
-before_install:            
+before_install:
+  - echo $DOCKER_HUB_PSWD | docker login -u $DOCKER_HUB_UID --password-stdin
   - mkdir -p output
   - docker pull asciidoctor/docker-asciidoctor
 
-# This is a copy of the travil.yml file from OPeNDAP/documentation
-# adapted for DMR++. mju 09/18/2024
-
-env:
-  global:
-    # GIT_UID
-    # - secure: "fKuotqHaud7u7IRbYyuKVEg+JFdPpu6N1D8hZ4Bv8+xxTzWlIz49daDG5sp8D+D2GzfV3z3dVlxk/KTSd1uX0/d2I+7Cy7R/Pobo8s5EvH9K26C6H5sX7smEe1ogjcZKtn3lhzetcJdIcG78CZ9SO/7AktJ26L8iupBZIN2tOMiNH2iip9vaBJnfqg8woPVSHXkdwn+WVIDmKzrIQeXMu8wuUsyz9gmj/iriv+JoWkx0JJc4O5Jt51S8N0Q2ySno7WnB6sz9d5Hdkh0DyV0DLtdO3a9P8zPeA9bDMPDTndfbkP1HlfcnKtAZtlx9l/a2GAhEAizpwlEx7kp2ryheR3WHOJwfpb8AiETfDQ69gHvWwRs0cnOdWX8a8BIzu1vbQAVInvcMi15vv6DAeX4pYGZHe00evI9FT0KYZfj5ZJFF77un/obrYCLM74cO4RsMunWNqleSAMJnvbzaRjYSpPFQyHVAFxG3dxTbzl95zjb4ydY4eJ446xIBcFAsfmz8Ky6adpXFQZEzPmJABtqF151dC1fU00+0V4l6dhLNsoY6EsuSnaHbYi9Jesy6ddtHLOo8M/i0mngCyW0CHfB4eWsPF9vjIzRwvTvWNJIXT9J40jWd2f3MASmReyJ+caj/ya1cRbeU9Hmkd/MTTiM+kiaeYcZ1LrV0cHOdeVbHYA8="
-    # GIT_TOKEN
-    # - secure: "KjvDUfRB8EREnAWMMPu06B2TbR+ewVPjcwYP5znh6I7kQwrPpaaxiga9NfT97U+rGqm2s7ECMK+JeGM3QDxNTJ3Lw1sIcvlJPcXW9Bd84Q1R7o2wS41s/OPN/U6Kt4k29WypbB/IJQCvdfcVNuQBYLFkF281np+naWQH1TvVlB8cg0kfq5EcQQrKkZO1G4hpA3oYb83aBWwgV9F6UYZudpSCnRhbduU11HHWZnPRhqIlY6OIZiy0zq/h+Gui1gz7Sg801s4LlJxnCsiiCmUpfctmGJczBOOLG9pPiaMkCC+Axv3HqYL6CpGsHH0DALSp5FGABBia4KMykx1cksj2b+M1xRkRH5N86CeZJa15tHtc5OfkQ/MZ9vN1WfDC37N3hmJeoGdzEsrWEGXqtCQGkY2xrkF/iVZnxLOFbkxLPx2eBBIfbe86jlBLsfe9TjErINYNVQrAUNW0r9QCDt6okpTewgL0U1ocvjvOJj1vZy+h81XZ0f0VQrI26HP1W41GN2udAAGgxCzaQ+dXnT6aRbuHGutWa/EDBlMO4LfLFuV4TuL2k0YO+2MwoLoBdwozuNn/NAKNQBN/rVkO9nL0y2DFKkWijGkrFhwAf0qsDfjvEG2iIgwXnuMvzjyFX+HpT8II1BGvMSJFpr8lASwWSx+A4vaMxJc7BgM7krAAwFA="
+# Name the file explicitly until we sort out the organization of the 'documentation'
+# project.
 
 script:
+  # Inject the version information
+  - GUIDE_VERSION=`cat VERSION`"-${TRAVIS_BUILD_NUMBER}"
+  - echo ${GUIDE_VERSION}
   - docker run -v $TRAVIS_BUILD_DIR:/documents/ --name asciidoc-to-html asciidoctor/docker-asciidoctor      asciidoctor -D /documents/output DMRpp.adoc
   - docker run -v $TRAVIS_BUILD_DIR:/documents/ --name  asciidoc-to-pdf asciidoctor/docker-asciidoctor  asciidoctor-pdf -D /documents/output DMRpp.adoc
 
@@ -31,15 +47,4 @@ after_failure:
 
 
 after_success:      
-  - |
-    cd output; ls -lR
-    cp -R ../images images;
-    ls -lRmq
-  - git init
-  - git config --global user.name "${GH_USER_NAME}"
-  - git config --global user.email "{GH_USER_EMAIL}"
-  - git add . ; git commit -m "Deploy to GitHub Pages"
-  - git branch
-  # The URL was "https://${GIT_UID}:${GIT_TOKEN}@github.com/OPENDAP/documentation"
-  - git push --force --quiet "https://${GH_TOKEN}@${GH_REF}" main:gh-pages
-  - git status
+  - ./travis/deploy_to_gh_pages.sh
