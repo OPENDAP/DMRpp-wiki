@@ -31,10 +31,10 @@ cp -R ../images images
 echo "${index_html}" | tee index.html
 
 # Now we set up the git repo
+git config --global init.defaultBranch "main"
 git init
 git config user.name "${GIT_USER_NAME}"
 git config user.email "{GIT_USER_EMAIL}"
-git config --global init.defaultBranch "main"
 # Add and commit the content
 git add .
 git status
