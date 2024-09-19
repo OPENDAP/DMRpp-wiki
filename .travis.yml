@@ -2,9 +2,6 @@ sudo: required
 branches:
   only:
   - main
-notifications:
-  email:
-  - mjimenez@opendap.org
 env:
   global:
   # GIT_UID
@@ -15,6 +12,10 @@ env:
   - secure: PkpweVKwhK3GgF3LTVxvYRBBLdGhXrs9YmwdwW7KQNoLl1fDSfTCGzhfFv+onRG3g0s1Of71onIu3/UiwxTR52MEgiUBIA7kQPYndeDwQYlyxJLPF8zUiCg6NNsVzS1n20vUQiwBUZxBn25owj/Ipes6NnZ5ff4/FWOxG752QDwxxpzJNg28BsG9ndtbks5EAw/C2zy7x1uG6O1nl3jaxUeF1ECSv6BjaNGzTneBjqMxglWlCK+Gcjdr9ZTWm2hNiskG+pM8qG4KDwelRmebgV+4cg+X7f6W7vXZoayR/MxPmr6rqTTJYNsEhIl0kJcLeq0DWeCa61IFI/kR0FIxgF4NFtfrkjv2bavbakAW9o0XLUVKaGTY3MSwvMDdB3oXTXcNWso4/ok70+Bwed7FarZ3aekPXi4tGohuIXUb85hiDRo28iQuERzQ+FU3Gh4kYbQmInqKfa/yMqw7ALuuM6/Mo9lgblS1UuDxgjRZsdXaM0urkhIsZ7UEeOVLSvIEdlBc+mqmk+p7QltufC4xnaKZfxz+qZevvB/fE+AgKURzma9a+ewQvLDDLEPiO3/V6b+DS9HnDkTRz1EXOlS6tmpXGZTI7NO9YvjFm16Di5zPQe9LoV6P22tOvV8k59+t0sYutQB/9x6Qd48H62A5WXoJoZ5kcPTbDOg9pLOi3KI=
   # GIT_USER_EMAIL
   - secure: 6oYNTWCIyKm9asatrYuhJViooFlYkhh7KI+YqPa2/IqQ3hlx2urnMk9w54O4gAMpjK4E52jQ39+Emk33/qKAPWODv5JpYrQ8UyAmKpmOU62epp7LQVe4ZE+N68Cm1KnGEw5UTtcmAIuGM2j+S07uiyjhUKIFfsFvocg02fcaMFZJy9ad4NCRQYksGwLqoiuII0szXX4eODLAZmPP+/rjAfXe3tMm87J1vqgjmWXYYKfO73QFGE2MX8qe4jtaI0rcp4s5hExkLw9AYBrpDx6cbDHxKJ1Dr89ZNDb3iRR4j09epY+yRT0j1UPgbc/I+Hz3fHZUp6UX1UcOS4I0dNccU3g5jo5XEWsnEThPx3ottnJUPdTEKecACIxI07/7MmQAJ2qot2BNh/tScLO6Xcy8BJNpaHNTpLBXU3G7VTIsPcmKf9E6m7QVPq+6CBEduWOqBb11gdGpBjtrK6stGoewEWsXj9fIRPgBrz8Z0ByeWxgqHVpFK9E4BxK71QM1P8IY3DVu/usL3Zd/iRaPfxQRhoWdNcZ8Zdj4pyOsQ+U5O90ixbSVslcngxJqD/5srFSGG9Nh4nS2HPv60KflwkRfXp687Rwo6RIjYjDf9qFQ2U4JnrECP+7wVQNAnoRct5SyVrtGp6mFmfDBFopXEhyqfYaquobxLUuL0sl5zq5/PmQ=
+notifications:
+  email:
+  - "{GIT_USER_EMAIL}"
+
 services:
 - docker
 before_install:
