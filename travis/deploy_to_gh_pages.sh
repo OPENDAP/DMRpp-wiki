@@ -32,8 +32,8 @@ echo "${index_html}" | tee index.html
 
 # Now we set up the git repo
 git init
-git config user.name "${GH_USER_NAME}"
-git config user.email "{GH_USER_EMAIL}"
+git config user.name "${GIT_USER_NAME}"
+git config user.email "{GIT_USER_EMAIL}"
 
 # Add and commit the content
 git add .
@@ -41,5 +41,5 @@ git status
 git commit -m "COMMIT Deploying update to GitHub Pages"
 git status
 # Push to GitHub Pages
-git push --force -v "https://${GH_TOKEN}@${GH_REF}" main:gh-pages; echo $?
+git push --force -v "https://${GIT_UID}:${GIT_TOKEN}@github.com/OPENDAP/DMRpp-wiki" main:gh-pages
 git status
