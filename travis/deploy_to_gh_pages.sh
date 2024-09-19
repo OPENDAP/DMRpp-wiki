@@ -34,7 +34,7 @@ echo "${index_html}" | tee index.html
 git init
 git config user.name "${GIT_USER_NAME}"
 git config user.email "{GIT_USER_EMAIL}"
-
+git config --global init.defaultBranch "main"
 # Add and commit the content
 git add .
 git status
