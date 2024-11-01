@@ -1,3 +1,5 @@
+[![DOI](https://zenodo.org/badge/856493055.svg)](https://doi.org/10.5281/zenodo.14025926)
+
 # DMR++ wiki
 
 
