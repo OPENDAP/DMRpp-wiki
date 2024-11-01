@@ -30,6 +30,15 @@ cp -R ../images images
 # Here we add an index.html that redirects to DMRpp.html
 echo "${index_html}" | tee index.html
 
+sed -i '/<\/head>/i\
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-J5L38PDYTT"></script>\
+<script>\
+window.dataLayer = window.dataLayer || [];\
+function gtag(){dataLayer.push(arguments);}\
+gtag("js", new Date());\
+gtag("config", "G-J5L38PDYTT");\
+</script>' DMRpp.html
+
 # Now we set up the git repo
 git config --global init.defaultBranch "main"
 git init

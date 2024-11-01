@@ -1,18 +1,14 @@
-= DMR++ - OPeNDAP
+= DMR++
 :Miguel Jimenez <mjimenez@opendap.org>:
 {docdate}
 :numbered:
 :toc:
-
-// these below are links
-:hyrax-installation: https://opendap.github.io/hyrax_guide/Master_Hyrax_Guide.html
-:hyrax-doc:  http://docs.opendap.org/index.php/Hyrax
-
+OPeNDAP
 
 == Introduction ==
 
 The +++ DMR++ +++ is a fast and flexible way to serve data stored in S3.
-The +++ DMR++ +++ encodes the location of the data content residing in a binary data file/object (e.g., an https://docs.hdfgroup.org/hdf5/v1_14/_intro_h_d_f5.html[hdf5] file) so that it can be directly accessed, without the need for an intermediate library API, by using the file with the location information. The binary data objects may be on a local filesystem, or they may reside across the web in something like an S3 bucket.
+The +++ DMR++ +++ encodes the location of the data content residing in a binary data file/object (e.g., an https://support.hdfgroup.org/documentation/hdf5/latest/[hdf5] file) so that it can be directly accessed, without the need for an intermediate library API, by using the file with the location information. The binary data objects may be on a local filesystem, or they may reside across the web in something like an S3 bucket.
 
 == How Does It Work? ==
 
@@ -44,13 +40,13 @@ These limitations and how to quickly evaluate an ''hdf5'' or ''netcdf-4'' file f
 
 The ''hdf5'' format has several filter/compression options used for storing data values. 
 The +++ DMR++ +++ software currently supports data that utilize the  H5Z_FILTER_DEFLATE, H5Z_FILTER_SHUFFLE, and H5Z_FILTER_FLETCHER32 filters.
-https://support.hdfgroup.org/HDF5/doc/RM/RM_H5Z.html[You can find more on hdf5 filters here.]
+https://support.hdfgroup.org/documentation/hdf5/latest/group___h5_z.html[You can find more on hdf5 filters here.]
 
 ==== ''hdf5'' storage layouts ====
 
 The ''hdf5'' format also uses a number of "storage layouts" that describe various structural organizations of the data values associated with a variable in the granule file.
 The +++ DMR++ +++ software currently supports data that utilize the  H5D_COMPACT, H5D_CHUNKED, and H5D_CONTIGUOUS storage layouts. These are all of the storage layouts defined by the ''hdf5'' library, but others can be added.
-https://support.hdfgroup.org/HDF5/doc1.6/Datasets.html[You can find more on hdf5 storage layouts here.]
+https://support.hdfgroup.org/releases/hdf5/v1_16/v1_16_0/documentation/doxygen/_l_b_dset_layout.html[You can find more on hdf5 storage layouts here.]
 
 
 ==== Is my ''hdf5'' or ''netcdf-4'' file suitable for +++ DMR++ +++? ====
@@ -61,7 +57,7 @@ To determine the ''hdf5'' filters, storage layouts, and chunking scheme used in 
 h5dump -H -p <filename>
 ------------------------
 
-To get a human readable assessment of the file that will show the storage layouts, chunking structure, and the filters needed for each variable (aka DATASET in the _hdf5_ vocabulary) https://support.hdfgroup.org/HDF5/doc/RM/Tools.html#Tools-Dump[h5dump info can be found here.]
+To get a human readable assessment of the file that will show the storage layouts, chunking structure, and the filters needed for each variable (aka DATASET in the _hdf5_ vocabulary) https://support.hdfgroup.org/ftp/HDF5/documentation/doc1.6/Tools.html#Tools-Dump[h5dump info can be found here.]
 
 
 _h5dump example output_:
@@ -473,7 +469,7 @@ By default _get_dmrpp_ the _H5.EnableCF_ option is set to false:
 --------------------
 
 
-There is a much more comprehensive discussion of this key feature, and others, in the link:{hyrax-installation}[HDF5 Handler section] of the Appendix in the Hyrax Data Server Installation and Configuration Guide.
+There is a much more comprehensive discussion of this key feature, and others, in the https://opendap.github.io/hyrax_guide/Master_Hyrax_Guide.html#hdf5-handler[HDF5 Handler section] of the Appendix in the Hyrax Data Server Installation and Configuration Guide.
 
 
 
@@ -547,7 +543,7 @@ Currently the only implementation of this is Hyrax's NGAP service which, when de
 When encountering this type of URL Hyrax will decompose it and use the content to formulate a query to the NASA CMR in order to retrieve the data access URL for the granule and for the +++ DMR++ +++ file. It then retrieves the +++ DMR++ +++ file and injects the data URL so that data access can proceed as described above.
 
 
-More on the Restified Path can be found https://wiki.earthdata.nasa.gov/display/DUTRAIN/Feature+analysis%3A+Restified+URL+for+OPENDAP+Data+Access[here].
+More on the Restified Path can be found https://wiki.earthdata.nasa.gov/display/DUTRAIN/Feature+analysis%3A+Restified+URL+for+OPENDAP+Data+Access[here] ([.underline]#NOTE: You need the right permissions access the previous URL#).
 
 == Recipe: Building and testing +++ DMR++ +++ files ==
 There are two recipes shown here, one using Hyrax docker containers and a second using the container that is part of the EOSDIS Cumulous task.
@@ -660,7 +656,7 @@ gf_url="http://localhost:8080/opendap/${GRANULE_FILE}"
 
 
 
-==== Inspect the +++ DMR++ +++ files====
+==== Inspect the +++ DMR++ +++ files ====
 
 Do the +++ DMR++ +++ files have the expected `dmrpp:href` URL(s)?
 
@@ -679,7 +675,7 @@ Inspect `${gf_url}.dmrpp.dmr`
 
 ==== DAP4 Check binary data response ====
 
-For a particular granule GRANULE_FILE and a particular variable VARIABLE_NAME (Where VARIABLE_NAME is a https://docs.opendap.org/index.php?title=DAP4:_Specification_Volume_1#Fully_Qualified_Names[full qualified DAP4 name]):
+For a particular granule GRANULE_FILE and a particular variable VARIABLE_NAME (Where VARIABLE_NAME is a https://opendap.github.io/dap4-specification/DAP4.html#_fully_qualified_names[full qualified DAP4 name]):
 
     curl -L -o dap4_subset_file "${gf_url}.dap?dap4.ce=VARIABLE_NAME"
     curl -L -o dap4_subset_dmrpp "${gf_url}.dmrpp.dap?dap4.ce=VARIABLE_NAME"
