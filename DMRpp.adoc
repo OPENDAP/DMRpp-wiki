@@ -1,13 +1,9 @@
-= DMR++ - OPeNDAP
+= DMR++
 :Miguel Jimenez <mjimenez@opendap.org>:
 {docdate}
 :numbered:
 :toc:
-
-// these below are links
-:hyrax-installation: https://opendap.github.io/hyrax_guide/Master_Hyrax_Guide.html
-:hyrax-doc:  http://docs.opendap.org/index.php/Hyrax
-
+OPeNDAP
 
 == Introduction ==
 
