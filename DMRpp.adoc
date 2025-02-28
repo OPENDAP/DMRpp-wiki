@@ -284,7 +284,7 @@ Below is a comparison of the same underlying data, the left window shows the dat
 
 
 .Comparison of responses from a +++ DMR++ +++ and the native file handler.
-image::/Data-comparison.png[width=650, height=400]
+image::Data-comparison.png[width=650, height=400]
 
 
 ==== Simple shell command ====
