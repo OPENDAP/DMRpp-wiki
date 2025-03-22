@@ -23,7 +23,7 @@ OPeNDAP, Inc.
 The +++ DMR++ +++ is a metadata file that provides a fast and flexible way to serve data stored in S3, or in any other service that supports HTTP Range GET.
 The +++ DMR++ +++ encodes the location of the data content residing in a binary data file/object (e.g., a https://support.hdfgroup.org/documentation/hdf5/latest/[hdf5] file) so that it can be directly accessed, without the need for an intermediate library API, by using the file with the location information. The binary data objects may be on a local filesystem, or they may reside across the web in something like an S3 bucket.
 
-A DMR is a metadata description of a datafile and is defined in link:https://opendap.github.io/dap4-specification/DAP4.html#_dataset[the DAP4 protocol, Sections 1.5.7-1.5.15].
+A DMR is a metadata description of a datafile and is defined in link:https://opendap.github.io/dap4-specification/DAP4.html[the DAP4 protocol, Sections 1.5.7-1.5.15].
 The +++ DMR++ +++ adds to the _DMR_ of the datafile _extra_ information (thus the +++ ++ +++), such as `byte offsets`, `chunk references`, `compression`, among other relevant information that can be used to get cloud-performant access to HDF5/NetCDF4 datafiles on S3. Hyrax, the OPeNDAP data Server, uses +++ DMR++ +++ to efficiently subset data on a local filesystem, in S3, or any other service that supports HTTP 1.1 and RangeGet.
 
 Additional advantages to the +++ DMR++ +++ are:
