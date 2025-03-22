@@ -23,7 +23,7 @@ OPeNDAP, Inc.
 The +++ DMR++ +++ is a metadata file that provides a fast and flexible way to serve data stored in S3, or in any other service that supports HTTP Range GET.
 The +++ DMR++ +++ encodes the location of the data content residing in a binary data file/object (e.g., a https://support.hdfgroup.org/documentation/hdf5/latest/[hdf5] file) so that it can be directly accessed, without the need for an intermediate library API, by using the file with the location information. The binary data objects may be on a local filesystem, or they may reside across the web in something like an S3 bucket.
 
-A DMR is a metadata description of a datafile and is defined in the DAP4 protocol, link:https://opendap.github.io/dap4-specification/DAP4.html#_dataset[Sections 1.5.7-1.5.15].
+A DMR is a metadata description of a datafile and is defined in link:https://opendap.github.io/dap4-specification/DAP4.html#_dataset[the DAP4 protocol, Sections 1.5.7-1.5.15].
 The +++ DMR++ +++ adds to the _DMR_ of the datafile _extra_ information (thus the +++ ++ +++), such as `byte offsets`, `chunk references`, `compression`, among other relevant information that can be used to get cloud-performant access to HDF5/NetCDF4 datafiles on S3. Hyrax, the OPeNDAP data Server, uses +++ DMR++ +++ to efficiently subset data on a local filesystem or S3.
 
 Additional advantages to the +++ DMR++ +++ are:
@@ -46,13 +46,16 @@ image::DMRppS3.png[width=650, align='center']
 The +++ DMR++ +++ ingest software reads a data file (see <<note1, this note>>) and builds a document that holds all the file's metadata (the names and types of all the variables along with any other information bound to those variables). This information is stored in a document we call the Dataset Metadata Response (DMR). The +++ DMR++ +++ adds some extra information to this regarding where each variable can be found and how to decode those values. The +++ DMR++ +++ is simply a special annotated DMR document.
 
 
-This effectively decouples the annotated +++ DMR++ +++ from the location of the granule file itself. Since +++ DMR++ +++ files are typically significantly smaller than the source data granules they represent, they can be stored and moved for less expense. They also enable reading all the file's metadata in one operation instead of the iterative process that many APIs require.
+This additional information enables:
 
-If the +++ DMR++ +++ contains references to the source granules location on the web, the location of the +++ DMR++ +++ file itself does not matter.
+* Decoupling the annotated +++ DMR++ +++ from the location of the granule file itself.
+* Since +++ DMR++ +++ files are typically significantly smaller than the source data granules they represent, they can be stored and moved for less expense.
+* Reading all the file's metadata in one operation instead of the iterative process that many APIs require.
+* If the +++ DMR++ +++ contains references to the source granules location on the web, the location of the +++ DMR++ +++ file itself does not matter.
 
 Software that understands the +++ DMR++ +++ content can directly access the data values held in the source granule file, and it can do so without having to retrieve the entire file and work on it locally, even when the file is stored in a Web Object Store like S3.
 
-If the granule file contains multiple variables and only a subset of them are needed, the +++ DMR++ +++ enabled software can retrieve just the bytes associated with the desired variables parts.
+If the granule file contains multiple variables and only a subset of them are needed, the +++ DMR++ +++ enabled software can retrieve just the bytes associated with the specified subset(s) of desired variable(s).
 
 [[note1]]
 NOTE: The OPeNDAP software currently supports HDF5 and NetCDF4. Support for HDF4 is under active development. Other formats can be supported, such as zarr.
