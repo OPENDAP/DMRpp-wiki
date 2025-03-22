@@ -297,7 +297,7 @@ Below is a comparison of the same underlying data, the left window shows the dat
 
 
 .Comparison of responses from a +++ DMR++ +++ and the native file handler.
-image::/Data-comparison.png[width=650, height=400]
+image::Data-comparison.png[width=650, height=400]
 
 
 ==== Simple shell command ====
@@ -578,11 +578,11 @@ When encountering this type of URL Hyrax will decompose it and use the content t
 More on the Restified Path can be found https://wiki.earthdata.nasa.gov/display/DUTRAIN/Feature+analysis%3A+Restified+URL+for+OPENDAP+Data+Access[here] ([.underline]#NOTE: You need the right permissions access the previous URL#).
 
 == Recipe: Building and testing +++ DMR++ +++ files ==
-There are two recipes shown here, one using Hyrax docker containers and a second using the container that is part of the NASA EOSDIS Cumulus task.
+There are two recipes shown here, the first using a Hyrax docker container and a second using the container that is part of the NASA EOSDIS Cumulus task.
 
-Prerequisites: 
+*_Prerequisites_*:
 
-- Docker daemon running on a system that also supports a shell (the examples use bash in this section).
+- The Docker daemon running on a system that also supports a shell (the examples use bash in this section).
 
 === Recipe: Building +++ DMR++ +++ files using a Hyrax docker container ===
 
