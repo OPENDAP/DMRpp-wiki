@@ -1,4 +1,4 @@
-= ``DMR++         `` image:logo-hyrax-red.svg[width=140]
+= ``DMR++         `` image:logo-hyrax-red.svg[width=200]
 OPeNDAP, Inc.
 {docdatetime}
 :numbered:
