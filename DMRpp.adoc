@@ -1,10 +1,12 @@
-= DMR++
-:Miguel Jimenez <mjimenez@opendap.org>:
-{docdate}
+= image:logo-hyrax-red.svg[width=300] DMR++
+{docdatetime}
 :imagesdir: ./images
+:source-highlighter: rouge
+:toc: left
+:toclevels: 3
 :numbered:
-:toc:
-OPeNDAP
+:docinfo: shared
+:Miguel Jimenez <mjimenez@opendap.org>:
 
 == Introduction ==
 
