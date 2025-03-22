@@ -3,7 +3,7 @@ OPeNDAP, Inc.
 {docdatetime}
 :numbered:
 :toc: left
-:toclevels: 2
+:toclevels: 3
 :icons: font
 :tabsize: 4
 :indent: 4
