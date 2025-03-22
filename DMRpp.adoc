@@ -1,9 +1,10 @@
-= image:logo-hyrax-red.svg[width=200]
+= image:logo-hyrax-red.svg[width=300]
 OPeNDAP, Inc.
 {docdatetime}
-:numbered:
 :toc: left
 :toclevels: 3
+:numbered:
+:docinfo: shared
 :icons: font
 :tabsize: 4
 :indent: 4
@@ -12,7 +13,7 @@ OPeNDAP, Inc.
 :coderay-linenums-mode: inline
 :prewrap!:
 :imagesdir: ./images
-:docinfo: shared
+:homepage: www.opendap.org
 :Miguel Jimenez <mjimenez@opendap.org>:
 
 = DMR++
