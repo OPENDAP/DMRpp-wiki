@@ -1,4 +1,4 @@
-= ``DMR++         `` image:logo-hyrax-red.svg[width=200]
+= image:logo-hyrax-red.svg[width=200]
 OPeNDAP, Inc.
 {docdatetime}
 :numbered:
@@ -15,7 +15,8 @@ OPeNDAP, Inc.
 :docinfo: shared
 :Miguel Jimenez <mjimenez@opendap.org>:
 
-DMR++
+= DMR++
+
 == Introduction ==
 
 The +++ DMR++ +++ is a metadata file that provides a fast and flexible way to serve data stored in S3, or in any other service that supports HTTP Range GET.
