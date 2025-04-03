@@ -517,7 +517,7 @@ In order for a dataset to be Climate Forecast (CF) compatible it must contain th
 The Hyrax _hdf5_handler_ software, utilized by the _get_dmrpp_ application, can create this data from the dataset metadata.  The _get_dmrpp_ application places these generated data in a “sidecar” file for deployment with the source _hdf5/netcdf-4_ file.
 
 
-== [NEW] `gen_dmrpp_sidecar` for building +++ DMR++ +++ files HDF5 and HDF4 ==
+== [NEW] `gen_dmrpp_side_car` for building +++ DMR++ +++ files HDF5 and HDF4 ==
 
 === Requirement
 This is a new feature of Hyrax available via Docker snapshot (not available on `latest` yet). 
