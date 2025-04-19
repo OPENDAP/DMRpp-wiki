@@ -1,7 +1,7 @@
 = image:logo-hyrax-red.svg[width=300]
 OPeNDAP, Inc.
 {docdatetime}
-:toc: left
+:toc:
 :toclevels: 3
 :numbered:
 :docinfo: shared
@@ -14,16 +14,20 @@ OPeNDAP, Inc.
 :prewrap!:
 :imagesdir: ./images
 :homepage: www.opendap.org
+:DMRpp: DMR++
 :Miguel Jimenez <mjimenez@opendap.org>:
+
+// Is the 'DMRpp' macro above better than sing '+++ DMR++ +++' everywhere? jhrg 4/19/25
 
 = DMR++
 
 == Introduction ==
 
-The +++ DMR++ +++ is a metadata file that provides a fast and flexible way to serve data stored in S3, or in any other service that supports HTTP Range GET.
+The {DMRpp} is a metadata file that provides a fast and flexible way to serve data stored in S3, or in any other service that supports HTTP Range GET.
+
 The +++ DMR++ +++ encodes the location of the data content residing in a binary data file/object (e.g., a https://support.hdfgroup.org/documentation/hdf5/latest/[hdf5] file) so that it can be directly accessed, without the need for an intermediate library API, by using the file with the location information. The binary data objects may be on a local filesystem, or they may reside across the web in something like an S3 bucket.
 
-A DMR is a metadata description of a datafile and is defined in link:https://opendap.github.io/dap4-specification/DAP4.html[the DAP4 protocol, Sections 1.5.7-1.5.15].
+A DMR is a metadata description of a datafile and is defined in link:https://opendap.github.io/dap4-specification/DAP4.html[the DAP4 protocol, Sections 1.5.7–1.5.15].
 The +++ DMR++ +++ adds to the _DMR_ of the datafile _extra_ information (thus the +++ ++ +++), such as `byte offsets`, `chunk references`, `compression`, among other relevant information that can be used to get cloud-performant access to HDF5/NetCDF4 datafiles on S3. Hyrax, the OPeNDAP data Server, uses +++ DMR++ +++ to efficiently subset data on a local filesystem, in S3, or any other service that supports HTTP 1.1 and RangeGet.
 
 Additional advantages to the +++ DMR++ +++ are:
@@ -36,14 +40,14 @@ Additional advantages to the +++ DMR++ +++ are:
 
 
 [[Diagram]]
-.Diagram of a collection of HDF5 files on an S3 bucket. Each file has next to it a sidecar file with the same name as the original but with ".dmrpp" (i.e. the DMR++). The ".dmrpp" file need not be next to the source file, and in fact because it is much smaller than the ".h5" source file, it is often moved in and out of S3 by the Hyrax data server, to reduce latency within S3.
+.A collection of HDF5 files on an S3 bucket. Each file has next to it a sidecar file with the same name as the original but with ".dmrpp" (i.e., the DMR++). The ".dmrpp" file need not be next to the source file, and in fact, because it is much smaller than the ".h5" source file, it is often moved in and out of S3 by the Hyrax data server to reduce latency within S3.
 image::DMRppS3.png[width=650, align='center']
 
 
 == How Does It Work? ==
 
 
-The +++ DMR++ +++ ingest software reads a data file (see <<note1, this note>>) and builds a document that holds all the file's metadata (the names and types of all the variables along with any other information bound to those variables). This information is stored in a document we call the Dataset Metadata Response (DMR). The +++ DMR++ +++ adds some extra information to this regarding where each variable can be found and how to decode those values. The +++ DMR++ +++ is simply a special annotated DMR document.
+The +++ DMR++ +++ ingest software reads a data file (see <<note1, this note>>) and builds a document that holds all the file's metadata, the names and types of all the variables along with any other information bound to those variables. This information is stored in a document we call the Dataset Metadata Response (DMR). The +++ DMR++ +++ adds some extra information to this regarding where each variable can be found and how to decode those values. The +++ DMR++ +++ is simply a special annotated DMR document.
 
 
 This additional information enables:
@@ -412,7 +416,7 @@ The command line switches provide a way to control the output of the tool. In ad
 *-v* ::
 	verbose mode, prints the intermediate DMR.
 *-V* ::
-	Very verbose mode, prints the DMR, the command and the configuration file used to build the DMR.
+	Very verbose mode, prints the DMR, the command, and the configuration file used to build the DMR.
 *-D* ::
 	Just print the DMR that will be used to build the +++ DMR++ +++.
 *-X* ::
@@ -516,6 +520,32 @@ In order for a dataset to be Climate Forecast (CF) compatible it must contain th
 
 The Hyrax _hdf5_handler_ software, utilized by the _get_dmrpp_ application, can create this data from the dataset metadata.  The _get_dmrpp_ application places these generated data in a “sidecar” file for deployment with the source _hdf5/netcdf-4_ file.
 
+
+== _BETA_ Building {DMRpp} files HDF5, NetCDF4, HDF4, and HDF4-EOS2 ==
+
+=== Requirement
+This is a new (March, 2025) feature of Hyrax available via Docker snapshot (not available on `latest` yet).
+[source,sh]
+----
+docker pull opendap/hyrax:snapshot
+----
+
+=== HDF4 
+To generate a dmrpp file for the HDF4 file hdf4.hdf. Do the following:
+[source,sh]
+----
+gen_dmrpp_side_car -I hdf4.hdf -H -U
+----
+If a sidecar file is generated, the sidecar file is always named after the original HDF4 file plus `_mvs.h5`. For example, `hdf4.hdf_mvs.h5.`
+
+NOTE: Note: `-H -U` are critical and cannot be omitted.
+
+=== HDF5
+To generate a dmrpp file for the HDF5 file `hdf5.h5`. Do the following:
+[source,sh]
+----
+gen_dmrpp_side_car -i hdf5.h5  -U
+----
 
 
 == Hyrax - Serving data using +++ DMR++ +++ files ==
