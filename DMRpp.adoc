@@ -1,7 +1,7 @@
 = image:logo-hyrax-red.svg[width=300]
 OPeNDAP, Inc.
 {docdatetime}
-:toc: left
+:toc:
 :toclevels: 3
 :numbered:
 :docinfo: shared
@@ -416,7 +416,7 @@ The command line switches provide a way to control the output of the tool. In ad
 *-v* ::
 	verbose mode, prints the intermediate DMR.
 *-V* ::
-	Very verbose mode, prints the DMR, the command and the configuration file used to build the DMR.
+	Very verbose mode, prints the DMR, the command, and the configuration file used to build the DMR.
 *-D* ::
 	Just print the DMR that will be used to build the +++ DMR++ +++.
 *-X* ::
@@ -521,29 +521,31 @@ In order for a dataset to be Climate Forecast (CF) compatible it must contain th
 The Hyrax _hdf5_handler_ software, utilized by the _get_dmrpp_ application, can create this data from the dataset metadata.  The _get_dmrpp_ application places these generated data in a “sidecar” file for deployment with the source _hdf5/netcdf-4_ file.
 
 
-== [NEW] `gen_dmrpp_side_car` for building +++ DMR++ +++ files HDF5 and HDF4 ==
+== _BETA_ Building {DMRpp} files HDF5, NetCDF4, HDF4, and HDF4-EOS2 ==
 
 === Requirement
-This is a new feature of Hyrax available via Docker snapshot (not available on `latest` yet). 
-
-```
+This is a new (March, 2025) feature of Hyrax available via Docker snapshot (not available on `latest` yet).
+[source,sh]
+----
 docker pull opendap/hyrax:snapshot
-```
+----
+
 === HDF4 
 To generate a dmrpp file for the HDF4 file hdf4.hdf. Do the following:
-```
+[source,sh]
+----
 gen_dmrpp_side_car -I hdf4.hdf -H -U
-```
+----
 If a sidecar file is generated, the sidecar file is always named after the original HDF4 file plus `_mvs.h5`. For example, `hdf4.hdf_mvs.h5.`
 
 NOTE: Note: `-H -U` are critical and cannot be omitted.
 
 === HDF5
 To generate a dmrpp file for the HDF5 file `hdf5.h5`. Do the following:
-
-```
+[source,sh]
+----
 gen_dmrpp_side_car -i hdf5.h5  -U
-```
+----
 
 
 == Hyrax - Serving data using +++ DMR++ +++ files ==
