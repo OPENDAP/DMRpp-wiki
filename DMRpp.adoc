@@ -594,6 +594,9 @@ total 1245840
 ...
 ----
 
+// Add info about templates
+
+// Add info about testing
 
 
 Here's a quick summary of what will follow. First, the _Hyrax_ Docker container will be downloaded from the OPeNDAP Docker Hub repository. Then  a directory will be made where the data files (the input files) will be stored. The Docker container will be run so that directory is mounted by the container and its contents accessed by the Hyrax data server and gen_dmrpp_side_car program. The program will make the {DMRpp}. The program will also make a sidecar file to hold the georeferencing information it that's necessary. Because the contents of the directory are shared by both the container and the host computer, it will be simple to use the {DMRpp} and sidecar files.
