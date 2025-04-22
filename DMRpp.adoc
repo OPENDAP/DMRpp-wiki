@@ -539,9 +539,62 @@ Change to the directory that holds your data files and assign an environment var
 Run the Docker container. The command returns The docker run command returns the Container ID (a long hexadecimal string) when the `-d` (run a detached container) is used. The `--name` option sets _hyrax_ as the name of the container which will be used in later commands. Running the container this way enables us to use both build {DMRpp} documents and test them, the latter using the Hyrax server that is part of the container.
 [source,sh]
 ----
-% docker run -d -h hyrax -p 8080:8080 -v $HDF4_DIR:/usr/share/hyrax --name=hyrax opendap/hyrax:1.17.1-126
+% docker run -d -h hyrax -p 8080:8080 -v $DATA:/usr/share/hyrax --name=hyrax opendap/hyrax:1.17.1-126
 9c88a0d4abe55f17802afd81150280073314f3940b9cd4973ea60dbc43f733a9
 ----
+Here are the files on my computer in the directory assigned to $DATA
+[source,sh]
+----
+% ls
+3B42.19980101.00.7.HDF
+3B42.19980101.03.7.HDF
+3B42.19980101.06.7.HDF
+3B42.19980101.09.7.HDF
+3B42.20130111.06.7.HDF
+3B42.20130111.09.7.HDF
+AIRS.2009.01.01.L3.RetStd_IR001.v7.0.3.0.G20160024306.hdf
+AIRS.2009.01.02.L3.RetStd_IR001.v7.0.3.0.G20160024358.hdf
+AIRS.2009.01.03.L3.RetStd_IR001.v7.0.3.0.G20160024538.hdf
+AMSR_E_L2_Land_V09_200206191023_D.hdf
+AMSR_E_L2_Land_V09_200206191112_A.hdf
+AMSR_E_L3_SeaIce25km_V15_20020601.hdf
+MCD12Q1.A2022001.h10v06.061.2023243073808.hdf
+MCD19A1.A2024025.h10v06.061.2024027100206.hdf
+MOD10A1F.A2024025.h01v08.061.2024027134335.hdf
+MOD10A1F.A2024025.h01v09.061.2024027130238.hdf
+MOD10A1F.A2024025.h01v10.061.2024027131939.hdf
+MOD11A1.A2024025.h10v06.061.2024028004317.hdf
+----
+To build a {DMRpp} for the first AIRS file (`AIRS.2009.01.01.L3.RetStd_IR001.v7.0.3.0.G20160024306.hdf`) we can run the gen_dmrpp_side_car command using exec using the file's name.
+[source,sh]
+----
+% docker exec -it -w /usr/share/hyrax hyrax gen_dmrpp_side_car -i AIRS.2009.01.01.L3.RetStd_IR001.v7.0.3.0.G20160024306.hdf -H -U
+% ls
+3B42.19980101.00.7.HDF
+3B42.19980101.03.7.HDF
+3B42.19980101.06.7.HDF
+3B42.19980101.09.7.HDF
+3B42.20130111.06.7.HDF
+3B42.20130111.09.7.HDF
+AIRS.2009.01.01.L3.RetStd_IR001.v7.0.3.0.G20160024306.hdf
+AIRS.2009.01.01.L3.RetStd_IR001.v7.0.3.0.G20160024306.hdf.dmrpp
+AIRS.2009.01.02.L3.RetStd_IR001.v7.0.3.0.G20160024358.hdf
+...
+----
+Another example, this time both the {DMRpp} and a sidecar _missing data_ file (`3B42.19980101.00.7.HDF_mvs.h5`) were built. Even though the input data file was an HDF4 file, the missing data file uses HDF5 to store the values. For this example, we should the sizes of the input data file and the smaller {DMRpp} and missing data file, which together are only 2% of the data file's size.
+[source,sh]
+----
+% docker exec -it -w /usr/share/hyrax hyrax gen_dmrpp_side_car -i 3B42.19980101.00.7.HDF -H -U
+% ls -l
+total 1245840
+-rw-r--r--@ 1 jimg  staff     774595 Aug 22  2024 3B42.19980101.00.7.HDF
+-rw-r--r--  1 jimg  staff       6514 Apr 21 22:42 3B42.19980101.00.7.HDF.dmrpp
+-rw-r--r--  1 jimg  staff       8075 Apr 21 22:42 3B42.19980101.00.7.HDF_mvs.h5
+-rw-r--r--@ 1 jimg  staff     765742 Aug 22  2024 3B42.19980101.03.7.HDF
+...
+----
+
+
 
 Here's a quick summary of what will follow. First, the _Hyrax_ Docker container will be downloaded from the OPeNDAP Docker Hub repository. Then  a directory will be made where the data files (the input files) will be stored. The Docker container will be run so that directory is mounted by the container and its contents accessed by the Hyrax data server and gen_dmrpp_side_car program. The program will make the {DMRpp}. The program will also make a sidecar file to hold the georeferencing information it that's necessary. Because the contents of the directory are shared by both the container and the host computer, it will be simple to use the {DMRpp} and sidecar files.
 
