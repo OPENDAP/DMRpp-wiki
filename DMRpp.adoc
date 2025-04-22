@@ -503,8 +503,6 @@ By default _get_dmrpp_ the _H5.EnableCF_ option is set to false:
 
 There is a much more comprehensive discussion of this key feature, and others, in the https://opendap.github.io/hyrax_guide/Master_Hyrax_Guide.html#HDF5-handler[HDF5 Handler section] of the Appendix in the Hyrax Data Server Installation and Configuration Guide.
 
-
-
 === Missing data, the CF conventions and _HDF5_ ===
 
 Many of the _HDF5_ files produced by NASA and others do not contain the domain coordinate data (such as latitude, longitude, time, etc.) as a collection of explicit values. Instead, information contained in the dataset metadata can be used to reproduce these values.
@@ -516,18 +514,220 @@ The Hyrax _HDF5_handler_ software, utilized by the _get_dmrpp_ application, can 
 // **jhrg** Content editing resumes jhrg 4/19/25
 == _BETA_ Building {DMRpp} files HDF5, NetCDF4, HDF4, and HDF4-EOS2 ==
 [NOTE]
-This is a command line tool for building {DMRpp} documents was introduced in March 2025 and will initially be available only using the _snapshot_ Hyrax Docker container.
+This is a command line tool for building {DMRpp} documents was introduced in March 2025 and will initially be available only using the Hyrax Docker container version _1.17.1-126_ or later.
 
-There is now one command that can be used to build {DMRpp} documents for both HDF5, netCDF4, HDF4, and HDF-EOS2. This command is called `gen_dmrpp_side_car`, so named because will not only build the {DMRpp} but also any additional _sidecar_ data file that needed for efficient and user-friendly access to data in the original source file. HDF4_EOS files in particular, although this can be the case with HDF5 as well, often lack important information such as accurate, full-resolution, georeferencing data. This new {DMRpp} builder will generate those geo-referencing values and store then in an addition sidecar file. The Hyrax server can efficiently read those values just as it reads values from the original data file.
+There is now one command that can be used to build {DMRpp} documents for both HDF5, netCDF4, HDF4, and HDF-EOS2. This command is called `gen_dmrpp_side_car`, so named because will not only build the {DMRpp} but also any additional _sidecar_ data file that needed for efficient and user-friendly access to data in the original source file. This new {DMRpp} builder will generate those geo-referencing values and store then in an additional sidecar file. The Hyrax server can efficiently read those values just as it reads values from the original data file.
 
-In the following, we outline using the _Hyrax_ Docker container to run this command because doing so has the added benefit that you can test the {DMRpp} that has just been built. While not suitable for production processes, this is useful when working with a new collection of data to ensure the system is returning the correct values. For production runs where many data files will be processed, it is better to use the smaller _bes_ Docker container. The process for using that is the same as for the Hyrax container, except that testing the results is more involved and depends on the configuration of the data processing system.
+// In the following, we outline using the _Hyrax_ Docker container to run this command because doing so has the added benefit that you can test the {DMRpp} that has just been built. While not suitable for production processes, this is useful when working with a new collection of data to ensure the system is returning the correct values. For production runs where many data files will be processed, it is better to use the smaller _BES_ Docker container. The process for using that is the same as for the Hyrax container, except that testing the results is more involved and depends on the configuration of the data processing system.
 
-=== Requirement
-First, get the snapshot (latest) version of the Hyrax Docker container.
+=== Summary of the {DMRpp} Build Process
+==== Assumptions
+* Docker installed on your computer and at least a basic understanding of its use.
+* data files in a directory on your computer
+
+In the following, `%` is the terminal prompt. Only some commands produce output, and for those that do, the output is shown below the command. The paths, etc., on your computer will almost certainly be different.
+
+==== Start
+Change to the directory that holds your data files and assign an environment variable to the full pathname of that directory to streamline some of the later steps. In my case that directory is called `HDF4-dir`.
 [source,sh]
 ----
-docker pull opendap/hyrax:snapshot
+% cd HDF4-dir
+% export DATA=$(pwd)
+% echo $DATA
+/Users/jimg/src/opendap/hyrax_git/HDF4-dir
 ----
+Run the Docker container. The command returns The docker run command returns the Container ID (a long hexadecimal string) when the `-d` (run a detached container) is used. The `--name` option sets _hyrax_ as the name of the container which will be used in later commands. Running the container this way enables us to use both build {DMRpp} documents and test them, the latter using the Hyrax server that is part of the container.
+[source,sh]
+----
+% docker run -d -h hyrax -p 8080:8080 -v $HDF4_DIR:/usr/share/hyrax --name=hyrax opendap/hyrax:1.17.1-126
+9c88a0d4abe55f17802afd81150280073314f3940b9cd4973ea60dbc43f733a9
+----
+
+Here's a quick summary of what will follow. First, the _Hyrax_ Docker container will be downloaded from the OPeNDAP Docker Hub repository. Then  a directory will be made where the data files (the input files) will be stored. The Docker container will be run so that directory is mounted by the container and its contents accessed by the Hyrax data server and gen_dmrpp_side_car program. The program will make the {DMRpp}. The program will also make a sidecar file to hold the georeferencing information it that's necessary. Because the contents of the directory are shared by both the container and the host computer, it will be simple to use the {DMRpp} and sidecar files.
+
+=== Detailed Steps
+[NOTE]
+These steps assume that you have the Docker daemon and other software on your computer.
+
+==== Get and Run the Docker Container
+First, get the version `1.17.1-126` of the Hyrax Docker container. This will download that version of the  Docker container to your local computer.
+[source,sh]
+----
+% docker pull opendap/hyrax:1.17.1-126
+----
+Next, make a directory where data files can be stored. For this example, the current working directory (CWD) will be used. The full path to the CWD will be stored in an environment variable named `HDF4_DIR`. You can choose any name, and it need not be the CWD, but setting the environment variable and making it the CWD will make the explanation below easier to follow.
+
+[source,sh]
+----
+% export HDF4_DIR=$(pwd)
+----
+
+Run the Docker container :
+
+[source,sh]
+----
+% docker run -d -h hyrax -p 8080:8080 -v $HDF4_DIR:/usr/share/hyrax --name=hyrax opendap/hyrax:1.17.1-126
+----
+
+What the options mean:
+[horizontal]
+-d, --detach:: Run container in the background and print container ID
+-h, --hostname:: Set the container's host name
+-p, --publish:: Publish a container's port(s) to the Docker host
+-v, --volume:: Mount a volume so that the container can use files on the Docker host
+--name:: Assign a name to the container; this name can be used in later Docker commands
+
+[NOTE]
+This command will download the Hyrax Docker container if you did not already do so.
+
+The `docker run -d ...` command will run the Hyrax container on your computer (called the _host_ computer) in _detached_ mode. The Hyrax container hold both the complete Hyrax service and the `gen_dmrpp_side_car` command. Later this server will be used to test the {DMRpp} documents that are built.
+
+The volume mount, from `$HDF4_DIR` to `/usr/share/hyrax` mounts the current directory of the host computer running the container to the directory _/usr/share/hyrax_ inside the container. That directory is the root of the server's data tree. This means that the HDF4 files you copied into the `HDF4_DIR` directory will be accessible by the server running in the container. That will be useful for testing later on.
+
+[NOTE]
+If you want to use a specific container version, substitute the version info for _1.17.1-126_ in the above commands. For example, to use the latest build of the container, use _snapshot_ instead ot the version number.
+
+Check that the container is running using:
+[source,sh]
+----
+% docker ps
+----
+or make a command alais for a more compact listing than the default output of `docker ps`
+[source,sh]
+----
+% alias d-ps='docker ps --format "table {{.ID}}\t{{.Names}}\t{{.Status}}\t{{.Image}}"'
+----
+This will show a somewhat easier-to-read bit of information about all the running Docker container on your host:
+[source,sh]
+----
+% d-ps
+
+CCONTAINER ID   NAMES     STATUS          IMAGE
+82074fe6ccfe    hyrax     Up 13 minutes   opendap/hyrax:1.17.1-126
+----
+If you want to stop the container, use
+[source,sh]
+----
+% docker rm -f hyrax
+----
+No need to stop the container now, we're pointing out how to do it because it's often useful.
+
+==== Running the {DMRpp} builder ====
+// TODO is this still true jhrg 4/21/25
+NOTE: At the end of this, I'll include a shell script that takes away many of these steps. However, the script obscures some aspects of the command that you might want to tweak, so the following shows you all the details. Skip to *Simple shell command* to skip over these details.
+
+We can use the Docker command `exec` to run the `gen_dmrpp_side_car` program inside the already running Docker container. For example, we can look at the command's online help using the `-h` option of the command.
+Get the command to return its help information:
+
+[source,sh]
+----
+% docker exec -it hyrax gen_dmrpp_side_car -h
+
+usage: gen_dmrpp_side_car [-h] -i I [-c] [-H] [-u URL] [-D] [-U] [-s SURL]
+                          [-S ESURL] [-v]
+
+Generate the dmrpp file for an HDF4/HDF5 file. If having the missing data, the
+HDF5 side car file that stores the data is also generated.
+
+optional arguments:
+  -h, --help            show this help message and exit
+  -i I                  The HDF4/5 file must be provided under the current
+                        directory or its children directories.
+  -c                    For the netCDF4/HDF5 files, the dmrpp and the side car
+                        files will be generated via the EnableCF option.
+  -H, --HDF4            Generate dmrpp from an HDF4 file.
+  -u URL, --URL URL     The URL that provides the HDF4/5 file path(including
+                        the file name at the end).
+  -D, --DisableSideCar  The sidecar file is not generated for the HDF4 file.
+  -U, --SCTURL          the location of the sidecar file will contain the
+                        template string OPeNDAP_DMRpp_SC_DATA_ACCESS_URL,
+                        which can be replaced at runtime.
+  -s SURL, --SURL SURL  The URL that provides the location of the side car
+                        file.
+  -S ESURL, --ESURL ESURL
+                        The URL that provides the existing side car file
+                        path(must be absolute path or under current dir). The
+                        dmrpp file of the side car file should also exist.
+  -v, --verbosity       Detailed description message and other information.
+
+----
+
+Let's build a {DMRpp} now, by explicitly using the container:
+
+--------------------------
+docker exec -it hyrax bash
+--------------------------
+
+starts the _bash_ shell in the container, with the current directory as root (/)
+
+---------------
+[root@hyrax /]#
+---------------
+
+
+Change to the directory that is the root of the data (you'll see your HDF4 files in here):
+
+
+--------------------
+ cd /usr/share/hyrax
+--------------------
+
+
+You will see, roughly:
+
+
+-----------------------------------
+[root@hyrax /]# cd /usr/share/hyrax
+[root@hyrax hyrax]# ls
+3B42.19980101.00.7.HDF
+3B42.19980101.03.7.HDF
+3B42.19980101.06.7.HDF
+
+...
+-----------------------------------
+
+
+In that directory, use the _get_dmrpp_h4_ command to build a {DMRpp} document for one of the files:
+
+--------------------------------------------------------------------------------------------------------------
+[root@hyrax hyrax]# get_dmrpp_h4 -i 3B42.20130111.09.7.HDF -u 'file:///usr/share/hyrax/3B42.20130111.09.7.HDF'
+--------------------------------------------------------------------------------------------------------------
+
+Copy that pattern for whatever file you use. From the `/usr/share/hyrax` directory, you pass _get_dmrpp_h4_ the name of the file (because it's local to the current directory) using the *-i* option. The *-u* option tells the command to embed the URL that follows it in the {DMRpp}. I've used a _file://_  URL to the file _/usr/share/hyrax/3B42.19980101.00.7.HDF_.
+
+
+NOTE: In the URL above, three slashes follow the colon: two from the way a URL names a protocol and one because the pathname starts at the root directory.
+
+Building the {DMRpp} and embedding a _file://_ URL will enable testing the {DMRpp}.
+
+
+==== Using the server to examine data returned by the {DMRpp} ====
+
+
+Let's look at how the _hyrax_ service will treat that data file using the {DMRpp}. In a browser, go to  http://localhost:8080/opendap/[http://localhost:8080/opendap/]
+
+.Hyrax Catalog view of all files available.
+image::Hyrax-including-new-DMRpp.png[width=650, height=400]
+
+
+NOTE: _The server caches data catalog information for 5 minutes (although this can be configured) so new items (e.g., {DMRpp} documents) may not show up right away. To force the display of a {DMRpp} that you just created, click on the source data file name and edit the URL so that the suffix *.dmr.html* is replaced by *.dmrpp/dmr* ._
+
+
+Click on your equivalent of the *3B42.20130111.09.7.HDF* link, subset, download and open in Panoply or the equivalent.
+
+.Page view of the DAP _Data Request Form_ for subsetting the dataset.
+image::Hyrax-subsetting.png[width=650, height=400]
+
+You can run batch tests in lots of files by building many DMR++ documents and then asking the server for various responses (_nc4_, _dap_) from the {DMRpp} and the original file. Those could be compared using various schemes, although in its entirety that is beyond this section's scope, the command _getdap4_ is also included in the container and could be used to compare _dap_ responses from the data file and the {DMRpp} document.
+
+Below is a comparison of the same underlying data, the left window shows the data returned using the {DMRpp}, the right shows the data read directly from the file using the server's builtin HDF4 reader.
+
+
+.Comparison of responses from a {DMRpp} and the native file handler.
+image::Data-comparison.png[width=650, height=400]
+
+
+// Original text resumes jhrg 4/19/25
 
 === HDF4 
 To generate a dmrpp file for the HDF4 file hdf4.hdf. Do the following:
