@@ -1,6 +1,7 @@
 = Building and Testing DMR++ Documents
 OPeNDAP, Inc.
 {docdatetime}
+:appendix-caption: Exhibit
 :toc:
 :toclevels: 3
 :numbered:
@@ -73,79 +74,23 @@ The software technologies HDF5, etc., are best thought of as tools that provide 
 
 While we aim to provide support for all possible HDF5, HDF4, etc., data files, there are aspects to the _data models_ these API libraries implement that the current {DMRpp} software does n
 
-There are aspects of the _data models_ used by HDF5, etc., that the {DMRpp} software does not yet support.
-// start here. jhrg 4/24/25
+There are aspects of the _data models_ used by HDF5, etc., that the {DMRpp} software does not yet support. As of April 2025, support for HDF5, as it is used by the NASA Earth Science data collections is close to complete. The best approach to determining if the OPeNDAP {DMRpp} builder software will work for a given collection's HDF5 files is to try it. We suggest picking one or two granules/files and then following the steps outlined here in Section <<sec-build-them>> followed by the testing process described in Section <<sec-test-them>>.
 
-=== HDF5 ===
-// TODO Rewrite this since, at this point all known NASA HDF5 files are supported. 4/22/25
-The HDF5 data format is quite complex, and many of the options and edge cases are not currently supported by the {DMRpp} software.
+Support for HDF4 and HDF4-EOS2 data files is much newer, and there are probably more edge cases that we will need to work on, but as of April 2025, the same advice applies to these as to the HDF5 case. Try to build the {DMRpp} and then test the result.
 
-These limitations and how to quickly evaluate a HDF5 or netCDF4 file for use with the {DMRpp} software are explained below.
 
-==== HDF5 filters ====
+==== Is My NetCDF File A Version _3_ or Version _4_ File?
+OPeNDAP's {DMRpp} software does not currently support netCDF3 files.footnote:[Not supporting netCDF3 is a shame because it's commonly found in older collections of data and it's one of the simpler data formats.] A complicating factor in building {DMRpp} documents is that it can be hard to tell at a glance if a file is netCDF version 3 or version4. A file with the suffix _.nc4_ is recognized as a _netCDF-4_ file. However, the file suffix _.nc_ can be the commonly used naming convention for both _netCDF-3_ and _netCDF-4_ files.
 
-The HDF5 format has several filter/compression options used for storing data values. 
-The {DMRpp} software currently supports data that use the  H5Z_FILTER_DEFLATE, H5Z_FILTER_SHUFFLE, and H5Z_FILTER_FLETCHER32 filters.
-https://support.hdfgroup.org/documentation/HDF5/latest/group___h5_z.html[You can find more on HDF5 filters here.]
-
-==== HDF5 storage layouts ====
-
-The HDF5 format also uses a number of "storage layouts" that describe various structural organizations of the data values associated with a variable in the granule file.
-The {DMRpp} software currently supports data that use the  H5D_COMPACT, H5D_CHUNKED, and H5D_CONTIGUOUS storage layouts. These are all the storage layouts defined by the HDF5 library, but others can be added.
-https://support.hdfgroup.org/releases/HDF5/v1_16/v1_16_0/documentation/doxygen/_l_b_dset_layout.html[You can find more on HDF5 storage layouts here.]
-
-==== Is my HDF5 or netCDF4 file suitable for {DMRpp}?
-To get a human-readable assessment of the file that will show the storage layouts, chunking structure, and the filters needed for each variable (aka DATASET in the _HDF5_ vocabulary), use the https://support.hdfgroup.org/ftp/HDF5/documentation/doc1.6/Tools.html#Tools-Dump[h5dump] command line program.
-
-.h5dump example output
-[source,sh]
-----
-$ h5dump -H -p chunked_gzipped_fourD.h5
-HDF5 "chunked_gzipped_fourD.h5" {
-	GROUP "/" {
-		DATASET "d_16_gzipped_chunks" {
-			DATATYPE  H5T_IEEE_F32LE
-			DATASPACE  SIMPLE { ( 40, 40, 40, 40 ) / ( 40, 40, 40, 40 ) }
-			STORAGE_LAYOUT {
-				CHUNKED ( 20, 20, 20, 20 )
-				SIZE 2863311 (3.576:1 COMPRESSION)
-			}
-			FILTERS {
-				COMPRESSION DEFLATE { LEVEL 6 }
-			}
-			FILLVALUE {
-				FILL_TIME H5D_FILL_TIME_ALLOC
-				VALUE  H5D_FILL_VALUE_DEFAULT
-			}
-			ALLOCATION_TIME {
-				H5D_ALLOC_TIME_INCR
-			}
-		}
-	}
-}
-----
-
-==== Is my netcdf file _netcdf-3_ or _netcdf-4_? ====
-
-A file with the suffix _.nc4_ is recognized as a _netcdf-4_ file. However, the file suffix _.nc_ can be the commonly used naming convention for both _netcdf-3_ and _netcdf-4_ files. You can use the `ncdump` command:
+You can use the `ncdump` command to determine if a _netCDF_ file is either classic _netCDF-3_ or _netCDF-4_. http://www.bic.mni.mcgill.ca/users/sean/Docs/netcdf/guide.txn_79.html[You can learn more in the NetCDF documentation here].
 
 ]source, sh]
 ----
 ncdump -k <filename>
 ----
 
-to determine if a _netcdf_ file is either classic _netcdf-3_ (classic) or _netcdf-4_. http://www.bic.mni.mcgill.ca/users/sean/Docs/netcdf/guide.txn_79.html[You can learn more in the NetCDF documentation here].
-
-=== HDF4 and HDF4-EOS2 ===
-The internal data storage layout in an HDF4 file is more complex than that in an HDF5 file, and we're focusing on complete support for those features used by NASA. In addition, we also support HDF4-EOS2, data files that should be read with the HDF4-EOS2 library. The main reason of using the HDF-EOS2 API is to retrieve the values for the Domain variables such as  Latitude and Longitude. Our support handles the HDF4-EOS Grid data type and uses {DMRpp} to retrieve  the Latitude and Longitude values appear as users expect. Dmrpp can handle hDF-EOS2 swath. However, for some HDF-EOS2 MODIS swath (level 1B etc.), currently users need to find the corresponding HDF-EOS2 files (MODIS level 3 products) that store the actual latitude and longitude values for each data point. The {Dmrpp} module doesn't support  automatic merging of the latitude and longitude of such HDF-EOS2 swath data.
-
-== Building {DMRpp} Documents
-[NOTE]
-The `gen_dmrpp_side_car` is a command line tool for building {DMRpp} documents introduced in March 2025 and is available only using the Hyrax Docker container version _1.17.1-126_ or later.
-
-The `gen_dmrpp_side_car` command, introduced in March 2025, can be used to build {DMRpp} documents for HDF5, netCDF4, HDF4, and HDF-EOS2 data files. This command will also build _sidecar_ data files when needed that provide additional information that simplifies using the data in these files. For many of the NASA data collections, geo-referencing data were not included in the data files to reduce file size. The gen_dmrpp_side_car command will store the 'missing' geo-referencing data in a sidecar file and build a {DMRpp} document that automatically referencing that sidecar file, providing seamless access to those geo-referencing values.
-
 === Summary of the {DMRpp} Build Process
+[#sec-build-them]
 ==== Assumptions
 You have:
 
@@ -241,8 +186,9 @@ The gen_dmrpp_side_car command takes a few options that control how it builds {D
 
 The `-H` option tells the command that the input file is an HDF4 or HDF4-EOS2 data file. If the `-H` option is not used, then the data file is assumed to be either HDF5 or netCDF4.
 
-The `-c` and `-D` options are used to control behavior of the command. The `-c` option results in {DMRpp} and sidecar files that follow the Climate Forecast (CF) conventions. The `-D` option will disable the build of a sidecar file, even when one would normally be required.
-// TODO Does this mean 'flattened' jhrg 4/22//25
+The `-c` and `-D` options are used to control behavior of the command. The `-c` option results in {DMRpp} and sidecar files that follow the Climate Forecast (CF) conventions. Using this option provides a {DMRpp} that mimics the behavior of the Hyrax server when it is used to service data stored on POSIX file systems with the _EnableCF_ option turned on. This organizes the presentation of the variables to follow CF and flattens the internal hierarchy of the data files, hiding any _Groups_.
+
+The `-D` option will disable the build of a sidecar file, even when one would normally be required.
 
 The `-u/U` and `-s/S` options control how URLs are represented in the {DMRpp} document. It is possible to build a {DMRpp} before the location of the data file in S3, for example, is known. In this case, the URL that references the data file will be represented by a 'template' value and substituted into the {DMRpp} _when the document is used_, nominally by the Hyrax service at runtime (although other software can also do this substitution - it is a simple text replacement). The same can be said for the URL that references the sidecar geo-referencing data file. The Hyrax service _assumes_ that the data file URL can be determined by removing the suffix `.dmrpp` from the {DMRpp} URL. Similarly, it assumes that the sidecar data file URL can be found by replacing the `.dmrpp` suffix with `_mvs.h5`. See <<ex-missing>>. Note that these options can be used to provide real values for data file and sidecar data URls. In that case, the given values will be used in the {DMRpp} instead of the template values. No run-time substitution of the URLs will be performed.
 
@@ -286,7 +232,7 @@ Complete option summary for the `docker exec` command:
 -w, --workdir:: Set the working directory inside the container
 
 [NOTE]
-If you want to use a specific container version, substitute the version info for _1.17.1-126_ in the above commands. For example, to use the latest build of the container, use _snapshot_ instead ot the version number.
+If you want to use a specific container version, substitute the version info for _1.17.1-126_ in the above commands. For example, to use the latest build of the container, use _snapshot_ instead of the version number.
 
 ==== Useful Docker Commands
 A useful docker command, `ps`, provides a way to see which docker containers are running.
@@ -315,6 +261,7 @@ If you want to stop the container, use
 ----
 
 == Testing {DMRpp} Containers Using the Builtin Hyrax Server
+[#sec-test-them]
 One of the more confounding things about serving data with {DMRpp} documents is that it requires a data server, or some software component, that can interpret the documents. Instead of the data being directly available, the {DMRpp} sits between the software and the data. In this section we show how to test a {DMRpp} document that using the Hyrax server running in the container used to build the {DMRpp} document. To do this, we will build the {DMRpp} with _file URLs_ for the data and sidecar files instead of _HTTP URLs_ or the _template values_ that the command would normally use.
 
 ----
@@ -342,28 +289,7 @@ Below is a comparison of the same underlying data, the left window shows the dat
 .Comparison of responses from a {DMRpp} and the native file handler.
 image::Data-comparison.png[width=650, height=400]
 
-
-// Original text resumes jhrg 4/19/25
-
-=== HDF4 
-To generate a dmrpp file for the HDF4 file hdf4.hdf. Do the following:
-[source,sh]
-----
-gen_dmrpp_side_car -I hdf4.hdf -H -U
-----
-If a sidecar file is generated, the sidecar file is always named after the original HDF4 file plus `_mvs.h5`. For example, `hdf4.hdf_mvs.h5.`
-
-NOTE: Note: `-H -U` are critical and cannot be omitted.
-
-=== HDF5
-To generate a dmrpp file for the HDF5 file `HDF5.h5`. Do the following:
-[source,sh]
-----
-gen_dmrpp_side_car -i HDF5.h5  -U
-----
-
-
-== Hyrax - Serving data using {DMRpp} files ==
+== Serving Data Using {DMRpp} Files ==
 
 There are three fundamental deployment scenarios for using {DMRpp} files to serve data with the Hyrax data server.
 
@@ -598,6 +524,84 @@ NOTE: One might consider doing this with two or more variables.
 .. From the File menu select *Open Remote Dataset*...
 .. Paste the `$gf_url.html` into the resulting dialog box.
 
+[appendix]
+=== HDF5 ===
+// TODO Rewrite this since, at this point all known NASA HDF5 files are supported. 4/22/25
+The HDF5 data format is quite complex, and many of the options and edge cases are not currently supported by the {DMRpp} software.
 
+These limitations and how to quickly evaluate a HDF5 or netCDF4 file for use with the {DMRpp} software are explained below.
+
+==== HDF5 filters ====
+
+The HDF5 format has several filter/compression options used for storing data values.
+The {DMRpp} software currently supports data that use the  H5Z_FILTER_DEFLATE, H5Z_FILTER_SHUFFLE, and H5Z_FILTER_FLETCHER32 filters.
+https://support.hdfgroup.org/documentation/HDF5/latest/group___h5_z.html[You can find more on HDF5 filters here.]
+
+==== HDF5 storage layouts ====
+
+The HDF5 format also uses a number of "storage layouts" that describe various structural organizations of the data values associated with a variable in the granule file.
+The {DMRpp} software currently supports data that use the  H5D_COMPACT, H5D_CHUNKED, and H5D_CONTIGUOUS storage layouts. These are all the storage layouts defined by the HDF5 library, but others can be added.
+https://support.hdfgroup.org/releases/HDF5/v1_16/v1_16_0/documentation/doxygen/_l_b_dset_layout.html[You can find more on HDF5 storage layouts here.]
+
+==== Is my HDF5 or netCDF4 file suitable for {DMRpp}?
+To get a human-readable assessment of the file that will show the storage layouts, chunking structure, and the filters needed for each variable (aka DATASET in the _HDF5_ vocabulary), use the https://support.hdfgroup.org/ftp/HDF5/documentation/doc1.6/Tools.html#Tools-Dump[h5dump] command line program.
+
+.h5dump example output
+[source,sh]
+----
+$ h5dump -H -p chunked_gzipped_fourD.h5
+HDF5 "chunked_gzipped_fourD.h5" {
+	GROUP "/" {
+		DATASET "d_16_gzipped_chunks" {
+			DATATYPE  H5T_IEEE_F32LE
+			DATASPACE  SIMPLE { ( 40, 40, 40, 40 ) / ( 40, 40, 40, 40 ) }
+			STORAGE_LAYOUT {
+				CHUNKED ( 20, 20, 20, 20 )
+				SIZE 2863311 (3.576:1 COMPRESSION)
+			}
+			FILTERS {
+				COMPRESSION DEFLATE { LEVEL 6 }
+			}
+			FILLVALUE {
+				FILL_TIME H5D_FILL_TIME_ALLOC
+				VALUE  H5D_FILL_VALUE_DEFAULT
+			}
+			ALLOCATION_TIME {
+				H5D_ALLOC_TIME_INCR
+			}
+		}
+	}
+}
+----
+
+=== HDF4 and HDF4-EOS2 ===
+The internal data storage layout in an HDF4 file is more complex than that in an HDF5 file, and we're focusing on complete support for those features used by NASA. In addition, we also support HDF4-EOS2, data files that should be read with the HDF4-EOS2 library. The main reason of using the HDF-EOS2 API is to retrieve the values for the Domain variables such as  Latitude and Longitude. Our support handles the HDF4-EOS Grid data type and uses {DMRpp} to retrieve  the Latitude and Longitude values appear as users expect. Dmrpp can handle hDF-EOS2 swath. However, for some HDF-EOS2 MODIS swath (level 1B etc.), currently users need to find the corresponding HDF-EOS2 files (MODIS level 3 products) that store the actual latitude and longitude values for each data point. The {Dmrpp} module doesn't support  automatic merging of the latitude and longitude of such HDF-EOS2 swath data.
+
+== Building {DMRpp} Documents
+[NOTE]
+The `gen_dmrpp_side_car` is a command line tool for building {DMRpp} documents introduced in March 2025 and is available only using the Hyrax Docker container version _1.17.1-126_ or later.
+
+The `gen_dmrpp_side_car` command, introduced in March 2025, can be used to build {DMRpp} documents for HDF5, netCDF4, HDF4, and HDF-EOS2 data files. This command will also build _sidecar_ data files when needed that provide additional information that simplifies using the data in these files. For many of the NASA data collections, geo-referencing data were not included in the data files to reduce file size. The gen_dmrpp_side_car command will store the 'missing' geo-referencing data in a sidecar file and build a {DMRpp} document that automatically referencing that sidecar file, providing seamless access to those geo-referencing values.
+
+[appendix]
+== Using the New Builder Command
+// From Kent in April 2025. jhrg 4/25/25
+
+=== HDF4
+To generate a dmrpp file for the HDF4 file hdf4.hdf. Do the following:
+[source,sh]
+----
+gen_dmrpp_side_car -I hdf4.hdf -H -U
+----
+If a sidecar file is generated, the sidecar file is always named after the original HDF4 file plus `_mvs.h5`. For example, `hdf4.hdf_mvs.h5.`
+
+NOTE: Note: `-H -U` are critical and cannot be omitted.
+
+=== HDF5
+To generate a dmrpp file for the HDF5 file `HDF5.h5`. Do the following:
+[source,sh]
+----
+gen_dmrpp_side_car -i HDF5.h5  -U
+----
 
 
