@@ -453,7 +453,7 @@ NOTE: By default, Hyrax will automatically associate files whose name ends with 
 If the {DMRpp} files that you wish to serve contain `dmrpp:href` attributes whose values are http(s) URLs then there are 2+1 steps to serve the data:
 
 . Place the {DMRpp} files on the local disk inside the directory tree identified by the `BES.Catalog.catalog.RootDirectory` in the BES configuration.
-. Ensure that the Hyrax `AllowedHosts` list is configured to allow Hyrax to access those target URLs. This can be accomplished by adding new regex records to the `AllowedHosts` list in `/etc/bes/site.conf`, creating that file as need be.
+. Ensure that the Hyrax `AllowedHosts` list is configured to allow Hyrax to access those target URLs. This can be done by adding new regex records to the `AllowedHosts` list in `/etc/bes/site.conf`, creating that file as need be.
 . If the data URLs require authentication to access, then you'll need to configure Hyrax for that too. See link:https://opendap.github.io/hyrax_guide/Master_Hyrax_Guide.html#_authentication_and_authorization[The Hyrax Data Server Installation and Configuration Guide] for more information.
 
 === Using {DMRpp} with file URLs ===
@@ -482,10 +482,10 @@ Another way to serve {DMRpp} files with Hyrax is to build the {DMRpp} files *wit
 
 Currently, the only implementation of this is Hyrax's NGAP service that, when deployed in the NASA NGAP cloud, will accept _REST__ URLs that are defined as having a URL path component with two mandatory and one optional parameters:
 
-----------------------------------------------------
+----
  MANDATORY: "/collections/UMM-C:{concept-id}"
  MANDATORY: "/granules/UMM-G:{GranuleUR}"
-----------------------------------------------------
+----
 
 .Example Hyrax in the Cloud REST URL
 [source]
@@ -494,14 +494,13 @@ https://opendap.earthdata.nasa.gov/collections/C1443727145-LAADS/granules/MOD08_
 ----
 
 [horizontal]
-UMM-C:{concept-id}:: /collections/C1443727145-LAADS
-UMM-G:{GranuleUR}:: /granules/MOD08_D3.A2020308.061.2020309092644.hdf.nc
+UMM-C:\{concept-id\}:: /collections/C1443727145-LAADS
+UMM-G:\{GranuleUR\}:: /granules/MOD08_D3.A2020308.061.2020309092644.hdf.nc
 
 When encountering this type of URL, Hyrax will decompose it and use the content to formulate a query to the NASA CMR to retrieve the data access URL for the granule and for the {DMRpp} file. It then retrieves the {DMRpp} file and injects the data URL so that data access can proceed as described above.
 
 [TIP]
-More on the REST Path can be found https://wiki.earthdata.nasa.gov/display/DUTRAIN/Feature+analysis%3A+Restified+URL+for+OPENDAP+Data+Access[here] ([.underline]#NOTE: You need the right permissions to access the previous URL#).
-
+More on the REST Path can be found https://wiki.earthdata.nasa.gov/display/DUTRAIN/Feature+analysis%3A+Restified+URL+for+OPENDAP+Data+Access[here]. You need access to the NASA ESDIS Earthdata Wiki to follow that link.
 
 [appendix]
 == Useful Docker Commands
@@ -516,7 +515,7 @@ or make a command alais for a more compact listing than the default output of `d
 ----
 % alias d-ps='docker ps --format "table {{.ID}}\t{{.Names}}\t{{.Status}}\t{{.Image}}"'
 ----
-This will show a somewhat easier-to-read bit of information about all the running Docker container on your host:
+This will show a somewhat easier-to-read bit of information about all the running Docker containers on your host:
 [source,shell]
 ----
 % d-ps
@@ -535,44 +534,41 @@ If you want to stop the container, use
 [WARNING]
 This appendix documents a deprecated command (`get_dmrpp`)that was used to build {DMRpp} documents for HDF5 and netCDF4 before `gen_dmrpp_side_car` was introduced. _Caveat emptor_.
 
-The application that builds the {DMRpp} files is a command line tool called _get_dmrpp_. It in turn utilizes other executables such as _build_dmrpp_, _reduce_mdf_, _merge_dmrpp_ (which rely in turn on the _HDF5_handler_ and the HDF5 library), along with a number of UNIX shell commands.
+The application that builds the {DMRpp} files is a command line tool called _get_dmrpp_. It in turn uses other executables such as _build_dmrpp_, _reduce_mdf_, _merge_dmrpp_ (which rely in turn on the _HDF5_handler_ and the HDF5 library), along with a number of UNIX shell commands.
 
-All of these components are install with each recent version of the Hyrax Data Server
+All of these components are installed with each recent version of the Hyrax Data Server
 
 You can see the _get_dmrpp_ usage statement with the command:
 
-------------
+----
 get_dmrpp -h
-------------
-
+----
 
 === Using _get_dmrpp_ ===
 
 The way that _get_dmrpp_ is invoked controls the way that the data are ultimately represented in the resulting {DMRpp} file(s).
 
-The _get_dmrpp_ application utilizes software from the Hyrax data server to produce the base DMR document which is used to construct the {DMRpp} file.
+The _get_dmrpp_ application uses software from the Hyrax data server to produce the base DMR document which is used to construct the {DMRpp} file.
 
 The Hyrax server has a long list of configuration options, several of which can substantially alter the structural and semantic representation of the dataset as seen in the {DMRpp} files generated using these options.
 
 === Command line options ===
 
-The command line switches provide a way to control the output of the tool. In addition to common options like verbose output or testing modes, the tool provides options to build extra (aka 'sidecar') data files that hold information needed for CF compliance if the original HDF5 data files lack that information (see the ''missing data'' section ). In addition, it is often desirable to build {DMRpp} files before the source data files are uploaded to a cloud store like S3. In this case, the URL to the data may not be known when the {DMRpp} is built. We support this by using placeholder/template strings in the ''dmr++'' and which can then be replaced with the URL at runtime, when the {DMRpp} file is evaluated. See the '-u' and '-p' options below.
-
+The command line switches provide a way to control the output of the tool. In addition to common options like verbose output or testing modes, the tool provides options to build extra (aka 'sidecar') data files that hold information needed for CF compliance. See the ''missing data'' section for more information. In addition, it is often desirable to build {DMRpp} files before the source data files are uploaded to a cloud store like S3. In this case, the URL to the data may not be known when the {DMRpp} is built. We support this by using placeholder/template strings in the ''dmr++'' and which can then be replaced with the URL at runtime, when the {DMRpp} file is evaluated. See the '-u' and '-p' options below.
 
 ==== Inputs ====
 
-
 *-b* ::
-The fully qualified path to the top level data directory. Data files read by _get_dmrpp_ must be in the directory tree rooted at this location and their names expressed as a path relative to this location. The value may not be set to `/` , or `/etc`. The default value is `/tmp` if a value is not provided. All the data files to be processed must be in this directory or one of its subdirectories. If _get_dmrpp_ is being executed from same directory as the data then `-b `pwd`` or `-b .` works as well.
+The fully qualified path to the top-level data directory. Data files read by _get_dmrpp_ must be in the directory tree rooted at this location and their names expressed as a path relative to this location. The value may not be set to `/` , or `/etc`. The default value is `/tmp` if a value is not provided. All the data files to be processed must be in this directory or one of its subdirectories. If _get_dmrpp_ is being executed from same directory as the data then `-b `pwd`` or `-b .` works as well.
 
 *-u* ::
-This option is used to specify the location of the binary data object. It’s value must be a http, https, or a `file://` URL. This URL will be injected into the {DMRpp} when it is constructed. If option `-u` is not used; then the template string `OPeNDAP_DMRpp_DATA_ACCESS_URL` will be used and the {DMRpp} will substitute a value at runtime.
+This option is used to specify the location of the binary data object. Its value must be `http`, `https`, or a `file://` URL. This URL will be injected into the {DMRpp} when it is constructed. If option `-u` is not used; then the template string `OPeNDAP_DMRpp_DATA_ACCESS_URL` will be used and the {DMRpp} will substitute a value at runtime.
 
 *-c* ::
 The path to an alternate bes configuration file to use.
 
 *-s* ::
-The path to an optional addendum configuration file which will be appended to the default BES configuration. Much like the `site.conf` file works for the full server deployment it will be loaded last and the settings there-in will have an override effect on the default configuration.
+The path to an optional addendum configuration file which will be appended to the default BES configuration. Much like the `site.conf` file works for the full server deployment it will be loaded last and the settings there-in will affect the default configuration.
 
 
 ==== Output ====
@@ -583,13 +579,13 @@ The name of the file to create.
 ==== Verbose Output Modes ====
 
 *-h* ::
-Show help/usage page.
+Show the help/usage page.
 *-v* ::
 verbose mode, prints the intermediate DMR.
 *-V* ::
 Very verbose mode, prints the DMR, the command, and the configuration file used to build the DMR.
 *-D* ::
-Just print the DMR that will be used to build the {DMRpp}.
+Print the DMR that will be used to build the {DMRpp}.
 *-X* ::
 Do not remove temporary files. May be used independently of the `-v` and/or `-V` options.
 
@@ -605,14 +601,12 @@ Run hyrax value probe tests on the resulting {DMRpp} file and compare the respon
 
 ==== Missing Data Creation ====
 
-
 *-M* ::
 Build a 'sidecar' file that holds missing information needed for CF compliance (e.g., Latitude, Longitude and Time coordinate data).
 *-p* ::
 Provide the URL for the Missing data sidecar file. If this is not given (but -M is), then a template value is used in the {DMRpp} file and a real URL is substituted at runtime.
 *-r* ::
-The path to the file that contains missing variable information for sets of input data files that share common missing variables. The file will be created if it doesn't exist and the result may be used in subsequent invocations of _get_dmrpp_ (using `-r`) to identify the missing variable file.
-
+The path to the file that contains missing variable information for sets of input data files that share common missing variables. The file will be created if it doesn't exist and the result may be used in later invocations of _get_dmrpp_ (using `-r`) to identify the missing variable file.
 
 ==== AWS Integration ====
 The _get_dmrpp_ application supports both S3 hosted granules as inputs, and uploading generated {DMRpp} files to an S3 bucket.
@@ -628,10 +622,9 @@ The `-U` command line parameter for `get_dmrpp` instructs `get_dmrpp` applicatio
 - The name of the input file is an S3 URL.
 - The `AWS CLI` has been configured with credentials that provide `r+w` permissions for the bucket referenced in the input file S3 URL.
 - The `-U` option has been specified.
-If all three of the above are true then `get_dmrpp` will copy the retrieve the granule, create a {DMRpp} file from the granule, and copy the resulting {DMRpp} file (as defined by the `-o` option) to the source S3 bucket using the well known NGAP sidecar file naming convention: *s3://bucket_name/granule_object_id.dmrpp*.  For example:
+If all three of the above are true then `get_dmrpp` will copy the retrieve the granule, create a {DMRpp} file from the granule, and copy the resulting {DMRpp} file (as defined by the `-o` option) to the source S3 bucket using the well-known NGAP sidecar file naming convention: *s3://bucket_name/granule_object_id.dmrpp*.  For example:
 
 	get_dmrpp -U -o foo -b `pwd` s3://bucket_name/granule_object_id
-
 
 === _HDF5_handler_ Configuration ===
 
@@ -639,10 +632,9 @@ Because _get_dmrpp_ uses the _HDF5_handler_ software to build the {DMRpp} the so
 
 The default configuration is large, but any valued may be altered at runtime.
 
-
 Here are some of the commonly manipulated configuration parameters with their default values:
 
-----------------------------------
+----
  H5.EnableCF=false
  H5.EnableDMR64bitInt=true
  H5.DefaultHandleDimension=true
@@ -653,7 +645,7 @@ Here are some of the commonly manipulated configuration parameters with their de
  H5.DisableStructMetaAttr=true
  H5.EnableFillValueCheck=true
  H5.CheckIgnoreObj=false
-----------------------------------
+----
 
 // NOTE: Mikejmnez. It states here that H5.EnableCF is `true` by default. But
 // below it states that it is `false` by default...
@@ -677,9 +669,9 @@ It will:
 
 By default _get_dmrpp_ the _H5.EnableCF_ option is set to false:
 
---------------------
+----
  H5.EnableCF = false
---------------------
+----
 
 There is a much more comprehensive discussion of this key feature, and others, in the https://opendap.github.io/hyrax_guide/Master_Hyrax_Guide.html#HDF5-handler[HDF5 Handler section] of the Appendix in the Hyrax Data Server Installation and Configuration Guide.
 
@@ -687,87 +679,87 @@ There is a much more comprehensive discussion of this key feature, and others, i
 
 Many of the _HDF5_ files produced by NASA and others do not contain the domain coordinate data (such as latitude, longitude, time, etc.) as a collection of explicit values. Instead, information contained in the dataset metadata can be used to reproduce these values.
 
-In order for a dataset to be Climate Forecast (CF) compatible it must contain these domain coordinate data values.
+In order for a dataset to be Climate Forecast (CF) compatible, it must contain these domain coordinate data values.
 
-The Hyrax _HDF5_handler_ software, utilized by the _get_dmrpp_ application, can create this data from the dataset metadata.  The _get_dmrpp_ application places these generated data in a “sidecar” file for deployment with the source _HDF5/netcdf-4_ file.
+The Hyrax _HDF5_handler_ software, used by the _get_dmrpp_ application, can create this data from the dataset metadata.  The _get_dmrpp_ application places these generated data in a “sidecar” file for deployment with the source _HDF5/netcdf-4_ file.
 
 [appendix]
 == Building {DMRpp} files for HDF4 and HDF4-EOS2 (experimental) ==
 [WARNING]
 This appendix documents a deprecated command (`get_dmrpp_h4`) that was used to build {DMRpp} documents for HDF4 and HDF4-EOS2 before `gen_dmrpp_side_car` was introduced. _Caveat emptor_.
 
-The HDF4 and HDF4-EOS2 (hereafter just HDF4) {DMRpp} document builder is currently available in the docker container we build for link:https://www.opendap.org/software/hyrax-data-server/[hyrax] server/service. You can get this container from link:https://hub.docker.com/repository/docker/opendap/hyrax[our public Docker Hub repository]. You can also get and build the ''Hyrax'' source code, and use the client that way (as part of a source code build), but it's much more complex than getting the Docker container. In addition, the Docker container includes a server that can test the {DMRpp} documents that are built and can even show you how the files would look when served without using the {DMRpp}.
+The HDF4 and HDF4-EOS2 (hereafter just HDF4) {DMRpp} document builder is currently available in the docker container we build for link:https://www.opendap.org/software/hyrax-data-server/[hyrax] server/service. You can get this container from link:https://hub.docker.com/repository/docker/opendap/hyrax[our public Docker Hub repository]. You can also get and build the ''Hyrax'' source code and use the client that way (as part of a source code build), but it's much more complex than getting the Docker container. In addition, the Docker container includes a server that can test the {DMRpp} documents that are built and can even show you how the files would look when served without using the {DMRpp}.
 
 NOTE: The following commands should be considered still experimental and subject to some change. Modify it to suit your own needs.
 
 === Using get_dmrpp_h4 ===
 Make a new directory in a convenient place and copy the HDF4 and/or HDF4-EOS2 files in that directory. Once you have the files in that directory, make an environment variable so it can be referred to easily. From inside the directory:
 
-----------------------
+----
 export HDF4_DIR=$(pwd)
-----------------------
+----
 
 Get the Docker container from Docker Hub using this command:
 
-------------------------------------------------------------------------------------------------------
+----
 docker run -d -h hyrax -p 8080:8080 -v $HDF4_DIR:/usr/share/hyrax --name=hyrax opendap/hyrax:snapshot
-------------------------------------------------------------------------------------------------------
+----
 
 What the options mean:
 
----------------------------------------------------------------
+----
 -d, --detach Run container in background and print container ID
 -h, --hostname Container host name
 -p, --publish Publish a container's port(s) to the host
 -v, --volume Bind mount a volume
 --name Assign a name to the container
----------------------------------------------------------------
+----
 
-This command will fetch the container *opendap/hyrax:snapshot* from Docker Hub. Thw _snapshot_ is the latest build of the container. It will then _run_ the container and return the container ID. The _hyrax_ server is now running on you computer and can be accessed with a web browser, curl, etc. More on that in a bit.
+This command will fetch the container *opendap/hyrax:snapshot* from Docker Hub. The _snapshot_ is the latest build of the container. It will then _run_ the container and return the container ID. The _hyrax_ server is now running on your computer and can be accessed with a web browser, curl, etc. More on that in a bit.
 
 The volume mount, from `$HDF4_DIR` to `'/usr/share/hyrax'` mounts the current directory of the host computer running the container to the directory _/usr/share/hyrax_ inside the container. That directory is the root of the server's data tree. This means that the HDF4 files you copied into the `HDF4_DIR` directory will be accessible by the server running in the container. That will be useful for testing later on.
 
-Note: If you want to use a specific container version, just substitute the version info for _snapshot._
+Note: If you want to use a specific container version, substitute the version info for _snapshot._
 
 Check that the container is running using:
 
-----------
+----
  docker ps
-----------
+----
 
 This will show a somewhat hard-to-read bit of information about all the running Docker containers on your host:
 
-------------------------------------------------------------------------------------------------------------------------------
+----
 CONTAINER ID        IMAGE                COMMAND              CREATED          STATUS            PORTS                    NAMES
 2949d4101df4   opendap/hyrax:snapshot   "/entrypoint.sh -"   15 seconds ago   Up 14 seconds   8009/tcp, 8443/tcp,
 10022/tcp, 11002/tcp, 0.0.0.0:8080->8080/tcp   hyrax
-------------------------------------------------------------------------------------------------------------------------------
+----
 
 If you want to stop the containers, use
 
----------------------------
+----
 docker rm -f <CONTAINER ID>
----------------------------
+----
 
 where the `<CONTAINER ID>` for the one we just started and shown in the output of _docker ps -a_ above is _2949d4101df4_. No need to stop the container now, I'm just pointing out how to do it because it's often useful.
 
 
 ==== Running the {DMRpp} builder ====
 
-NOTE: At the end of this, I'll include a shell script that takes away many of these steps, but the script obscures some aspects of the command that you might want to tweak, so the following shows you all the details. Skip to *Simple shell command* to skip over these details.
+NOTE: At the end of this, I'll include a shell script that takes away many of these steps. However, the script obscures some aspects of the command that you might want to tweak, so the following shows you all the details. Skip to *Simple shell command* to skip over these details.
 
 Make sure you are in the directory with the HDF4 files for these steps.
 
 Get the command to return its help information:
 
--------------------------------------
+----
 docker exec -it hyrax get_dmrpp_h4 -h
--------------------------------------
+----
 
 
 will return:
 
--------------------------------------------------------------------------
+----
 usage: get_dmrpp_h4 [-h] -i I [-c CONF] [-s] [-u DATA_URL] [-D] [-v]
 
 Build a dmrpp file for an HDF4 file. get_dmrpp_h4 -i h4_file_name. A dmrpp
@@ -776,33 +768,33 @@ file that uses the HDF4 file name will be generated.
 optional arguments:
 
 ...
--------------------------------------------------------------------------
+----
 
 Let's build a {DMRpp} now, by explicitly using the container:
 
---------------------------
+----
 docker exec -it hyrax bash
---------------------------
+----
 
 starts the _bash_ shell in the container, with the current directory as root (/)
 
----------------
+----
 [root@hyrax /]#
----------------
+----
 
 
 Change to the directory that is the root of the data (you'll see your HDF4 files in here):
 
 
---------------------
+----
  cd /usr/share/hyrax
---------------------
+----
 
 
 You will see, roughly:
 
 
------------------------------------
+----
 [root@hyrax /]# cd /usr/share/hyrax
 [root@hyrax hyrax]# ls
 3B42.19980101.00.7.HDF
@@ -810,18 +802,18 @@ You will see, roughly:
 3B42.19980101.06.7.HDF
 
 ...
------------------------------------
+----
 
 
 In that directory, use the _get_dmrpp_h4_ command to build a {DMRpp} document for one of the files:
 
---------------------------------------------------------------------------------------------------------------
+----
 [root@hyrax hyrax]# get_dmrpp_h4 -i 3B42.20130111.09.7.HDF -u 'file:///usr/share/hyrax/3B42.20130111.09.7.HDF'
---------------------------------------------------------------------------------------------------------------
+----
 
 Copy that pattern for whatever file you use. From the `/usr/share/hyrax` directory, you pass _get_dmrpp_h4_ the name of the file (because it's local to the current directory) using the *-i* option. The *-u* option tells the command to embed the URL that follows it in the {DMRpp}. I've used a _file://_  URL to the file _/usr/share/hyrax/3B42.19980101.00.7.HDF_.
 
-NOTE: In the URL above, three slashes following the colon: two from the way a URL names a protocol and one because the pathname starts at the root directory.
+NOTE: In the URL above, three slashes follow the colon: two from the way a URL names a protocol and one because the pathname starts at the root directory.
 
 Building the {DMRpp} and embedding a _file://_ URL will enable testing the {DMRpp}.
 
@@ -832,14 +824,14 @@ Let's look at how the _hyrax_ service will treat that data file using the {DMRpp
 .Hyrax Catalog view of all files available.
 image::Hyrax-including-new-DMRpp.png[width=650, height=400]
 
-NOTE: _The server caches data catalog information for 5 minutes (although this can be configured) so new items (e.g., {DMRpp} documents) may not show up right away. To force the display of a {DMRpp} that you just created, click on the source data file name and edit the URL so that the suffix *.dmr.html* is replaced by *.dmrpp/dmr* ._
+NOTE: _The server caches data catalog information for 5 minutes (although this can be configured) so new items (e.g., {DMRpp} documents) may not show up right away. To force the display of a {DMRpp} that you just created, click on the source data file name and edit the URL so that the suffix *.dmr.html* is replaced by *.dmrpp.dmr*.
 
 Click on your equivalent of the *3B42.20130111.09.7.HDF* link, subset, download and open in Panoply or the equivalent.
 
 .Page view of the DAP _Data Request Form_ for subsetting the dataset.
 image::Hyrax-subsetting.png[width=650, height=400]
 
-You can run batch tests in lots of files by building many DMR++ documents and then asking the server for various responses (_nc4_, _dap_) from the {DMRpp} and the original file. Those could be compared using various schemes, although in its entirety that is beyond this section's scope, the command _getdap4_ is also included in the container and could be used to compare _dap_ responses from the data file and the {DMRpp} document.
+You can run batch tests in lots of files by building many DMR++ documents and then asking the server for various responses (_nc4_, _dap_) from the {DMRpp} and the original file. Those could be compared using various schemes, although in its entirety beyond this section's scope, the command _getdap4_ is also included in the container and could be used to compare _dap_ responses from the data file and the {DMRpp} document.
 
 Below is a comparison of the same underlying data, the left window shows the data returned using the {DMRpp}, the right shows the data read directly from the file using the server's builtin HDF4 reader.
 
@@ -854,19 +846,19 @@ NOTE: ''In the spirit of a recipe, I'll restate the earlier command for starting
 
 Start the container:
 
------------------------------------------------------------------------------------------------------
+----
 docker run -d -h hyrax -p 8080:8080 -v $HDF4_DIR:/usr/share/hyrax --name=hyrax opendap/hyrax:snapshot
------------------------------------------------------------------------------------------------------
+----
 
 Check if it is running:
 
----------
+----
 docker ps
----------
+----
 
 The command, written for the Bourne Shell, is:
 
-----------------------------------------------
+----
 #!/bin/sh
 #
 # usage get_dmrpp_h4.sh <file>
@@ -877,25 +869,25 @@ cat <<EOF | docker exec --interactive hyrax sh
 cd $data_root
 get_dmrpp_h4 -i $1 -u "file://$data_root/$1"
 EOF
-----------------------------------------------
+----
 
 Copy that, save it in a file (I named the file _get_dmrpp_h4.sh_).
 
-Run the command on the host (not the docker container) and in the directory with the HDF4 files (you don't have to do that, but sorting out the details is left as an exercise for the reader. Run the command like this:
+Run the command on the host, not the docker container, and in the directory with the HDF4 files (you don't have to do that, but sorting out the details is left as an exercise for the reader. Run the command like this:
 
---------------------------------------------------------
+----
  ./get_dmrpp_h4.sh AMSR_E_L3_SeaIce25km_V15_20020601.hdf
---------------------------------------------------------
+----
 
 The {DMRpp} will appear when the command completes.
 
----------------------------------------------------------------------------------------------
+----
 (hyrax500) hyrax_git/HDF4-dir % ls -l
 total 1251240
 -rw-r--r--@ 1 jimg  staff    1250778 Aug 22 22:31 AMSR_E_L2_Land_V09_200206191112_A.hdf
 -rw-r--r--@ 1 jimg  staff   20746207 Aug 22 22:32 AMSR_E_L3_SeaIce25km_V15_20020601.hdf
 -rw-r--r--  1 jimg  staff    3378674 Aug 28 17:37 AMSR_E_L3_SeaIce25km_V15_20020601.hdf.dmrpp
----------------------------------------------------------------------------------------------
+----
 
 ////
 [appendix]
@@ -908,14 +900,14 @@ These limitations and how to quickly evaluate a HDF5 or netCDF4 file for use wit
 ==== HDF5 filters ====
 
 The HDF5 format has several filter/compression options used for storing data values.
-The {DMRpp} software currently supports data that use the  H5Z_FILTER_DEFLATE, H5Z_FILTER_SHUFFLE, and H5Z_FILTER_FLETCHER32 filters.
-https://support.hdfgroup.org/documentation/HDF5/latest/group___h5_z.html[You can find more on HDF5 filters here.]
+The {DMRpp} software currently supports data that use the H5Z_FILTER_DEFLATE, H5Z_FILTER_SHUFFLE, and H5Z_FILTER_FLETCHER32 filters.
+https://support.hdfgroup.org/documentation/HDF5/latest/group___h5_z.html[You can find more on HDF5 filters here].
 
 ==== HDF5 storage layouts ====
 
 The HDF5 format also uses a number of "storage layouts" that describe various structural organizations of the data values associated with a variable in the granule file.
-The {DMRpp} software currently supports data that use the  H5D_COMPACT, H5D_CHUNKED, and H5D_CONTIGUOUS storage layouts. These are all the storage layouts defined by the HDF5 library, but others can be added.
-https://support.hdfgroup.org/releases/HDF5/v1_16/v1_16_0/documentation/doxygen/_l_b_dset_layout.html[You can find more on HDF5 storage layouts here.]
+The {DMRpp} software currently supports data that use the H5D_COMPACT, H5D_CHUNKED, and H5D_CONTIGUOUS storage layouts. These are all the storage layouts defined by the HDF5 library, but others can be added.
+https://support.hdfgroup.org/releases/HDF5/v1_16/v1_16_0/documentation/doxygen/_l_b_dset_layout.html[You can find more on HDF5 storage layouts here].
 
 ==== Is my HDF5 or netCDF4 file suitable for {DMRpp}?
 To get a human-readable assessment of the file that will show the storage layouts, chunking structure, and the filters needed for each variable (aka DATASET in the _HDF5_ vocabulary), use the https://support.hdfgroup.org/ftp/HDF5/documentation/doc1.6/Tools.html#Tools-Dump[h5dump] command line program.
@@ -949,7 +941,7 @@ HDF5 "chunked_gzipped_fourD.h5" {
 ----
 
 === HDF4 and HDF4-EOS2 ===
-The internal data storage layout in an HDF4 file is more complex than that in an HDF5 file, and we're focusing on complete support for those features used by NASA. In addition, we also support HDF4-EOS2, data files that should be read with the HDF4-EOS2 library. The main reason of using the HDF-EOS2 API is to retrieve the values for the Domain variables such as  Latitude and Longitude. Our support handles the HDF4-EOS Grid data type and uses {DMRpp} to retrieve  the Latitude and Longitude values appear as users expect. Dmrpp can handle hDF-EOS2 swath. However, for some HDF-EOS2 MODIS swath (level 1B etc.), currently users need to find the corresponding HDF-EOS2 files (MODIS level 3 products) that store the actual latitude and longitude values for each data point. The {Dmrpp} module doesn't support  automatic merging of the latitude and longitude of such HDF-EOS2 swath data.
+The internal data storage layout in an HDF4 file is more complex than that in an HDF5 file, and we're focusing on complete support for those features used by NASA. In addition, we also support HDF4-EOS2, data files that should be read with the HDF4-EOS2 library. The main reason for using the HDF-EOS2 API is to retrieve the values for the Domain variables such as Latitude and Longitude. Our support handles the HDF4-EOS Grid data type and uses {DMRpp} to retrieve the Latitude and Longitude values appear as users expect. Dmrpp can handle hDF-EOS2 swath. However, for some HDF-EOS2 MODIS swath (level 1B etc.), currently users need to find the corresponding HDF-EOS2 files (MODIS level 3 products) that store the actual latitude and longitude values for each data point. The {Dmrpp} module doesn't support automatic merging of the latitude and longitude of such HDF-EOS2 swath data.
 ////
 
 // TODO Should we retain this and update it? jhrg 4/28/25
@@ -963,7 +955,7 @@ There are two recipes shown here, the first using a Hyrax docker container, and 
 
 === Recipe: Building {DMRpp} files using a Hyrax docker container ===
 
-. Acquire representative granule files for the collection you wish to import. Put them on the system that is running the Docker daemon. For this recipe we will assume that these files have been placed in the directory:
+. Acquire representative granule files for the collection you wish to import. Put them on the system running the Docker daemon. For this recipe we will assume that these files have been placed in the directory:
 
 	/tmp/dmrpp
 
@@ -981,7 +973,7 @@ There are two recipes shown here, the first using a Hyrax docker container, and 
 
 	docker exec -it hyrax get_dmrpp -b /usr/share/hyrax -o /usr/share/hyrax/input_file.dmrpp -u "file:///usr/share/hyrax/input_file" "input_file"
 
-.. Or if you want more scripting flexibility you can log in to the docker container to do the same:
+.. Or if you want more scripting flexibility, you can log in to the docker container to do the same:
 
 ... Login to the docker container:
 
@@ -1002,7 +994,7 @@ NOTE: Now that you have made a dmr++ file, use the running Hyrax server to view 
 
 NOTE: The resulting *{DMRpp}* files should contain the correct file:// URLs and be correctly located so that they may be tested with the Hyrax service running in the docker instance.
 
-------------------------------------------------------------------------------------
+----
 #!/bin/bash
 # This script will write each output file as a sidecar file into
 # the same directory as its associated input granule data file.
@@ -1027,20 +1019,20 @@ do
 
     get_dmrpp -b "$bes_dir" -o "$outfile" -u "file://$infile" "$infile_base"
 done
-------------------------------------------------------------------------------------
+----
 
 TIP: Remember that you can use the Hyrax server that is running in the docker container to view and test the {DMRpp} files you just created by pointing your browser at: http://localhost:8080/opendap/
 
 
 === Testing and qualifying {DMRpp} files ===
-In the previous section/step we created some initial {DMRpp} files using the default configuration. It is crucial to make sure that they provide the representation of the data that you and your users are expecting, and that they will work correctly with the Hyrax server. (See the following sections for details). If the generated {DMRpp} files do not match expectations then the default configuration of the `get_dmrpp` may need to be amended using the `-s` parameter.
-If the data are currently being served by your DAAC's on-prem team this is where understanding exactly what the localizations made to the configurations of the on-prem Hyrax instances deployed for the collection is important. These localization will probably need to be injected into `get_drmpp` in order to produce the correct data representation in the {DMRpp} files.
+In the previous section/step we created some initial {DMRpp} files using the default configuration. It is crucial to make sure that they provide the representation of the data that you and your users are expecting and that they will work correctly with the Hyrax server. (See the following sections for details). If the generated {DMRpp} files do not match expectations, then the default configuration of the `get_dmrpp` may need to be amended using the `-s` parameter.
+If the data are currently being served by your DAAC's on-prem team, this is where understanding exactly what the localizations made to the configurations of the on-prem Hyrax instances deployed for the collection is important. This localization will probably need to be injected into `get_drmpp` to produce the correct data representation in the {DMRpp} files.
 
 
 === Flattening Groups ===
-By default `get_dmrpp` will preserve and show group hierarchies. If this is not desired, say for CF-1.0 compatibility, then you can change this by creating a small amendment to `get_dmrpp`'s default configuration.
+By default, `get_dmrpp` will preserve and show group hierarchies. If this is not desired, say for CF-1.0 compatibility, then you can change this by creating a small amendment to `get_dmrpp`'s default configuration.
 
-First create the amending configuration file:
+First, create the amending configuration file:
 
 	echo "H5.EnableCF=true" > site.conf
 
@@ -1053,15 +1045,15 @@ And re-run the {DMRpp} production as shown above.
 
 
 === DAP representations ===
-We have test and assurance procedures for DAP4 and DAP2 protocols below. Both are important. For legacy datasets the DAP2 request API is widely used by an existing client base and should continue to be supported. Since DAP4 subsumes DAP2 (but with somewhat different API semantics) It should be checked for legacy datasets as well. For more modern datasets that content DAP4 types such as Int64 that are not part of the DAP2 specification or implementations we will need to rely on eliding the instances of unmapped types, or return an error when this is encountered.
+We have test and assurance procedures for the DAP4 and DAP2 protocols below. Both are important. For legacy datasets the DAP2 request API is widely used by an existing client base and should continue to be supported. Since DAP4 subsumes DAP2 (but with somewhat different API semantics), it should be checked for legacy datasets as well. For more modern datasets that content DAP4 types such as Int64 that are not part of the DAP2 specification or implementations, we will need to rely on eliding the instances of unmapped types or return an error when this is encountered.
 
 
-------------------------------------------------------
+----
 # Test Constants:
 GRANULE_FILE="some_name.h5"
 # Granule URL
 gf_url="http://localhost:8080/opendap/$GRANULE_FILE"
-------------------------------------------------------
+----
 
 
 
