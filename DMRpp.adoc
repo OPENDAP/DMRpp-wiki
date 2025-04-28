@@ -83,7 +83,7 @@ OPeNDAP's {DMRpp} software does not currently support netCDF3 files.footnote:[No
 
 You can use the `ncdump` command to determine if a _netCDF_ file is either classic _netCDF-3_ or _netCDF-4_ http://www.bic.mni.mcgill.ca/users/sean/Docs/netcdf/guide.txn_79.html[(You can learn more in the NetCDF documentation here)]. Here are two files, both using the suffix `.nc` where the first is netCDF3 and the second is netCDF4.
 
-[source,shell]
+[source,shell,linenums]
 ----
 % ncdump -k fnoc1.nc
 classic
@@ -109,7 +109,7 @@ In this section we jump right into some examples without much explanation. This 
 
 Change to the directory that holds your data files and assign an environment variable to the full pathname of that directory. This will streamline some of the later steps in this section. In my case that directory is called `HDF4-dir`, and I used the environment variable 'DATA.'
 
-[source,console]
+[source,console,linenums]
 [#ex-setup]
 ----
 % cd HDF4-dir
@@ -179,7 +179,7 @@ Even though the input data file was an HDF4-ESO2 file, the missing data file use
 This is also an HDF4 file, so the `-H` option is used.
 
 .Building both the {DMRpp} and a missing data file
-[source,shell,highlight=6,7]
+[source,shell,linenums,highlight=6-7]
 [#ex-missing]
 ----
 % docker exec -it -w /usr/share/hyrax hyrax gen_dmrpp_side_car -i 3B42.19980101.00.7.HDF -H
