@@ -196,7 +196,7 @@ total 1245840
 The final example in this section shows building a {DMRpp} for an HDF5 file. For an HDF5 file, do not include the `-H` option.
 
 .Build a {DMRpp} for an HDF5 file.
-[source,console,hightlight=10]
+[source,console,linenums,hightlight=10]
 [#ex-hdf5]
 ----
 % docker exec -it -w /usr/share/hyrax hyrax gen_dmrpp_side_car -i SMAP_L4_SM_aup_20150420T210000_Vv7032_001.h5 -U
@@ -218,7 +218,7 @@ This section is primarily for NASA ESDIS users of the {DMRpp} document builder. 
 
 A {DMRpp} document is an eXtensible Markup Language (XML) document. We call the data file/granule that the {DMRpp} describes the _source data file_. Each {DMRpp} has at least one source data file, but may have more (for example, with HDF4-EOS2 data).  The first XML _element_ in the {DMRpp} contains a URL that points to the {DMRpp} document's source data file. It looks like this:
 
-[source,xml,highlight=5]
+[source,xml,linenums,highlight=5]
 ----
 <?xml version="1.0" encoding="ISO-8859-1"?>
 <Dataset xmlns="http://xml.opendap.org/ns/DAP/4.0#"
