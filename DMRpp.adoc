@@ -20,6 +20,17 @@ OPeNDAP, Inc.
 
 //image:logo-hyrax-red.svg[width=300]
 
+////
+// Pithy version of why we did this. Written by ChatGPT 4o (https://chatgpt.com/share/680fb929-06a0-8010-a492-47bd11a682bd). jhrg 4/28/25
+OPeNDAP developed the DMR++ system to enable fast, efficient access to large scientific datasets without requiring full file downloads. By providing lightweight, annotated metadata, DMR++ reduces data movement and supports scalable, cloud-native workflows essential for modern research.
+
+Some tagline versions:
+
+DMR++: Fast, efficient, cloud-ready access to large scientific datasets.
+DMR++: Smarter access to big data — without moving big files.
+DMR++: Unlock scientific data faster, with lower cost and complexity.
+DMR++: Lightweight metadata for powerful, scalable data access.
+////
 == Intended Audience
 This document is for people who want to enable access to HDF and netCDF data files stored in Amazon Web Services (AWS) Simple Storage Service (S3) using the OPeNDAP _Hyrax_ data server. It describes how to build the {DMRpp} documents the Hyrax server uses. This document will also be useful to people who want to build {DMRpp} documents for other reasons, such as enabling client-side technology like _VirtualiZarr_ to access/subset remote data files  using only HTTP.
 
@@ -30,12 +41,12 @@ There are some features of the {DMRpp} builder software that are targeted specif
 
 The {DMRpp} is a metadata file that provides a fast and flexible way to access data stored in Amazon Web Services (AWS) Simple Storage Service (S3), or using any other service that supports HTTP.footnote:[The HTTP/S service must support the _Range_ header of HTTP/1.1. When using libcurl, both HTTP/S and the 'file:' protocols can be used.]
 
+// Written by ChatGPT. https://chatgpt.com/share/680fb929-06a0-8010-a492-47bd11a682bd jhrg 4/2825
+OPeNDAP developed the {DMRpp} system in response to the growing need for faster, more efficient access to scientific data stored in large, complex files. As datasets expanded in size and migrated to cloud-based storage systems like S3, traditional methods of reading metadata and retrieving data became increasingly cumbersome and expensive. {DMRpp} was designed to solve this problem by creating a lightweight, annotated metadata file that describes where data elements are located and how they can be accessed, without requiring full downloads or local processing. By decoupling metadata access from the underlying storage and minimizing data movement, {DMRpp} enables scalable, cloud-friendly workflows that better support the demands of modern Earth science research.
+
 The {DMRpp} encodes the location of data residing in a binary data file/object (e.g., an https://support.hdfgroup.org/documentation/HDF5/latest/[HDF5] file) so that it can be directly accessed, without the need for an intermediate Application Programmer Interface (API) library. The binary data objects may be on a local filesystem, or they may be accessible using HTTP in, for example, an S3 bucket. The Hyrax data server from OPeNDAP can use {DMRpp} files to provide access and subsetting services for data stored in S3 without first copying their data files from S3. That is, Hyrax can use the {DMRpp} files to access and subset data 'in place.' This mirrors the behavior of the Hyrax server when used with data files stored on POSIX file systems.
 
 The {DMRpp} is an extension of the Dataset Metadata Response (DMR) from OPeNDAP's DAP4 protocol. For a full description of DAP4 and the DMR object, see the DAP4 protocol, link:https://opendap.github.io/dap4-specification/DAP4.html[Sections 1.5.7–1.5.15]. The DMR encodes metadata information about the names, data types, and hierarchical relations of the variables that make up a dataset. The {DMRpp} adds information about the location, size, and other relevant characteristics of those variables. Software can then use this information to read binary data values directly from the dataset's file(s) without using an API library or copying the dataset to temporary storage before accessing the data.
-
-// Add a paragraph about the intention behind dev of DMR++. jhrg 4/27/25
-This mirrors the behavior of the Hyrax server when used with data files stored on POSIX file systems.
 
 Additional advantages to the {DMRpp} are:
 
@@ -50,7 +61,26 @@ Additional advantages to the {DMRpp} are:
 image::DMRppS3.png[width=70%, align='center']
 
 ////
-// I don't think this fits in this document. jhrg 4/24/25
+// Revised version. jhrg 4/28/25
+== How Does It Work? ==
+
+The {DMRpp} builder software reads a data file and builds a document that captures all the file's metadata, including the names, types, and associated attributes of each variable. This information is stored in a document called the Dataset Metadata Response (DMR). {DMRpp} extends the DMR by adding annotations that specify where each variable's data can be found within the file and how to decode those values. In effect, the {DMRpp} is a specially annotated DMR document.
+
+This additional information enables:
+
+Decoupling the annotated {DMRpp} from the physical location of the granule file.
+
+Storing and transferring {DMRpp} files more efficiently, since they are typically much smaller than the data granules they represent.
+
+Reading all of a file’s metadata in a single operation, instead of through the iterative processes required by many APIs.
+
+Referencing source granules via web URLs, making the {DMRpp} file location itself independent and flexible.
+
+Software that understands {DMRpp} content can directly access the data values held in the source granule file. It can do so without retrieving the entire file or processing it locally, even when the granule is stored in a Web Object Store like S3.
+
+If a granule contains multiple variables and only a subset is needed, {DMRpp}-enabled software can retrieve just the bytes associated with the specified variables, further improving efficiency.
+
+// Original version
 == How Does It Work? ==
 The {DMRpp} ingest software reads a data file and builds a document that holds all the file's metadata, the names and types of all the variables along with any other information bound to those variables. This information is stored in a document we call the Dataset Metadata Response (DMR). The {DMRpp} adds some extra information to this regarding where each variable can be found and how to decode those values. The {DMRpp} is simply a special annotated DMR document.
 
@@ -65,6 +95,7 @@ Software that understands the {DMRpp} content can directly access the data value
 
 If the granule file contains multiple variables and only a subset of them are needed, the {DMRpp} enabled software can retrieve just the bytes associated with the specified subset(s) of desired variable(s).
 ////
+
 == Supported Data Formats ==
 The software to build {DMRpp} documents currently works with HDF5, netCDF4, HDF4, and HDF4-EOS2 files.footnote:[The netCDF4 format is a subset of HDF5, so HDF5 tools are used for both.] Other formats like Zarr and netCDF3 are not currently supported by the {DMRpp} software, but support could be added if requested.
 
