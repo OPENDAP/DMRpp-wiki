@@ -167,7 +167,7 @@ MOD11A1.A2024025.h10v06.061.2024028004317.hdf
 
 Run the Docker container. The docker run command returns the Container ID (a long hexadecimal string) when the `-d` (run a detached container) is used. The `--name` option sets _hyrax_ as the name of the container which will be used in later commands. Running the container this way enables us to use both build {DMRpp} documents and later test them.
 
-[source,shell]
+[source,shell,linenum]
 ----
 % docker run -d -h hyrax -p 8080:8080 -v $DATA:/usr/share/hyrax --name=hyrax opendap/hyrax:1.17.1-126
 9c88a0d4abe55f17802afd81150280073314f3940b9cd4973ea60dbc43f733a9
@@ -184,7 +184,7 @@ If you want to use the latest version of the `gen+dmrpp_side_car` command, repla
 To build a {DMRpp} for the first AIRS file we can run the `gen_dmrpp_side_car` command, using `docker exec`, with the file's name. Because this file is an HDF4 file, the command option `-H` is used.
 
 .Building a {DMRpp} for an AIRS HDF4 file/granule.
-[source,shellhighlight=7]
+[source,shell,linenum,highlight=7]
 ----
 % docker exec -it -w /usr/share/hyrax hyrax gen_dmrpp_side_car -i AIRS.2009.01.01.L3.RetStd_IR001.v7.0.3.0.G20160024306.hdf -H
 
@@ -275,7 +275,7 @@ However, when the OPeNDAP {DMRpp} was first developed for use by NASA ESDIS, we 
 What if you do not need or want that? The `-u` option of `gen_dmrpp_side_car` provides a way to tell the {DMRpp} document builder to use a specific value for the data source URL. The following examples show the {DMRpp} XML _with_ the template value for the data source URL and then using a URL set with the `-u` option.
 
 .With the template
-[source,shell]
+[source,shell,linenum,highlight=6]
 ----
 % docker exec -it -w /usr/share/hyrax hyrax gen_dmrpp_side_car -i SMAP_L4_SM_aup_20150420T210000_Vv7032_001.h5
 %head  SMAP_L4_SM_aup_20150420T210000_Vv7032_001.h5.dmrpp
@@ -289,7 +289,7 @@ What if you do not need or want that? The `-u` option of `gen_dmrpp_side_car` pr
 The template value for the data source URL is `OPeNDAP_DMRpp_DATA_ACCESS_URL`
 
 .Explicit data source URL, set using `-u`
-[source,shell]
+[source,shell,linenum,highlight=6]
 ----
 % docker exec -it -w /usr/share/hyrax hyrax gen_dmrpp_side_car -i SMAP_L4_SM_aup_20150420T210000_Vv7032_001.h5 -u https://test.opendap.org/examples/SMAP_L4_SM_aup_20150420T210000_Vv7032_001.h5
 % head SMAP_L4_SM_aup_20150420T210000_Vv7032_001.h5.dmrpp
@@ -311,7 +311,7 @@ There is one exception to the rule that `-u` is used for the data source URL and
 In this example, we show the three files made from an HDF4-EOS2 file that where the sidecar file is necessary. The output of the command is shown first, followed by two views inside the {DMRpp} document.
 
 .An Explicit Data Source URL is a Pattern for an Explicit Sidecar Data URL
-[source,shell]
+[source,shell,linenum,highlight=6-7]
 ----
 % docker exec -it -w /usr/share/hyrax hyrax gen_dmrpp_side_car -i 3B42.20190110.06.7.HDF -H -u file:///usr/share/hyrax/3B42.20190110.06.7.HDF
 
@@ -323,7 +323,7 @@ total 1895672
 ----
 
 .The Resulting XML, edited. Look for the _file:///_ URLs marked with the comments _HERE_.
-[source,xml]
+[source,xml,linenum,highlight=5,13]
 ----
 <?xml version="1.0" encoding="ISO-8859-1"?>
 <Dataset xmlns="http://xml.opendap.org/ns/DAP/4.0#" xmlns:dmrpp="http://xml.opendap.org/dap/dmrpp/1.0.0#"
@@ -365,7 +365,7 @@ The gen_dmrpp_side_car command takes a few options that control how it builds {D
 [#sec-docker-exp]
 In the  <<sec-examples>> we used one docker command to start a container and then a second docker command to run the {DMRpp} builder inside that container. Here is an explanation of those commands in more detail. First, the container is started on the host computer.
 
-[source,shell]
+[source,shell,linenum]
 ----
 % docker run -d -h hyrax -p 8080:8080 -v $DATA:/usr/share/hyrax --name=hyrax opendap/hyrax:1.17.1-126
 9c88a0d4abe55f17802afd81150280073314f3940b9cd4973ea60dbc43f733a9
