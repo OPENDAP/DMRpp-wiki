@@ -460,6 +460,7 @@ Currently, the only implementation of this is Hyrax's NGAP service that, when de
  MANDATORY: "/granules/UMM-G:{GranuleUR}"
 ----------------------------------------------------
 
+.Example Hyrax in the Cloud REST URL
 [source]
 ----
 https://opendap.earthdata.nasa.gov/collections/C1443727145-LAADS/granules/MOD08_D3.A2020308.061.2020309092644.hdf.nc
@@ -471,8 +472,8 @@ UMM-G:{GranuleUR}:: /granules/MOD08_D3.A2020308.061.2020309092644.hdf.nc
 
 When encountering this type of URL Hyrax will decompose it and use the content to formulate a query to the NASA CMR to retrieve the data access URL for the granule and for the {DMRpp} file. It then retrieves the {DMRpp} file and injects the data URL so that data access can proceed as described above.
 
-
-More on the Restified Path can be found https://wiki.earthdata.nasa.gov/display/DUTRAIN/Feature+analysis%3A+Restified+URL+for+OPENDAP+Data+Access[here] ([.underline]#NOTE: You need the right permissions access the previous URL#).
+[TIP]
+More on the REST Path can be found https://wiki.earthdata.nasa.gov/display/DUTRAIN/Feature+analysis%3A+Restified+URL+for+OPENDAP+Data+Access[here] ([.underline]#NOTE: You need the right permissions to access the previous URL#).
 
 ////
 == Recipe: Building and testing {DMRpp} files ==
