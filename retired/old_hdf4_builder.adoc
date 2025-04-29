@@ -1,0 +1,230 @@
+:toc:
+:toclevels: 3
+:numbered:
+:docinfo: shared
+:icons: font
+:tabsize: 4
+:indent: 4
+:source-highlighter: coderay
+:coderay-linenums-mode: inline
+:prewrap!:
+:imagesdir: ./images
+:homepage: www.opendap.org
+:DMRpp: DMR++
+:Miguel Jimenez <mjimenez@opendap.org>:
+:James Gallagher <jgallagher@opendap.org>:
+
+
+== Building {DMRpp} files for HDF4 and HDF4-EOS2 (experimental) ==
+The HDF4 and HDF4-EOS2 (hereafter just HDF4) {DMRpp} document builder is currently available in the docker container we build for link:https://www.opendap.org/software/hyrax-data-server/[hyrax] server/service. You can get this container from link:https://hub.docker.com/repository/docker/opendap/hyrax[our public Docker Hub repository]. You can also get and build the ''Hyrax'' source code, and use the client that way (as part of a source code build), but it's much more complex than getting the Docker container. In addition, the Docker container includes a server that can test the {DMRpp} documents that are built and can even show you how the files would look when served without using the {DMRpp}.
+
+
+NOTE: The following commands should be considered still experimental and subject to some change. Modify it to suit your own needs.
+
+
+=== Using get_dmrpp_h4 ===
+Make a new directory in a convenient place and copy the HDF4 and/or HDF4-EOS2 files in that directory. Once you have the files in that directory, make an environment variable so it can be referred to easily. From inside the directory:
+
+----------------------
+export HDF4_DIR=$(pwd)
+----------------------
+
+Get the Docker container from Docker Hub using this command:
+
+------------------------------------------------------------------------------------------------------
+docker run -d -h hyrax -p 8080:8080 -v $HDF4_DIR:/usr/share/hyrax --name=hyrax opendap/hyrax:snapshot
+------------------------------------------------------------------------------------------------------
+
+
+What the options mean:
+
+---------------------------------------------------------------
+-d, --detach Run container in background and print container ID
+-h, --hostname Container host name
+-p, --publish Publish a container's port(s) to the host
+-v, --volume Bind mount a volume
+--name Assign a name to the container
+---------------------------------------------------------------
+
+This command will fetch the container *opendap/hyrax:snapshot* from Docker Hub. Thw _snapshot_ is the latest build of the container. It will then _run_ the container and return the container ID. The _hyrax_ server is now running on you computer and can be accessed with a web browser, curl, etc. More on that in a bit.
+
+The volume mount, from `$HDF4_DIR` to `'/usr/share/hyrax'` mounts the current directory of the host computer running the container to the directory _/usr/share/hyrax_ inside the container. That directory is the root of the server's data tree. This means that the HDF4 files you copied into the `HDF4_DIR` directory will be accessible by the server running in the container. That will be useful for testing later on.
+
+Note: If you want to use a specific container version, just substitute the version info for _snapshot._
+
+Check that the container is running using:
+
+----------
+ docker ps
+----------
+
+This will show a somewhat hard-to-read bit of information about all the running Docker container on you host:
+
+------------------------------------------------------------------------------------------------------------------------------
+CONTAINER ID        IMAGE                COMMAND              CREATED          STATUS            PORTS                    NAMES
+2949d4101df4   opendap/hyrax:snapshot   "/entrypoint.sh -"   15 seconds ago   Up 14 seconds   8009/tcp, 8443/tcp,
+10022/tcp, 11002/tcp, 0.0.0.0:8080->8080/tcp   hyrax
+------------------------------------------------------------------------------------------------------------------------------
+
+If you want to stop the containers, use
+
+---------------------------
+docker rm -f <CONTAINER ID>
+---------------------------
+
+where the `<CONTAINER ID>` for the one we just started and shown in the output of _docker ps -a_ above is _2949d4101df4_. No need to stop the container now, I'm just pointing out how to do it because it's often useful.
+
+
+==== Running the {DMRpp} builder ====
+
+NOTE: At the end of this, I'll include a shell script that takes away many of these steps, but the script obscures some aspects of the command that you might want to tweak, so the following shows you all the details. Skip to *Simple shell command* to skip over these details.
+
+Make sure you are in the directory with the HDF4 files for these steps.
+
+Get the command to return its help information:
+
+-------------------------------------
+docker exec -it hyrax get_dmrpp_h4 -h
+-------------------------------------
+
+
+will return:
+
+-------------------------------------------------------------------------
+usage: get_dmrpp_h4 [-h] -i I [-c CONF] [-s] [-u DATA_URL] [-D] [-v]
+
+Build a dmrpp file for an HDF4 file. get_dmrpp_h4 -i h4_file_name. A dmrpp
+file that uses the HDF4 file name will be generated.
+
+optional arguments:
+
+...
+-------------------------------------------------------------------------
+
+Let's build a {DMRpp} now, by explicitly using the container:
+
+--------------------------
+docker exec -it hyrax bash
+--------------------------
+
+starts the _bash_ shell in the container, with the current directory as root (/)
+
+---------------
+[root@hyrax /]#
+---------------
+
+
+Change to the directory that is the root of the data (you'll see your HDF4 files in here):
+
+
+--------------------
+ cd /usr/share/hyrax
+--------------------
+
+
+You will see, roughly:
+
+
+-----------------------------------
+[root@hyrax /]# cd /usr/share/hyrax
+[root@hyrax hyrax]# ls
+3B42.19980101.00.7.HDF
+3B42.19980101.03.7.HDF
+3B42.19980101.06.7.HDF
+
+...
+-----------------------------------
+
+
+In that directory, use the _get_dmrpp_h4_ command to build a {DMRpp} document for one of the files:
+
+--------------------------------------------------------------------------------------------------------------
+[root@hyrax hyrax]# get_dmrpp_h4 -i 3B42.20130111.09.7.HDF -u 'file:///usr/share/hyrax/3B42.20130111.09.7.HDF'
+--------------------------------------------------------------------------------------------------------------
+
+Copy that pattern for whatever file you use. From the `/usr/share/hyrax` directory, you pass _get_dmrpp_h4_ the name of the file (because it's local to the current directory) using the *-i* option. The *-u* option tells the command to embed the URL that follows it in the {DMRpp}. I've used a _file://_  URL to the file _/usr/share/hyrax/3B42.19980101.00.7.HDF_.
+
+
+NOTE: In the URL above, three slashes following the colon: two from the way a URL names a protocol and one because the pathname starts at the root directory.
+
+Building the {DMRpp} and embedding a _file://_ URL will enable testing the {DMRpp}.
+
+
+==== Using the server to examine data returned by the {DMRpp} ====
+
+
+Let's look at how the _hyrax_ service will treat that data file using the {DMRpp}. In a browser, go to  http://localhost:8080/opendap/[http://localhost:8080/opendap/]
+
+.Hyrax Catalog view of all files available.
+image::Hyrax-including-new-DMRpp.png[width=650, height=400]
+
+
+NOTE: _The server caches data catalog information for 5 minutes (although this can be configured) so new items (e.g., {DMRpp} documents) may not show up right away. To force the display of a {DMRpp} that you just created, click on the source data file name and edit the URL so that the suffix *.dmr.html* is replaced by *.dmrpp/dmr* ._
+
+
+Click on your equivalent of the *3B42.20130111.09.7.HDF* link, subset, download and open in Panoply or the equivalent.
+
+.Page view of the DAP _Data Request Form_ for subsetting the dataset.
+image::Hyrax-subsetting.png[width=650, height=400]
+
+You can run batch tests in lots of files by building many DMR++ documents and then asking the server for various responses (_nc4_, _dap_) from the {DMRpp} and the original file. Those could be compared using various schemes, although in its entirety that is beyond this section's scope, the command _getdap4_ is also included in the container and could be used to compare _dap_ responses from the data file and the {DMRpp} document.
+
+Below is a comparison of the same underlying data, the left window shows the data returned using the {DMRpp}, the right shows the data read directly from the file using the server's builtin HDF4 reader.
+
+
+.Comparison of responses from a {DMRpp} and the native file handler.
+image::Data-comparison.png[width=650, height=400]
+
+
+==== Simple shell command ====
+
+Here is a simple shell command that you can run on the host computer that will eliminate most of the above.
+
+NOTE: ''In the spirit of a recipe, I'll restate the earlier command for starting the docker container with the *get_dmrpp_h4* command and the *hyrax* server.''
+
+Start the container:
+
+-----------------------------------------------------------------------------------------------------
+docker run -d -h hyrax -p 8080:8080 -v $HDF4_DIR:/usr/share/hyrax --name=hyrax opendap/hyrax:snapshot
+-----------------------------------------------------------------------------------------------------
+
+Check if it is running:
+
+---------
+docker ps
+---------
+
+The command, written for the Bourne Shell, is:
+
+----------------------------------------------
+#!/bin/sh
+#
+# usage get_dmrpp_h4.sh <file>
+
+data_root=/usr/share/hyrax
+
+cat <<EOF | docker exec --interactive hyrax sh
+cd $data_root
+get_dmrpp_h4 -i $1 -u "file://$data_root/$1"
+EOF
+----------------------------------------------
+
+Copy that, save it in a file (I named the file _get_dmrpp_h4.sh_).
+
+Run the command on the host (not the docker container) and in the directory with the HDF4 files (you don't have to do that, but sorting out the details is left as an exercise for the reader. Run the command like this:
+
+--------------------------------------------------------
+ ./get_dmrpp_h4.sh AMSR_E_L3_SeaIce25km_V15_20020601.hdf
+--------------------------------------------------------
+
+
+The {DMRpp} will appear when the command completes.
+
+---------------------------------------------------------------------------------------------
+(hyrax500) hyrax_git/HDF4-dir % ls -l
+total 1251240
+-rw-r--r--@ 1 jimg  staff    1250778 Aug 22 22:31 AMSR_E_L2_Land_V09_200206191112_A.hdf
+-rw-r--r--@ 1 jimg  staff   20746207 Aug 22 22:32 AMSR_E_L3_SeaIce25km_V15_20020601.hdf
+-rw-r--r--  1 jimg  staff    3378674 Aug 28 17:37 AMSR_E_L3_SeaIce25km_V15_20020601.hdf.dmrpp
+---------------------------------------------------------------------------------------------
+
