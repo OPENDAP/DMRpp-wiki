@@ -179,7 +179,7 @@ In this document, we use an explicit version number when we show the container b
 [WARNING]
 Do not confuse the Docker tag  _snapshot_ with _latest_. In all but the most unusual situations, you do *NOT* want the container tagged _latest_. Use the tag _snapshot_.
 
-If you want to use the latest version of the `gen+dmrpp_side_car` command, replace the version number in _opendap/hyrax:1.17.1-126_ with _snapshot_. Using _opendap/hyrax:snapshot_ will always get the most recent version of the software.
+If you want to use the latest version of the `gen_dmrpp_side_car` command, replace the version number in _opendap/hyrax:1.17.1-126_ with _snapshot_. Using _opendap/hyrax:snapshot_ will always get the most recent version of the software.
 
 To build a {DMRpp} for the first AIRS file we can run the `gen_dmrpp_side_car` command, using `docker exec`, with the file's name. Because this file is an HDF4 file, the command option `-H` is used.
 
@@ -200,7 +200,7 @@ AIRS.2009.01.02.L3.RetStd_IR001.v7.0.3.0.G20160024358.hdf
 In this second example both the {DMRpp} and a sidecar _missing data_ file (`3B42.19980101.00.7.HDF_mvs.h5`) are built. As is often the case, the {DMRpp} and missing data files together are only 2% of the data file's size.
 
 [NOTE]
-Even though the input data file was an HDF4-ESO2 file, the missing data file uses HDF5 to store the values.
+Even though the input data file was an HDF4-EOS2 file, the missing data file uses HDF5 to store the values.
 
 This is also an HDF4 file, so the `-H` option is used.
 
@@ -267,7 +267,7 @@ dmrpp:version:: The version of the {DMRpp} builder software used to make this {D
 
 The value of the `dmrpp:href` attribute is the source of data values that the Hyrax data server will use with building data responses. This URL can be either an HTTP, HTTPS or _file://_ URL (for more about the latter option, see <<sec-test-them>>.
 
-However, when the OPeNDAP {DMRpp} was first developed for use by NASA ESDIS, we did not want to encode the URl to the data file into the {DMRpp}. Instead, we planned on using the ESDIS Common Metadata Repository (CMR) to look up information about a granule and use that to find the source data file. This helped guard against having to edit many of the documents while the ESDIS system was in flux (i.e., it was a decision well aligned with agile development principles). In place of an explicit URL to the source data file, the `gen_dmrpp_side_car` will, by default, use a template string that the hyrax data server substitutes at runtime with the current data source URL as read from CMR.
+However, when the OPeNDAP {DMRpp} was first developed for use by NASA ESDIS, we did not want to encode the URL to the data file into the {DMRpp}. Instead, we planned on using the ESDIS Common Metadata Repository (CMR) to look up information about a granule and use that to find the source data file. This helped guard against having to edit many of the documents while the ESDIS system was in flux (i.e., it was a decision well aligned with agile development principles). In place of an explicit URL to the source data file, the `gen_dmrpp_side_car` will, by default, use a template string that the hyrax data server substitutes at runtime with the current data source URL as read from CMR.
 
 What if you do not need or want that? The `-u` option of `gen_dmrpp_side_car` provides a way to tell the {DMRpp} document builder to use a specific value for the data source URL. The following examples show the {DMRpp} XML _with_ the template value for the data source URL and then using a URL set with the `-u` option.
 
@@ -352,9 +352,9 @@ The gen_dmrpp_side_car command takes a few options that control how it builds {D
 
 -D:: The `-D` option will disable the build of a sidecar file, even when one would normally be required. The default is to build sidecar data files when needed.
 
--U:: Use the template value (`OPeNDAP_DMRpp_SC_DATA_ACCESS_URL`) for the value of the sidecar data file URL. The default is to use only the name of the template file. In most cases, if a sidecar file is made the `-U` or -`-u <URL>` options should be used.
+-U:: Use the template value (`OPeNDAP_DMRpp_SC_DATA_ACCESS_URL`) for the value of the sidecar data file URL. The default is to use only the name of the template file. In most cases, if a sidecar file is made the `-U` or `-u <URL>` options should be used.
 
--u/--URL:: The `-u/--URL` and `-s/SURL` options control how URLs are represented in the {DMRpp} document. It is possible to build a {DMRpp} before the location of the data file in S3, for example, is known. In this case, the URL that references the data file will be represented by a 'template' value and substituted into the {DMRpp} _when the document is used_, nominally by the Hyrax service at runtime (although other software can also do this substitution - it is a simple text replacement). See  <<sec-data-source-url>>. If this option is used, no run-time substitution of the data source URL will be performed.
+-u/--URL:: The `-u/--URL` and `-s/--SURL` options control how URLs are represented in the {DMRpp} document. It is possible to build a {DMRpp} before the location of the data file in S3, for example, is known. In this case, the URL that references the data file will be represented by a 'template' value and substituted into the {DMRpp} _when the document is used_, nominally by the Hyrax service at runtime (although other software can also do this substitution - it is a simple text replacement). See  <<sec-data-source-url>>. If this option is used, no run-time substitution of the data source URL will be performed.
 
 -s/--SURL:: The `-s/--SURL` option provides the same feature for the URL that references the sidecar geo-referencing data file. The Hyrax service _assumes_ that the data file URL can be determined by removing the suffix `.dmrpp` from the {DMRpp} URL. Similarly, it assumes that the sidecar data file URL can be found by replacing the `.dmrpp` suffix with `_mvs.h5`. See <<ex-missing>>. Note that these options can be used to provide real values for data file and sidecar data URls. In that case, the given values will be used in the {DMRpp} instead of the template values. No run-time substitution of the URLs will be performed.
 
