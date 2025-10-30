@@ -45,6 +45,11 @@ There are some features of the {DMRpp} builder software that are targeted specif
 
 The {DMRpp} is a metadata file that provides a fast and flexible way to access data stored in Amazon Web Services (AWS) Simple Storage Service (S3), or using any other service that supports HTTP.footnote:[The HTTP/S service must support the _Range_ header of HTTP/1.1. When using libcurl, both HTTP/S and the 'file:' protocols can be used.]
 
+[[AnatomyDMRpp]]
+.Diagram showing what a {DMRpp} might look like for a given (individual) file. The {DMRpp} is an XML document containing metadata declarations of the variables and attributes within the file, and annotated with Chunk Manifests for each Array. Currently, it supports fletcher32, shuffle, and deflate as CompressionType, and deflateLevel between 1 and 9 (9 included).
+image::Anatomy_DMRpp.png[width=100%, align='center']
+
+
 // Written by ChatGPT. https://chatgpt.com/share/680fb929-06a0-8010-a492-47bd11a682bd jhrg 4/28/25
 OPeNDAP developed the {DMRpp} system in response to the growing need for faster, more efficient access to scientific data stored in large, complex files. As datasets expanded in size and migrated to cloud-based storage systems like S3, traditional methods of reading metadata and retrieving data became increasingly cumbersome and expensive. {DMRpp} was designed to solve this problem by creating a lightweight, annotated metadata file that describes where data elements are located and how they can be accessed, without requiring full downloads or local processing. By decoupling metadata access from the underlying storage and minimizing data movement, {DMRpp} enables scalable, cloud-friendly workflows that better support the demands of modern Earth science research.
 
