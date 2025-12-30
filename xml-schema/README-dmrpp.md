@@ -27,7 +27,7 @@ _**Me**_
 
 [! NOTE]: It's actually a 1.0 schema.
 
-# DMR++ Documentation for the dmrpp Namespace
+# DMR++ Documentation for the `dmrpp` Namespace
 
 _**ChatGPT**_
 
@@ -35,23 +35,26 @@ _**ChatGPT**_
 
 ### `dmrpp:chunks`
 
-Child of a DAP variable element (e.g., `Float32`, `Int32`, etc.).
-It describes how the variable’s data are stored on disk or over HTTP in an HDF5-like chunked layout. The element can
-carry:
+The dmrpp:chunks element is always a child of a DAP/DMR variable element (e.g., `Float32`, `Int32`, etc.).
+It describes how the variable’s data are stored on in an HDF5-like chunked layout. The element can
+contain the following:
 
-* global info about the storage/filtering (`compressionType`, `deflateLevel`, `byteOrder`, `structOffset`, `LBChunk`,
-  optional `fillValue`, optional `DIO="off"`), and
-* one of:
+* Attributes (all optional) about the storage/filtering (`compressionType`, `deflateLevel`, `byteOrder`,
+  `structOffset`, `LBChunk`, `fillValue`, and `DIO`), and
+* Child elements; 
+  * Exactly one `dmrpp:chunkDimensionSizes` element, as defined below. This defines the logical organization
+    Of the chunks/blocks that make up the variable.
+  * and one of:
+      * a list of individual `dmrpp:chunk` elements (this is the typical case for an HDF5/NetCDF4 file),
+      * a list of `dmrpp:block` elements (linked-block storage), or
+      * a “multi linked-block chunk” arrangement where `dmrpp:chunk` elements refer to multiple underlying _blocks_
+        (this case deals with formats where _chunks_ are not always atomic such as HDF4).
 
-    * a list of individual `dmrpp:chunk` elements (normal chunked storage),
-    * a list of `dmrpp:block` elements (linked-block storage), or
-    * a “multi linked-block chunk” arrangement where `dmrpp:chunk` elements refer to multiple underlying blocks.
+The DMR++ parser uses the information in the `dmrpp:chunks` element to build internal _Chunk_ objects. This 
+can include _Chunk_ objects that are not present in the data file/object because they consist solely of fill
+values. In this case, the parser must synthesize these chunks itself using the value of the `fillValue` attribute.
 
-
-
-The parser uses this to build the internal `Chunk` objects and, if there are missing chunks, to synthesize “fill value
-chunks.”
-
+**jhrg 12/30/25**
 ---
 
 ### `dmrpp:chunkDimensionSizes`
