@@ -73,9 +73,9 @@ parent `chunks` element and the byte order information is also stored in the `ch
 information was done to reduce the size of the `chunk` elements since there can be many of these for a given variable,
 especially in older HDF5 files.
 
-[!NOTE]
-I'm not sure if chunks in an HDF5 file can have different filters or if the filters have to be uniform for
-a given variable. Similarly, I'm not sure how the _filter mask_ is actually used.
+> [!NOTE]
+> I'm not sure if chunks in an HDF5 file can have different filters or if the filters have to be uniform for
+> a given variable. Similarly, I'm not sure how the _filter mask_ is actually used.
 
 ---
 
