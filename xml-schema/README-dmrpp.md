@@ -196,8 +196,8 @@ Below is a standalone XSD 1.1 file for the `dmrpp` namespace, focused on what yo
 * Types and constraints are conservative: they won’t enforce all your semantic rules, but they match what the code
   expects structurally.
 
-[!NOTE]
-The schema is in the file dmrpp.xsd
+> [!NOTE]
+> The schema is in the file dmrpp.xsd
 
 ---
 
