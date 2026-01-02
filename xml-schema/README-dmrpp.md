@@ -64,7 +64,10 @@ Each `dmrpp:chunk` describes a single data chunk (or a multi-block chunk–-see 
 * `chunkPositionInArray`: space-separated integer indices of the chunk in chunk-space (e.g., `"[0,1,3]"`).
 * `byteOrder`: optional byte order information; one of `LE` or `BE` (little- or big-endian). Defaults to `BE`
 * `fm`: optional “filter mask” for per-chunk filter flags.
-* `href` and `trust`/`dmrpp:trust`: optional overriding data URL and whether it’s trusted.
+* `href` and `trust`/`dmrpp:trust`: the 'trust' attribute applies to the value of the 'href' attribute. For systems
+  like NASA Earthdata Cloud (EDC), this saves authentication steps by telling the DMR++ parser that this href does
+  not need to be authenticated--it can be trusted because access to the DMR++ itself was authenticated/authorized.
+  When present, the value(s) of 'href' and 'trust' override those given in the `dap4:Dataset` element.
 * `LinkedBlockIndex`: when using multi-block chunks, groups several linked blocks into one logical chunk.
 
 The parser uses this element to know **where within the file/object to read data** and how to reconstruct the data of
@@ -85,7 +88,8 @@ Child of `dmrpp:chunks` used for **linked-block storage** (non-contiguous pieces
 Each `dmrpp:block` has:
 
 * `offset`, `nBytes`: byte location and size of a block.
-* `href`, `trust`/`dmrpp:trust`: optional overriding storage URL and trust flag.
+* `href`, `trust`/`dmrpp:trust`: as with 'href' and 'trust' for the `chunk` element above, this provies an optional
+  overriding storage URL and trust flag.
 
 The parser groups multiple blocks into a logical chunk in memory.
 
@@ -107,16 +111,20 @@ The handler then slices the byte buffer into equal-sized string segments and de-
 
 ### `dmrpp:compact`
 
-Child of the variable element indicating **HDF5 COMPACT storage** — the data are stored inline in the DMR++ document, *
-*base64-encoded**.
+Child of the variable element indicating **HDF5 COMPACT storage** — the data are stored inline in the DMR++ document, 
+as **base64-encoded** values. This encoding, while somewhat gross, provides a way to include binary data in an XML
+document. For encode values that take more than NNN FIXME bytes, the encode values are compressed using XYZ FIXME.
+
+> [!NOTE]
+> Get the correct information from the code.
 
 The parser:
 
 * base64-decodes the contents,
 * interprets them according to the variable’s DAP type (numeric, string, fixed-length string array, etc.),
-* and populates the corresponding `BaseType` in memory without any external I/O.
+* and populates the corresponding variable in memory without any external I/O.
 
-Only used for relatively small variables.
+This inline base64 encoding is only used for relatively small variables.
 
 ---
 
@@ -199,9 +207,3 @@ Below is a standalone XSD 1.1 file for the `dmrpp` namespace, focused on what yo
 > [!NOTE]
 > The schema is in the file dmrpp.xsd
 
----
-
-If you’d like, in a follow-up I can:
-
-* tweak element/attribute names to exactly match your `DmrppNames.h`, and/or
-* show how to wire this into the DAP4 DMR schema using `xs:any` or explicit `dmrpp:*` element references.

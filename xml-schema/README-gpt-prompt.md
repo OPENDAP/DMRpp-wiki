@@ -27,10 +27,21 @@ _**Me**_
 
 [! NOTE]: It's actually a 1.0 schema.
 
+_**ChatGPT**_
+
 # DMR++ Documentation for the `dmrpp` Namespace
 
 ...
 
-What follows in the document is almost completely rewritten.
+_**Me**_
 
-jhrg 1/2/26
+What follows in the document is almost completely rewritten. jhrg 1/2/26
+
+_**ChatGPT**_
+
+---
+
+If you’d like, in a follow-up I can:
+
+* tweak element/attribute names to exactly match your `DmrppNames.h`, and/or
+* show how to wire this into the DAP4 DMR schema using `xs:any` or explicit `dmrpp:*` element references.
