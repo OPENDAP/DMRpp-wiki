@@ -1,41 +1,26 @@
 
-_*Me*_
-
-I have a fairly large C++ class implementation that parses (using the pugixml header library) an XML document. This
-document contains a mix of XML elements from our DAP4 namespace and a new namespace called 'dmrpp'. I'd like to document
-the dmrpp namespace, first using a short paragraph for each of the XML elements the parser recognizes and then using XML
-Schema (XSD 1.1). Can you do that? The source file is 2k LOC.
-
-_**ChatGPT**_
-
-Yes, I can absolutely help with that.
-
-_**Me**_
-
-Here is the C++ code that implements the XML DOM parser using the pugixml library:
-
-...
-
-And, my editorial comments are in notes.
-
-_**ChatGPT**_
-
-From this code, the parser knows about the following **dmrpp elements** (plus a few dmrpp attributes on `Dataset`). I’ll
-first give you short, human-readable descriptions, then a concrete XSD 1.1 schema you can use as a starting point.
-
-_**Me**_
-
-[! NOTE]: It's actually a 1.0 schema.
-
 # DMR++ Documentation for the `dmrpp` Namespace
 
-_**ChatGPT**_
+The DMR++ `dmrpp` elements were added to provide a way to describe the organization of 'chunks' used by an HDF5
+to store the data values in an array. The elements in this namespace can be added to a DAP4 DMR (Dataset Metadata
+Response) document without affecting the XML parse of the elements in the DAP4 namespace.
+
+There are three primary elements in the `dmrpp` namespace: `chunks`, `chunkDimensionSizes`, and `chunk`. While
+not always true, in general, a `chunks` element encloses a set of `chunk` elements and a single `chunkDimensionSizes`
+element. The `chunks` element provides information that can be applied to all the chunks that make up a variable.
+The information in the `chunkDimensionSizes` element could have been encoded as an attribute of the `chunks` element.
+The `chunk` elements hold information unique to each chunk that makes up the variable.
+
+It is possible that a DRM++ document contains variables that have neither `chunks` nor `chunkDimensionSizes`
+elements since some variables' data is stored in a single 'chunk' in the HDF5 file. If only the attributes defined
+for `chunk` are needed, then that is the only element present. For example, HDF5 defines a storage class named
+_CONTIGUOUS_ that can be represented as a single chunk.
 
 ## 1. dmrpp namespace elements – short descriptions
 
-### `dmrpp:chunks`
+### dmrpp:chunks
 
-The dmrpp:chunks element is always a child of a DAP/DMR variable element (e.g., `Float32`, `Int32`, etc.).
+The `dmrpp:chunks` element is always a child of a DAP/DMR variable element (e.g., `Float32`, `Int32`, etc.).
 It describes how the variable’s data are stored on in an HDF5-like chunked layout. The element can
 contain the following:
 
@@ -54,24 +39,26 @@ The DMR++ parser uses the information in the `dmrpp:chunks` element to build int
 can include _Chunk_ objects that are not present in the data file/object because they consist solely of fill
 values. In this case, the parser must synthesize these chunks itself using the value of the `fillValue` attribute.
 
-**jhrg 12/30/25**
 ---
 
-### `dmrpp:chunkDimensionSizes`
+### dmrpp:chunkDimensionSizes
 
-Child of `dmrpp:chunks`.
-Contains a **whitespace separated list of chunk sizes**, one per array dimension (e.g., `"100 200"`). Used together with
-the array’s declared dimensions to compute the **logical number of chunks** and their shapes, and to detect which
-logical chunks are missing (all fill values).
+The `dmrpp:chunkDimensionSizes` is a child of `dmrpp:chunks`.
+It Contains a **whitespace separated list of chunk sizes**, one per array dimension (e.g., `"100 200"`). It is used
+together with the array’s declared dimensions to compute the **logical number of chunks** and their shapes. It is also 
+used in conjuction with the 0..N `dmrpp:chunk` elements (see below) to detect which logical chunks are not included 
+in the data file/object (i.e., they contain only fill values). For an array stored as a number of discreet chunks, 
+this element has to be present to tell the DMR++ interpreter how the information in the chunks is reassembled to make
+the original array.
 
 ---
 
-### `dmrpp:chunk`
+### dmrpp:chunk
 
-Usually a child of `dmrpp:chunks`, sometimes (older style) a direct child of the variable element for contiguous
-storage.
+The `dmrpp:chubnk` element is usually a child of `dmrpp:chunks`, but is sometimes a direct child of the
+variable element for contiguous storage.
 
-Each `dmrpp:chunk` describes a single data chunk (or a multi-block chunk) via attributes:
+Each `dmrpp:chunk` describes a single data chunk (or a multi-block chunk–-see below) via attributes:
 
 * `offset` and `nBytes`: byte offset and length in the underlying data resource (HDF5 file, etc.).
 * `chunkPositionInArray`: space-separated integer indices of the chunk in chunk-space (e.g., `"[0,1,3]"`).
@@ -80,7 +67,15 @@ Each `dmrpp:chunk` describes a single data chunk (or a multi-block chunk) via at
 * `href` and `trust`/`dmrpp:trust`: optional overriding data URL and whether it’s trusted.
 * `LinkedBlockIndex`: when using multi-block chunks, groups several linked blocks into one logical chunk.
 
-The parser uses this to know **where to read data** and how to reconstruct the multidimensional array.
+The parser uses this element to know **where within the file/object to read data** and how to reconstruct the data of
+the chunk. For HDF5, each chunk carries byte order and filter mask information. The list of filters is stored in the
+parent `chunks` element and the byte order information is also stored in the `chunks` element. _his duplication of
+information was done to reduce the size of the `chunk` elements since there can be many of these for a given variable,
+especially in older HDF5 files.
+
+[!NOTE]
+I'm not sure if chunks in an HDF5 file can have different filters or if the filters have to be uniform for
+a given variable. Similarly, I'm not sure how the _filter mask_ is actually used.
 
 ---
 
@@ -201,7 +196,8 @@ Below is a standalone XSD 1.1 file for the `dmrpp` namespace, focused on what yo
 * Types and constraints are conservative: they won’t enforce all your semantic rules, but they match what the code
   expects structurally.
 
-[! NOTE] The schema is in the file dmrpp.xsd
+[!NOTE]
+The schema is in the file dmrpp.xsd
 
 ---
 
