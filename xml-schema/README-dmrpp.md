@@ -55,15 +55,18 @@ the original array.
 
 ### dmrpp:chunk
 
-The `dmrpp:chubnk` element is usually a child of `dmrpp:chunks`, but is sometimes a direct child of the
+The `dmrpp:chunk` element is usually a child of `dmrpp:chunks`, but is sometimes a direct child of the
 variable element for contiguous storage.
 
 Each `dmrpp:chunk` describes a single data chunk (or a multi-block chunk–-see below) via attributes:
 
 * `offset` and `nBytes`: byte offset and length in the underlying data resource (HDF5 file, etc.).
 * `chunkPositionInArray`: space-separated integer indices of the chunk in chunk-space (e.g., `"[0,1,3]"`).
-* `byteOrder`: optional byte order information; one of `LE` or `BE` (little- or big-endian). Defaults to `BE`
-* `fm`: optional “filter mask” for per-chunk filter flags.
+* `byteOrder`: THIS IS A MISTAKE jhrg 1/6/26 optional byte order information; one of `LE` or `BE` (little- or big-endian). Defaults to `BE`
+* `fm`: optional “filter mask” for per-chunk filter flags. A 32-bit integer; bit mask; should always be zero; 
+  indicates that a filter failed (hdf5 keeps the original data), when you read the data, use this mask to know to
+  not try to decompress the data in the chunk. it rarely occurs. With Direct I/O, this becomes important. This only 
+  matters when the mask value is non-zero. shuffle is bit 0, deflate is bit 1, fletcher32 is bit 2
 * `href` and `trust`/`dmrpp:trust`: the 'trust' attribute applies to the value of the 'href' attribute. For systems
   like NASA Earthdata Cloud (EDC), this saves authentication steps by telling the DMR++ parser that this href does
   not need to be authenticated--it can be trusted because access to the DMR++ itself was authenticated/authorized.
@@ -91,7 +94,10 @@ Each `dmrpp:block` has:
 * `href`, `trust`/`dmrpp:trust`: as with 'href' and 'trust' for the `chunk` element above, this provies an optional
   overriding storage URL and trust flag.
 
-The parser groups multiple blocks into a logical chunk in memory.
+The parser groups multiple blocks into a single buffer in memory.
+
+A `dmrpp:chunks` element can contain either one or more `dmrpp:chunk` or `dmrpp:block` element(s), but not 
+both.
 
 ---
 
