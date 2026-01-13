@@ -24,8 +24,30 @@ The `dmrpp:chunks` element is always a child of a DAP/DMR variable element (e.g.
 It describes how the variable’s data are stored on in an HDF5-like chunked layout. The element can
 contain the following:
 
+The DMR++ parser uses the information in the `dmrpp:chunks` element to build internal _Chunk_ objects. This
+can include _Chunk_ objects that are not present in the data file/object because they consist solely of fill
+values. In this case, the parser must synthesize these chunks itself using the value of the `fillValue` attribute.
+
 * Attributes (all optional) about the storage/filtering (`compressionType`, `deflateLevel`, `byteOrder`,
-  `structOffset`, `LBChunk`, `fillValue`, and `DIO`), and
+  `structOffset`, `LBChunk`, `fillValue`, and `DIO`)
+  * `compressionType`: a space separated list of filters, not limited to compression. DMR++ supports _shuffle_, 
+     _deflate_, and _fletcher32_.
+     The deflate filter is the standard Internet deflate algorithm and has an associated compression level. The
+     shuffle filter is used to group the high-order, ..., low-order bytes in multibyte numerical types together to improve
+     the performance of the deflate algorithm. The fletcher32 filter is a 32-bit hash for the data. _The order of
+     the filters in the list is important._ The order of the filters in this attribute is the order in which they
+     were aplied when encoding data values, so they must be applied in reverse order.
+  * `deflateLevel`: the numerical level of compression used when the data in the chunk were compressed. This is not
+     needed to deflate the chunk, but it is needed when other operations are applied, particularly the direct I/O
+     operations.
+  * `byteOrder`: optional byte order information; one of `LE` or `BE` (little- or big-endian). Defaults to `BE`.
+    Although `dmrpp:chunk` also includes a _byteOrder_ attribute, all the chunks inside a _dmrpp:chunks_ element 
+    must have the same byte order.
+  * `structOffset`:
+  * `LBChunk`:
+  * `fillValue`:
+  * `DIO`:
+
 * Child elements; 
   * Exactly one `dmrpp:chunkDimensionSizes` element, as defined below. This defines the logical organization
     Of the chunks/blocks that make up the variable.
@@ -35,9 +57,6 @@ contain the following:
       * a “multi linked-block chunk” arrangement where `dmrpp:chunk` elements refer to multiple underlying _blocks_
         (this case deals with formats where _chunks_ are not always atomic such as HDF4).
 
-The DMR++ parser uses the information in the `dmrpp:chunks` element to build internal _Chunk_ objects. This 
-can include _Chunk_ objects that are not present in the data file/object because they consist solely of fill
-values. In this case, the parser must synthesize these chunks itself using the value of the `fillValue` attribute.
 
 ---
 
