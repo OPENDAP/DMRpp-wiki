@@ -60,7 +60,6 @@ values. In this case, the parser must synthesize these chunks itself using the v
       * a “multi linked-block chunk” arrangement where `dmrpp:chunk` elements refer to multiple underlying _blocks_
         (this case deals with formats where _chunks_ are not always atomic such as HDF4).
 
-
 ---
 
 ### dmrpp:chunkDimensionSizes
