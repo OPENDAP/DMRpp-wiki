@@ -44,9 +44,12 @@ values. In this case, the parser must synthesize these chunks itself using the v
     Although `dmrpp:chunk` also includes a _byteOrder_ attribute, all the chunks inside a _dmrpp:chunks_ element 
     must have the same byte order.
   * `structOffset`:
-  * `LBChunk`:
-  * `fillValue`:
-  * `DIO`:
+  * `LBChunk`: boolean value indicting if this variable has linked blocks
+  * `fillValue`: the fill value used for chunks that have no data. In some cases an array will have regions where
+    there is no data. For example, satellite swath data stored as a map projection. In such a case, a format like
+    HDF5 will not bother to write out a chunk that only has fill values. Software that uses the DMR++ to read data
+    will need to fill in the gaps left by these 'phantom' chunks.
+  * `DIO`: 
 
 * Child elements; 
   * Exactly one `dmrpp:chunkDimensionSizes` element, as defined below. This defines the logical organization
