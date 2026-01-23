@@ -17,7 +17,7 @@ elements since some variables' data is stored in a single 'chunk' in the HDF5 fi
 for `chunk` are needed, then that is the only element present. For example, HDF5 defines a storage class named
 _CONTIGUOUS_ that can be represented as a single chunk.
 
-## 1. The dmrpp Namespace Elements
+## The dmrpp Namespace Elements
 
 ### dmrpp:chunks
 
@@ -29,42 +29,43 @@ The DMR++ parser uses the information in the `dmrpp:chunks` element to build int
 can include _Chunk_ objects that are not present in the data file/object because they consist solely of fill
 values. In this case, the parser must synthesize these chunks itself using the value of the `fillValue` attribute.
 
-* Attributes (all optional) about the storage/filtering (`compressionType`, `deflateLevel`, `byteOrder`,
-  `structOffset`, `fillValue`, `LBChunk`, and `DIO`)
-    * `compressionType`: a space separated list of filters, not limited to compression. Currently, DMR++ supports
-      _shuffle_, _deflate_, and _fletcher32_. The deflate filter uses the standard Internet deflate algorithm and
-      includes an associated compression level. The shuffle filter groups the high-order through low-order bytes of
-      multibyte numerical types together to improve the effectiveness of the deflate algorithm. The fletcher32 filter
-      provides a 32-bit hash of the data. *The order of the filters in the list is important.* The filters are listed in
-      the order in which they were applied during data encoding and therefore must be applied in reverse order during
-      decoding.
-    * `deflateLevel`: the numerical level of the deflate compression, used when the data in the chunk were
-      compressed. The deflateLevel must be between 1 and 9. This is not needed to deflate the chunk, but it is
-      necessary when other operations are applied.
-    * `byteOrder`: optional byte order information; one of `LE` or `BE` (little- or big-endian). Defaults to `BE`.
-      Although `dmrpp:chunk` also includes a _byteOrder_ attribute, all the chunks inside a _dmrpp:chunks_ element
-      must have the same byte order.
-    * `structOffset`: total size and offset information for a structure. In DMR++, only simple structures are supported;
-      nested structures are not supported. This attribute is a space-separated list of numbers that encode the offsets,
-      in bytes, from the start of the structure for all fields except the first, which must have an offset of zero
-      bytes. In addition to the field offsets, the final element of the list specifies the total size of the structure
-      in bytes.
-    * `fillValue`: the fill value used for chunks that have no data. In some cases, an array may contain regions with no
-      data. For example, this can occur with satellite swath data stored using a map projection. In such cases, a format
-      such as HDF5 may omit writing chunks that contain only fill values. Software that uses the DMR++ to read data must
-      fill in the gaps left by these “phantom” chunks. Each member of a structure may have its own fill value; in that
-      case, _fillValue_ is represented as a space-separated list of strings.
-    * `LBChunk`: boolean value indicting if this variable has linked blocks. Linked blocks are used by HDF4 when a '
-      chunk'
-      is not atomic but instead split into multiple regions within a single file. In this case, the 'linked blocks' are
-      concatenated and then treated as 'chunk.' See the `dmrpp:block` element below.
-    * `DIO`: a boolean that indicates the chunks can be used for a particular I/O optimization. Direct IO (DIO) is a
-      feature in the Hyrax software that improves performance by passing chunked data directly to the end user without
-      applying any filtering operations (for example, without decompression). By default, the Hyrax data server uses DIO
-      when writing NetCDF-4 files from HDF5 data described using DMR++, provided that certain conditions are met. This
-      feature can be disabled.
+#### Attributes of `dmrpp:chunks`
 
-* Child elements; 
+All attributes of the `dmrpp:chunks` element are optional.
+
+* `compressionType`: a space separated list of filters, not limited to compression. Currently, DMR++ supports
+  _shuffle_, _deflate_, and _fletcher32_. The deflate filter uses the standard Internet deflate algorithm and
+  includes an associated compression level. The shuffle filter groups the high-order through low-order bytes of
+  multibyte numerical types together to improve the effectiveness of the deflate algorithm. The fletcher32 filter
+  provides a 32-bit hash of the data. *The order of the filters in the list is important.* The filters are listed in
+  the order in which they were applied during data encoding and therefore must be applied in reverse order during
+  decoding.
+* `deflateLevel`: the numerical level of the deflate compression, used when the data in the chunk were
+  compressed. The deflateLevel must be between 1 and 9. This is not needed to deflate the chunk, but it is
+  necessary when other operations are applied.
+* `byteOrder`: optional byte order information; one of `LE` or `BE` (little- or big-endian). Defaults to `BE`.
+  Although `dmrpp:chunk` also includes a _byteOrder_ attribute, all the chunks inside a _dmrpp:chunks_ element
+  must have the same byte order.
+* `structOffset`: total size and offset information for a structure. In DMR++, only simple structures are supported;
+  nested structures are not supported. This attribute is a space-separated list of numbers that encode the offsets,
+  in bytes, from the start of the structure for all fields except the first, which must have an offset of zero
+  bytes. In addition to the field offsets, the final element of the list specifies the total size of the structure
+  in bytes.
+* `fillValue`: the fill value used for chunks that have no data. In some cases, an array may contain regions with no
+  data. For example, this can occur with satellite swath data stored using a map projection. In such cases, a format
+  such as HDF5 may omit writing chunks that contain only fill values. Software that uses the DMR++ to read data must
+  fill in the gaps left by these “phantom” chunks. Each member of a structure may have its own fill value; in that
+  case, _fillValue_ is represented as a space-separated list of strings.
+* `LBChunk`: boolean value indicting if this variable has linked blocks. Linked blocks are used by HDF4 when a '
+  chunk' is not atomic but instead split into multiple regions within a single file. In this case, the 'linked blocks'
+  are concatenated and then treated as 'chunk.' See the `dmrpp:block` element below.
+* `DIO`: a boolean that indicates the chunks can be used for a particular I/O optimization. Direct IO (DIO) is a
+  feature in the Hyrax software that improves performance by passing chunked data directly to the end user without
+  applying any filtering operations (for example, without decompression). By default, the Hyrax data server uses DIO
+  when writing NetCDF-4 files from HDF5 data described using DMR++, provided that certain conditions are met. This
+  feature can be disabled. _**FIXME**_ _What are those conditions_?
+
+#### Child elements of `dmrpp:chunks` 
   * Exactly one `dmrpp:chunkDimensionSizes` element, as defined below. This defines the logical organization
     Of the chunks/blocks that make up the variable.
   * and one of:
@@ -85,20 +86,32 @@ in the data file/object (i.e., they contain only fill values). For an array stor
 this element has to be present to tell the DMR++ interpreter how the information in the chunks is reassembled to make
 the original array.
 
+#### Attributes of `dmrpp:chunkDimensionSizes`
+
+The `dmrpp:chunkDimensionSizes` element has no attributes.
+
+#### Child elements of `dmrpp:chunkDimensionSizes`
+
+The `dmrpp:chunkDimensionSizes` element has no child elements.
 ---
 
 ### dmrpp:chunk
 
-The `dmrpp:chunk` element is usually a child of `dmrpp:chunks`, but is sometimes a direct child of the
-variable element for contiguous storage.
+Each `dmrpp:chunk` describes a single data chunk. The `dmrpp:chunk` element is usually a child of `dmrpp:chunks`, but is
+sometimes a direct child of the variable element when all the data are held in a singe chunk (e.g., HDF5 contiguous
+storage).
 
 The software uses the `dmrpp:chunk` element to determine **where within the file or object to read data** and how to
-reconstruct the chunk’s data. For HDF5, each chunk includes byte-order and filter-mask information. The list of filters
-is stored in the parent `chunks` element, and the byte-order information is also stored in the `chunks` element. This
-duplication of information reduces the size of individual `chunk` elements, which is important because a variable may
-have many chunks, especially in older HDF5 files.
+reconstruct the chunk’s data. Each `dmrpp:chunk` element must include the `offset` and `size` attribute. For a variable
+that contains more than one chunk, the `chunkPositionInArray` attribute must also be included.
 
-Each `dmrpp:chunk` describes a single data chunk (or a multi-block chunk–-see below) via attributes:
+The remain attributes are optional. If they are not used by a given `dmrpp:chunk` element, then the value is either
+the default value (e.g., `fm`, see below) or an inherited value from some enclosing XML element. In version XXX of
+the DMR++, the only elements that provide inherited attributes are the `dap:Dataset` and the `dmrpp:chunks` elements.
+Using inherited XML attributes complicates parsing but can reduce XML document size when the number of `dmrpp:chunk`
+elements is large.
+
+
 
 * `offset` and `nBytes`: byte offset and length in the underlying data resource (HDF5 file, etc.).
 * `chunkPositionInArray`: space-separated integer indices of the chunk in chunk-space (e.g., `"[0,1,3]"`).
