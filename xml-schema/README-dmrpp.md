@@ -1,5 +1,5 @@
 
-# DMR++ Documentation for the `dmrpp` Namespace
+~~# DMR++ Documentation for the `dmrpp` Namespace
 
 The DMR++ `dmrpp` XML namespace elements were added to provide a way to describe the organization of 'chunks' used by a
 binary data format such as HDF5 to store the data values in an array. The DMR++ supports both HDF5 and HDF4 as of
@@ -73,7 +73,9 @@ All attributes of the `dmrpp:chunks` element are optional.
       * a list of `dmrpp:block` elements (linked-block storage), or
       * a “multi linked-block chunk” arrangement where `dmrpp:chunk` elements refer to multiple underlying _blocks_
         (this case deals with formats where _chunks_ are not always atomic such as HDF4).
-
+      * A `dmrpp:chunks` element can contain, as child elements, either one or more `dmrpp:chunk` or `dmrpp:block`
+        element(s), but not both.
+      * 
 ---
 
 ### dmrpp:chunkDimensionSizes
@@ -111,7 +113,7 @@ the DMR++, the only elements that provide inherited attributes are the `dap:Data
 Using inherited XML attributes complicates parsing but can reduce XML document size when the number of `dmrpp:chunk`
 elements is large.
 
-
+#### Attributes of `dmrpp:chunk`
 
 * `offset` and `nBytes`: byte offset and length in the underlying data resource (HDF5 file, etc.).
 * `chunkPositionInArray`: space-separated integer indices of the chunk in chunk-space (e.g., `"[0,1,3]"`).
@@ -129,6 +131,12 @@ elements is large.
 * `LinkedBlockIndex`: When multi-block chunks are used, this attribute groups multiple linked blocks into a single
   logical chunk.
 
+#### Child elements of `dmrpp:chunk`
+
+The `dmrpp:chunk` element has no child elements.
+
+**_FIXME_** Maybe it can contain dmrpp:block elements?
+
 ---
 
 ### `dmrpp:block`
@@ -136,7 +144,7 @@ elements is large.
 Child of `dmrpp:chunks` used for **linked-block storage**, non-contiguous pieces of a variable stored as blocks that 
 are assembled into a single chunk.
 
-Each `dmrpp:block` has:
+#### Attributes of `dmrpp:block`
 
 * `offset`, `nBytes`: byte location and size of a block.
 * `href` and `trust` / `dmrpp:trust`: The `trust` attribute applies to the value of the `href` attribute. In systems
@@ -145,13 +153,13 @@ Each `dmrpp:block` has:
   already authenticated and authorized. When present, the values of `href` and `trust` override those specified in the
   `dap4:Dataset` element. 
 
-> [!NOTE]
-> Kent notes that the `href` and `trust` attributes might not be supported by the `drmpp:block` element.
+**_FIXME_** Kent notes that the `href` and `trust` attributes might not be supported by the `drmpp:block` element.
 
-The parser groups multiple blocks into a single buffer in memory that is them treated as a 'chunk.'
+The DMR++ interpreter groups multiple blocks into a single buffer in memory that is them treated as a 'chunk.'
 
-A `dmrpp:chunks` element can contain either one or more `dmrpp:chunk` or `dmrpp:block` element(s), but not 
-both.
+#### Child elements of `dmrpp:block`
+
+The `dmrpp:block` element has no child elements.
 
 ---
 
@@ -163,13 +171,20 @@ as raw bytes.
 The parser treats this as a marker that:
 
 * indicates the base type is string-like but should be interpreted as **fixed-length strings**,
+
+#### Attributes of `dmrpp:FixedLengthStringArray`
+
 * attribute `string_length` (e.g., `"8"`) gives the per-string length in bytes,
 * attribute `pad` describes how padding bytes are encoded (e.g., `"null"`, `"space"`, `"zero"`).
 
 The software then slices the byte buffer into equal-sized string segments and de-pads each one appropriately, 
 extracting an array of strings.
 
----
+#### Child elements of `dmrpp:FixedLengthStringArray`
+
+The `dmrpp:FixedLengthStringArray` element has no child elements.
+
+---~~
 
 ### `dmrpp:compact`
 
@@ -177,13 +192,21 @@ Child element of a DMR variable element indicating **HDF5 COMPACT storage** — 
 as **base64-encoded** values. This encoding provides a way to include binary data in an XML
 document.
 
-The parser:
+The interpreter:
 
 * base64-decodes the contents,
 * interprets them according to the variable’s DAP type (numeric, string, fixed-length string array, etc.),
 * and populates the corresponding variable in memory without any external I/O.
 
 This inline base64 encoding is only used for relatively small variables.
+
+#### Attributes of `dmrpp:compact`
+
+The `dmrpp:compact` element has no attributes.
+
+#### Child elements of `dmrpp:compact`
+
+The `dmrpp:compact` element has no child elements.
 
 ---
 
