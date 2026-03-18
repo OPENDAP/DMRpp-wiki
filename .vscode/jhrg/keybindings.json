@@ -1,0 +1,7 @@
+[
+    {
+        "key": "alt+q",
+        "command": "rewrap.rewrapComment",
+        "when": "editorTextFocus && !editorReadonly"
+    }
+]
