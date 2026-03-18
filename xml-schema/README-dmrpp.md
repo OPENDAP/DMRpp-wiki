@@ -1,5 +1,5 @@
 
-~~# DMR++ Documentation for the `dmrpp` Namespace
+# DMR++ Documentation for the `dmrpp` Namespace
 
 The DMR++ `dmrpp` XML namespace elements were added to provide a way to describe the organization of 'chunks' used by a
 binary data format such as HDF5 to store the data values in an array. The DMR++ supports both HDF5 and HDF4 as of
@@ -40,42 +40,52 @@ All attributes of the `dmrpp:chunks` element are optional.
   provides a 32-bit hash of the data. *The order of the filters in the list is important.* The filters are listed in
   the order in which they were applied during data encoding and therefore must be applied in reverse order during
   decoding.
+
 * `deflateLevel`: the numerical level of the deflate compression, used when the data in the chunk were
   compressed. The deflateLevel must be between 1 and 9. This is not needed to deflate the chunk, but it is
   necessary when other operations are applied.
+
 * `byteOrder`: optional byte order information; one of `LE` or `BE` (little- or big-endian). Defaults to `BE`.
   Although `dmrpp:chunk` also includes a _byteOrder_ attribute, all the chunks inside a _dmrpp:chunks_ element
   must have the same byte order.
+
 * `structOffset`: total size and offset information for a structure. In DMR++, only simple structures are supported;
   nested structures are not supported. This attribute is a space-separated list of numbers that encode the offsets,
   in bytes, from the start of the structure for all fields except the first, which must have an offset of zero
   bytes. In addition to the field offsets, the final element of the list specifies the total size of the structure
   in bytes.
+
 * `fillValue`: the fill value used for chunks that have no data. In some cases, an array may contain regions with no
   data. For example, this can occur with satellite swath data stored using a map projection. In such cases, a format
   such as HDF5 may omit writing chunks that contain only fill values. Software that uses the DMR++ to read data must
   fill in the gaps left by these “phantom” chunks. Each member of a structure may have its own fill value; in that
   case, _fillValue_ is represented as a space-separated list of strings.
+
 * `LBChunk`: boolean value indicting if this variable has linked blocks. Linked blocks are used by HDF4 when a '
   chunk' is not atomic but instead split into multiple regions within a single file. In this case, the 'linked blocks'
   are concatenated and then treated as 'chunk.' See the `dmrpp:block` element below.
+
 * `DIO`: a boolean that indicates the chunks can be used for a particular I/O optimization. Direct IO (DIO) is a
   feature in the Hyrax software that improves performance by passing chunked data directly to the end user without
   applying any filtering operations (for example, without decompression). By default, the Hyrax data server uses DIO
   when writing NetCDF-4 files from HDF5 data described using DMR++, provided that certain conditions are met. This
-  feature can be disabled. _**FIXME**_ _What are those conditions_?
+  feature can be disabled. _**NOTE**_ This is used to control the Direct Chunk I/O optimization of Hyarx. When there
+  are many small chunks, the resulting file is less performant than a file with a new (larger) chunk size.
 
 #### Child elements of `dmrpp:chunks` 
   * Exactly one `dmrpp:chunkDimensionSizes` element, as defined below. This defines the logical organization
     Of the chunks/blocks that make up the variable.
+
   * and one of:
       * a list of individual `dmrpp:chunk` elements (this is the typical case for an HDF5/NetCDF4 file),
+
       * a list of `dmrpp:block` elements (linked-block storage), or
+
       * a “multi linked-block chunk” arrangement where `dmrpp:chunk` elements refer to multiple underlying _blocks_
         (this case deals with formats where _chunks_ are not always atomic such as HDF4).
+
       * A `dmrpp:chunks` element can contain, as child elements, either one or more `dmrpp:chunk` or `dmrpp:block`
         element(s), but not both.
-      * 
 ---
 
 ### dmrpp:chunkDimensionSizes
@@ -135,7 +145,8 @@ elements is large.
 
 The `dmrpp:chunk` element has no child elements.
 
-**_FIXME_** Maybe it can contain dmrpp:block elements?
+> [!NOTE]
+> A dmrpp:block element can contain `dmrpp:block` elements to cover the case of HDF4 multi-link block chunks.
 
 ---
 
@@ -153,7 +164,9 @@ are assembled into a single chunk.
   already authenticated and authorized. When present, the values of `href` and `trust` override those specified in the
   `dap4:Dataset` element. 
 
-**_FIXME_** Kent notes that the `href` and `trust` attributes might not be supported by the `drmpp:block` element.
+
+> [!NOTE]
+>  Kent notes that the `href` and `trust` attributes might not be supported by the `drmpp:block` element. 
 
 The DMR++ interpreter groups multiple blocks into a single buffer in memory that is them treated as a 'chunk.'
 
@@ -184,7 +197,7 @@ extracting an array of strings.
 
 The `dmrpp:FixedLengthStringArray` element has no child elements.
 
----~~
+---
 
 ### `dmrpp:compact`
 
@@ -249,7 +262,7 @@ base64-encoded strings separated by semicolons.
 
 There is also an element whose QName is whatever `DMRPP_VLSA_ELEMENT` expands to in `DmrppNames.h`. From the usage:
 
-* It appears as a child of an **array of strings/URLs**.
+* It appears as a child belonging to an **array of strings/URLs**.
 * `DMZ::process_vlsa` passes that element to `vlsa::read(...)`, which fills a `std::vector<std::string>` and marks the
   array as a **variable-length string array (VLSA)**.
 
