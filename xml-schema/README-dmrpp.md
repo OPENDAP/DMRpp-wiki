@@ -3,33 +3,34 @@
 
 The DMR++ `dmrpp` XML namespace elements were added to provide a way to describe
 the organization of 'chunks' used by a binary data format such as HDF5 to store
-the data values in an array. The DMR++ supports both HDF5 and HDF4 as of January
+the data values in an array. DMR++ supports both HDF5 and HDF4 as of January
 2026. The elements in this `dmrpp` namespace can be added to a DAP4 DMR (Dataset
-Metadata Response) document without affecting the XML parse of the elements in
+Metadata Response) document without affecting the XML parsing of the elements in
 the DAP4 namespace.
 
 There are three primary elements in the `dmrpp` namespace: `chunks`,
-`chunkDimensionSizes`, and `chunk`. While not always true, in general, a
+`chunkDimensionSizes`, and `chunk`. While this is not always true, in general a
 `chunks` element encloses a set of `chunk` elements and a single
 `chunkDimensionSizes` element. The `chunks` element provides information that
-can be applied to all the chunks that make up a variable. The information in the
+applies to all the chunks that make up a variable. The information in the
 `chunkDimensionSizes` element could have been encoded as an attribute of the
 `chunks` element. The `chunk` elements hold information unique to each chunk
 that makes up the variable.
 
-It is possible that a DMR++ document contains variables that have neither
-`chunks` nor `chunkDimensionSizes` elements since some variables' data is stored
-in a single 'chunk' in the HDF5 file. If only the attributes defined for `chunk`
-are needed, then that is the only element present. For example, HDF5 defines a
-storage class named _CONTIGUOUS_ that can be represented as a single chunk.
+It is possible for a DMR++ document to contain variables that have neither
+`chunks` nor `chunkDimensionSizes` elements, since some variables' data is
+stored in a single 'chunk' in the HDF5 file. If only the attributes defined for
+`chunk` are needed, then that is the only element present. For example, HDF5
+defines a storage class named _CONTIGUOUS_ that can be represented as a single
+chunk.
 
-## The dmrpp Namespace Elements
+## 1. The dmrpp Namespace Elements
 
-### dmrpp:chunks
+### Element `dmrpp:chunks`
 
 The `dmrpp:chunks` element is always a child of a DAP/DMR variable element
 (e.g., `Float32`, `Int32`, etc.). It describes how the variable’s data are
-stored on in an HDF5-like chunked layout. The element can contain the following:
+stored in an HDF5-like chunked layout. The element can contain the following:
 
 The DMR++ parser uses the information in the `dmrpp:chunks` element to build
 internal _Chunk_ objects. This can include _Chunk_ objects that are not present
@@ -41,7 +42,7 @@ case, the parser must synthesize these chunks itself using the value of the
 
 All attributes of the `dmrpp:chunks` element are optional.
 
-* `compressionType`: a space separated list of filters, not limited to
+* `compressionType`: a space-separated list of filters, not limited to
   compression. Currently, DMR++ supports _shuffle_, _deflate_, and _fletcher32_.
   The deflate filter uses the standard Internet deflate algorithm and includes
   an associated compression level. The shuffle filter groups the high-order
@@ -76,10 +77,11 @@ All attributes of the `dmrpp:chunks` element are optional.
   chunks. Each member of a structure may have its own fill value; in that case,
   _fillValue_ is represented as a space-separated list of strings.
 
-* `LBChunk`: boolean value indicting if this variable has linked blocks. Linked
-  blocks are used by HDF4 when a ' chunk' is not atomic but instead split into
-  multiple regions within a single file. In this case, the 'linked blocks' are
-  concatenated and then treated as 'chunk.' See the `dmrpp:block` element below.
+* `LBChunk`: boolean value indicating whether this variable has linked blocks.
+  Linked blocks are used by HDF4 when a 'chunk' is not atomic but instead split
+  into multiple regions within a single file. In this case, the 'linked blocks'
+  are concatenated and then treated as a 'chunk.' See the `dmrpp:block` element
+  below.
 
 * `DIO`: a boolean that indicates the chunks can be used for a particular I/O
   optimization. Direct IO (DIO) is a feature in the Hyrax software that improves
@@ -88,31 +90,32 @@ All attributes of the `dmrpp:chunks` element are optional.
   Hyrax data server uses DIO when writing NetCDF-4 files from HDF5 data
   described using DMR++, provided that certain conditions are met. This feature
   can be disabled. _**NOTE**_ This is used to control the Direct Chunk I/O
-  optimization of Hyarx. When there are many small chunks, the resulting file is
+  optimization of Hyrax. When there are many small chunks, the resulting file is
   less performant than a file with a new (larger) chunk size.
 
-#### Child elements of `dmrpp:chunks` 
+#### Child elements of `dmrpp:chunks`
   * Exactly one `dmrpp:chunkDimensionSizes` element, as defined below. This
-    defines the logical organization Of the chunks/blocks that make up the
+    defines the logical organization of the chunks/blocks that make up the
     variable.
 
   * and one of:
-      * a list of individual `dmrpp:chunk` elements (this is the typical case
-        for an HDF5/NetCDF4 file),
+    * a list of individual `dmrpp:chunk` elements (this is the typical case
+      for an HDF5/NetCDF4 file),
 
-      * a list of `dmrpp:block` elements (linked-block storage), or
+    * a list of `dmrpp:block` elements (linked-block storage), or
 
-      * a “multi linked-block chunk” arrangement where `dmrpp:chunk` elements
-        refer to multiple underlying _blocks_ (this case deals with formats
-        where _chunks_ are not always atomic such as HDF4).
+    * a “multi linked-block chunk” arrangement where `dmrpp:chunk` elements
+      refer to multiple underlying _blocks_ (this case deals with formats
+      where _chunks_ are not always atomic, such as HDF4).
 
-      * A `dmrpp:chunks` element can contain, as child elements, either one or
-        more `dmrpp:chunk` or `dmrpp:block` element(s), but not both.
+  A `dmrpp:chunks` element can contain, as child elements, either one or more
+  `dmrpp:chunk` elements or one or more `dmrpp:block` elements, but not both.
+
 ---
 
-### dmrpp:chunkDimensionSizes
+### Element `dmrpp:chunkDimensionSizes`
 
-The `dmrpp:chunkDimensionSizes` is a child of `dmrpp:chunks`. It Contains a
+The `dmrpp:chunkDimensionSizes` element is a child of `dmrpp:chunks`. It contains a
 **whitespace separated list of chunk sizes**, one per array dimension (e.g.,
 `"100 200"`). It is used together with the array’s declared dimensions to
 compute the **logical number of chunks** and their shapes. It is also used in
@@ -129,13 +132,14 @@ The `dmrpp:chunkDimensionSizes` element has no attributes.
 #### Child elements of `dmrpp:chunkDimensionSizes`
 
 The `dmrpp:chunkDimensionSizes` element has no child elements.
+
 ---
 
-### dmrpp:chunk
+### Element `dmrpp:chunk`
 
 Each `dmrpp:chunk` describes a single data chunk. The `dmrpp:chunk` element is
 usually a child of `dmrpp:chunks`, but is sometimes a direct child of the
-variable element when all the data are held in a singe chunk (e.g., HDF5
+variable element when all the data are held in a single chunk (e.g., HDF5
 contiguous storage).
 
 The software uses the `dmrpp:chunk` element to determine **where within the file
@@ -144,12 +148,12 @@ or object to read data** and how to reconstruct the chunk’s data. Each
 variable that contains more than one chunk, the `chunkPositionInArray` attribute
 must also be included.
 
-The remain attributes are optional. If they are not used by a given
+The remaining attributes are optional. If they are not used by a given
 `dmrpp:chunk` element, then the value is either the default value (e.g., `fm`,
 see below) or an inherited value from some enclosing XML element. In version XXX
-of the DMR++, the only elements that provide inherited attributes are the
+of DMR++, the only elements that provide inherited attributes are the
 `dap:Dataset` and the `dmrpp:chunks` elements. Using inherited XML attributes
-complicates parsing but can reduce XML document size when the number of
+complicates parsing, but can reduce XML document size when the number of
 `dmrpp:chunk` elements is large.
 
 #### Attributes of `dmrpp:chunk`
@@ -187,7 +191,7 @@ The `dmrpp:chunk` element has no child elements.
 
 ---
 
-### `dmrpp:block`
+### Element `dmrpp:block`
 
 Child of `dmrpp:chunks` used for **linked-block storage**, non-contiguous pieces
 of a variable stored as blocks that are assembled into a single chunk.
@@ -209,7 +213,7 @@ of a variable stored as blocks that are assembled into a single chunk.
 > supported by the `drmpp:block` element. 
 
 The DMR++ interpreter groups multiple blocks into a single buffer in memory that
-is them treated as a 'chunk.'
+is then treated as a 'chunk.'
 
 #### Child elements of `dmrpp:block`
 
@@ -217,7 +221,7 @@ The `dmrpp:block` element has no child elements.
 
 ---
 
-### `dmrpp:FixedLengthStringArray`
+### Element `dmrpp:FixedLengthStringArray`
 
 Child element of a DMR array variable element when that array is actually an
 **array of fixed-length strings** stored as raw bytes.
@@ -225,7 +229,7 @@ Child element of a DMR array variable element when that array is actually an
 The parser treats this as a marker that:
 
 * indicates the base type is string-like but should be interpreted as
-  **fixed-length strings**,
+  **fixed-length strings**.
 
 #### Attributes of `dmrpp:FixedLengthStringArray`
 
@@ -242,7 +246,7 @@ The `dmrpp:FixedLengthStringArray` element has no child elements.
 
 ---
 
-### `dmrpp:compact`
+### Element `dmrpp:compact`
 
 Child element of a DMR variable element indicating **HDF5 COMPACT storage** —
 the data are stored inline in the DMR++ document, as **base64-encoded** values.
@@ -267,7 +271,7 @@ The `dmrpp:compact` element has no child elements.
 
 ---
 
-### `dmrpp:missingdata`
+### Element `dmrpp:missingdata`
 
 Child element of a DMR variable element containing **missing-data values** for
 an array (or a single unsigned byte scalar) as base64-encoded bytes, optionally
@@ -278,17 +282,15 @@ The parser:
 * base64-decodes the contents,
 * inflates them with zlib if needed,
 * and either:
-
-    * copies directly into the variable (no projection), or
-    * uses the variable’s projection (start/stop/stride) to create a subset
-      buffer.
+  copies directly into the variable (no projection), or
+  uses the variable’s projection (start/stop/stride) to create a subset buffer.
 
 This is used as a special “all missing” data source (e.g., when some chunks are
 not present and are logically all fill/missing).
 
 ---
 
-### `dmrpp:specialstructuredata`
+### Element `dmrpp:specialstructuredata`
 
 Child of a structure variable (or array of structures) that encodes the content
 of a **“special structure”** as base64.
@@ -305,7 +307,10 @@ structures), including embedded base64-encoded strings separated by semicolons.
 
 ---
 
-### `dmrpp` variable-length string array element (name from `DMRPP_VLSA_ELEMENT`)
+### Element `dmrpp:vlsa`
+
+> [!NOTE]
+> This is under construction
 
 There is also an element whose QName is whatever `DMRPP_VLSA_ELEMENT` expands to
 in `DmrppNames.h`. From the usage:
@@ -315,9 +320,21 @@ in `DmrppNames.h`. From the usage:
   `std::vector<std::string>` and marks the array as a **variable-length string
   array (VLSA)**.
 
-In the XSD below I’ll call this element `dmrpp:vlenStringArray` as a
-placeholder; you should rename it to match the actual name used in your
-`DmrppNames.h`.
+  #### Example
+  ```xml
+  <?xml version="1.0" encoding="ISO-8859-1"?>
+    <Dataset xmlns="http://xml.opendap.org/ns/DAP/4.0#" xmlns:dmrpp="http://xml.opendap.org/dap/dmrpp/1.0.0#" dapVersion="4.0" dmrVersion="1.0" name="t_vl_string_1d.h5" dmrpp:href="OPeNDAP_DMRpp_DATA_ACCESS_URL" dmrpp:version="3.20.13">
+        <String name="VLSArrayElements">
+            <Dim size="4"/>
+            <dmrpp:vlsa>
+                <v>Parting</v>
+                <v>is su</v>
+                <v>swe</v>
+                <v></v>
+            </dmrpp:vlsa>
+        </String>
+    </Dataset>
+    ```
 
 ---
 
@@ -357,4 +374,3 @@ your parser actually uses.
 
 > [!NOTE]
 > The schema is in the file dmrpp.xsd
-
