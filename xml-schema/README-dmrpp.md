@@ -312,33 +312,31 @@ structures), including embedded base64-encoded strings separated by semicolons.
 > [!NOTE]
 > This is under construction
 
-There is also an element whose QName is whatever `DMRPP_VLSA_ELEMENT` expands to
-in `DmrppNames.h`. From the usage:
+The `dmrpp:vlsa` element introduces the _values_ of an array of varying length strings. The DMR++ document treats this kind of data specially because it does not 'chunk well' and can present a number of performance issues, particularly where datasets contain very large two-dimensional arrays of these varying length strings.
 
-* It appears as a child belonging to an **array of strings/URLs**.
-* `DMZ::process_vlsa` passes that element to `vlsa::read(...)`, which fills a
-  `std::vector<std::string>` and marks the array as a **variable-length string
-  array (VLSA)**.
+The `dmrpp:vlsa` element wraps each value using a `dmrpp:v` element (see example N below). Because a common pattern in datasets is to use these arrays for flags that describe data quality, there are often many consecutive elements with the same value. The `dmrpp:v` element has an optional _count_ attribute `dmrpp:c` that encodes a Run Length Limited could of _N_ consecutive values.
 
-  #### Example
-  ```xml
-  <?xml version="1.0" encoding="ISO-8859-1"?>
-    <Dataset xmlns="http://xml.opendap.org/ns/DAP/4.0#" xmlns:dmrpp="http://xml.opendap.org/dap/dmrpp/1.0.0#" dapVersion="4.0" dmrVersion="1.0" name="t_vl_string_1d.h5" dmrpp:href="OPeNDAP_DMRpp_DATA_ACCESS_URL" dmrpp:version="3.20.13">
-        <String name="VLSArrayElements">
-            <Dim size="4"/>
-            <dmrpp:vlsa>
-                <v>Parting</v>
-                <v>is su</v>
-                <v>swe</v>
-                <v></v>
-            </dmrpp:vlsa>
-        </String>
-    </Dataset>
-    ```
+In the example DMR++ document below, the string array _VLSArrayElements_ is a vector of twelve elements. The first two are _Parting_ and _is such_ while the remaining ten elements are all _sweet_.
+
+```xml
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<Dataset xmlns="http://xml.opendap.org/ns/DAP/4.0#" xmlns:dmrpp="http://xml.opendap.org/dap/dmrpp/1.0.0#" dapVersion="4.0" dmrVersion="1.0" name="t_vl_string_1d.h5" dmrpp:href="OPeNDAP_DMRpp_DATA_ACCESS_URL" dmrpp:version="3.20.13">
+    <String name="VLSArrayElements">
+        <Dim size="12"/>
+        <dmrpp:vlsa>
+            <v>Parting</v>
+            <v>is such</v>
+            <v c="10">sweet</v>
+            <v></v>
+        </dmrpp:vlsa>
+    </String>
+</Dataset>
+```
+Example 1. How Varying Length Strings are Represented
 
 ---
 
-## 2. dmrpp attributes on the Dataset element
+## 2. dmrpp Namespace Attributes on the Dataset Element
 
 The parser also recognizes these **dmrpp attributes on the root `Dataset`
 element**:
@@ -358,19 +356,6 @@ import/reuse them.
 ---
 
 ## 3. Example dmrpp.xsd (XSD 1.1)
-
-Below is a standalone XSD 1.1 file for the `dmrpp` namespace, focused on what
-your parser actually uses.
-
-### Notes before you drop this into your repo
-
-* **Namespace URI**: I’ve used a placeholder `http://opendap.org/ns/dmrpp/1.0#`.
-  Swap this for your actual dmrpp namespace URI.
-* **VLSA element name**: I’ve chosen `vlenStringArray` for the variable-length
-  string array element. Rename that element to whatever `DMRPP_VLSA_ELEMENT` is
-  in your code.
-* Types and constraints are conservative: they won’t enforce all your semantic
-  rules, but they match what the code expects structurally.
 
 > [!NOTE]
 > The schema is in the file dmrpp.xsd
