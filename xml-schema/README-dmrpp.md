@@ -1,28 +1,34 @@
 
 # DMR++ Documentation for the `dmrpp` Namespace
 
-The DMR++ `dmrpp` XML namespace elements were added to provide a way to describe
-the organization of 'chunks' used by a binary data format such as HDF5 to store
-the data values in an array. DMR++ supports both HDF5 and HDF4 as of January
-2026. The elements in this `dmrpp` namespace can be added to a DAP4 DMR (Dataset
-Metadata Response) document without affecting the XML parsing of the elements in
-the DAP4 namespace.
+The DMR++ `dmrpp` XML namespace elements were added to the DMR++ provide a way
+to describe the organization of 'chunks' used by a binary data format such as
+HDF5 to store the data values in an array. DMR++ supports both HDF5. HDF4 and
+HDFEOS2 as of January 2026. The elements in the `dmrpp` namespace can be added
+to a DAP4 DMR (Dataset Metadata Response) document without affecting the XML
+parsing of the elements in the DAP4 namespace.
 
 There are three primary elements in the `dmrpp` namespace: `chunks`,
-`chunkDimensionSizes`, and `chunk`. While this is not always true, in general a
-`chunks` element encloses a set of `chunk` elements and a single
-`chunkDimensionSizes` element. The `chunks` element provides information that
-applies to all the chunks that make up a variable. The information in the
-`chunkDimensionSizes` element could have been encoded as an attribute of the
-`chunks` element. The `chunk` elements hold information unique to each chunk
-that makes up the variable.
+`chunkDimensionSizes`, and `chunk`. In general, a `chunks` element encloses a
+set of `chunk` elements and a single `chunkDimensionSizes` element. The `chunks`
+element provides information that applies to all the chunks that hold the data
+values of a variable. The `chunkDimensionSizes` element holds a space separated
+list of integer values that are the dimensions of each chunk. The `chunk`
+elements hold information unique to each chunk that makes up the variable.
 
-It is possible for a DMR++ document to contain variables that have neither
-`chunks` nor `chunkDimensionSizes` elements, since some variables' data is
-stored in a single 'chunk' in the HDF5 file. If only the attributes defined for
-`chunk` are needed, then that is the only element present. For example, HDF5
-defines a storage class named _CONTIGUOUS_ that can be represented as a single
-chunk.
+While the most variables in a dataset describe by a DMR++ document will contain
+ `chunks`, `chunkDimensionSizes` and `chink` elements, it is possible for a
+DMR++ document to contain variables that have neither `chunks` nor
+`chunkDimensionSizes` elements. Some variables' data is stored in a single
+'chunk' in the HDF5 file. If only the attributes defined for `chunk` are needed,
+then that is the only element present. For example, HDF5 defines a storage class
+named _CONTIGUOUS_ that can be represented as a single chunk.
+
+Other elements in the `dmrpp` namespace address data organization techniques
+that the supported formats _can_ use, but generally do so sparingly. The entire
+namespace is documented here. Of particular note are variables that do not used
+'chunked storage' or variable that contain various subtypes of string data.
+
 
 ## 1. The dmrpp Namespace Elements
 
@@ -312,11 +318,21 @@ structures), including embedded base64-encoded strings separated by semicolons.
 > [!NOTE]
 > This is under construction
 
-The `dmrpp:vlsa` element introduces the _values_ of an array of varying length strings. The DMR++ document treats this kind of data specially because it does not 'chunk well' and can present a number of performance issues, particularly where datasets contain very large two-dimensional arrays of these varying length strings.
+The `dmrpp:vlsa` element introduces the _values_ of an array of varying length
+strings. The DMR++ document treats this kind of data specially because it does
+not 'chunk well' and can present a number of performance issues, particularly
+where datasets contain very large two-dimensional arrays of these varying length
+strings.
 
-The `dmrpp:vlsa` element wraps each value using a `dmrpp:v` element (see example N below). Because a common pattern in datasets is to use these arrays for flags that describe data quality, there are often many consecutive elements with the same value. The `dmrpp:v` element has an optional _count_ attribute `dmrpp:c` that encodes a Run Length Limited could of _N_ consecutive values.
+The `dmrpp:vlsa` element wraps each value using a `dmrpp:v` element (see example
+N below). Because a common pattern in datasets is to use these arrays for flags
+that describe data quality, there are often many consecutive elements with the
+same value. The `dmrpp:v` element has an optional _count_ attribute `dmrpp:c`
+that encodes a Run Length Limited could of _N_ consecutive values.
 
-In the example DMR++ document below, the string array _VLSArrayElements_ is a vector of twelve elements. The first two are _Parting_ and _is such_ while the remaining ten elements are all _sweet_.
+In the example DMR++ document below, the string array _VLSArrayElements_ is a
+vector of twelve elements. The first two are _Parting_ and _is such_ while the
+remaining ten elements are all _sweet_.
 
 ```xml
 <?xml version="1.0" encoding="ISO-8859-1"?>
