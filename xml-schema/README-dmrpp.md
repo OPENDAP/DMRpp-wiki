@@ -20,14 +20,15 @@ While the most variables in a dataset describe by a DMR++ document will contain
  `chunks`, `chunkDimensionSizes` and `chink` elements, it is possible for a
 DMR++ document to contain variables that have neither `chunks` nor
 `chunkDimensionSizes` elements. Some variables' data is stored in a single
-'chunk' in the HDF5 file. If only the attributes defined for `chunk` are needed,
+place in the HDF5 file. If only the attributes defined for `chunk` are needed,
 then that is the only element present. For example, HDF5 defines a storage class
-named _CONTIGUOUS_ that can be represented as a single chunk.
+named _CONTIGUOUS_ that can be represented as a single chunk (even though it is
+technically not an HDF5 'chunk').
 
 Other elements in the `dmrpp` namespace address data organization techniques
 that the supported formats _can_ use, but generally do so sparingly. The entire
-namespace is documented here. Of particular note are variables that do not used
-'chunked storage' or variable that contain various subtypes of string data.
+namespace is documented here. Of particular note are variables that do not use
+'chunked storage' or variables that contain various subtypes of string data.
 
 
 ## 1. The dmrpp Namespace Elements
@@ -46,7 +47,9 @@ case, the parser must synthesize these chunks itself using the value of the
 
 #### Attributes of `dmrpp:chunks`
 
-All attributes of the `dmrpp:chunks` element are optional.
+All attributes of the `dmrpp:chunks` element are optional. When used, the
+value(s) of these attributes apply equally to all of the `dmrpp:chunk` elements
+contained by the `dmrpp:chunks` element.
 
 * `compressionType`: a space-separated list of filters, not limited to
   compression. Currently, DMR++ supports _shuffle_, _deflate_, and _fletcher32_.
@@ -61,7 +64,9 @@ All attributes of the `dmrpp:chunks` element are optional.
 * `deflateLevel`: the numerical level of the deflate compression, used when the
   data in the chunk were compressed. The deflateLevel must be between 1 and 9.
   This is not needed to deflate the chunk, but it is necessary when other
-  operations are applied.
+  operations are applied. If the 'deflate' filter is applied more than once,
+  this attribute is a list of the deflate levels used for each call of the
+  filter.
 
 * `byteOrder`: optional byte order information; one of `LE` or `BE` (little- or
   big-endian). Defaults to `BE`. Although `dmrpp:chunk` also includes a
@@ -83,11 +88,15 @@ All attributes of the `dmrpp:chunks` element are optional.
   chunks. Each member of a structure may have its own fill value; in that case,
   _fillValue_ is represented as a space-separated list of strings.
 
-* `LBChunk`: boolean value indicating whether this variable has linked blocks.
+* `LBChunk`: boolean value indicating whether this variable has linked block chunks.
   Linked blocks are used by HDF4 when a 'chunk' is not atomic but instead split
   into multiple regions within a single file. In this case, the 'linked blocks'
-  are concatenated and then treated as a 'chunk.' See the `dmrpp:block` element
-  below.
+  are concatenated and then treated as a 'chunk.' Note that these linked blocks
+  are not teh same as data describe by teh `dmrpp:block` element (see below). The
+  purpose of this attribute is to provide a hint to the DMR++ interpreter that 
+  it needs to check for this kind of chunk as it parses each `dmrpp:chunk` element
+  or that it can safely ignore this corner case for this variable's `dmrpp:chunk`
+  elements. 
 
 * `DIO`: a boolean that indicates the chunks can be used for a particular I/O
   optimization. Direct IO (DIO) is a feature in the Hyrax software that improves
@@ -95,9 +104,13 @@ All attributes of the `dmrpp:chunks` element are optional.
   any filtering operations (for example, without decompression). By default, the
   Hyrax data server uses DIO when writing NetCDF-4 files from HDF5 data
   described using DMR++, provided that certain conditions are met. This feature
-  can be disabled. _**NOTE**_ This is used to control the Direct Chunk I/O
-  optimization of Hyrax. When there are many small chunks, the resulting file is
-  less performant than a file with a new (larger) chunk size.
+  can be disabled. The attribute is used to indicate that a given variable cannot
+  take advantage of this optimization.
+  
+  > [!NOTE]
+  > The `DIO` attribute used to control the Direct I/O optimization of Hyrax. It
+  > is not really a feature of the data reader, but instead an optimization for
+  > a common _output_ operation of the OPeNDAP NASA runs.
 
 #### Child elements of `dmrpp:chunks`
   * Exactly one `dmrpp:chunkDimensionSizes` element, as defined below. This
@@ -108,7 +121,7 @@ All attributes of the `dmrpp:chunks` element are optional.
     * a list of individual `dmrpp:chunk` elements (this is the typical case
       for an HDF5/NetCDF4 file),
 
-    * a list of `dmrpp:block` elements (linked-block storage), or
+    * a list of `dmrpp:block` elements (e.g., HDF4 block storage), or
 
     * a “multi linked-block chunk” arrangement where `dmrpp:chunk` elements
       refer to multiple underlying _blocks_ (this case deals with formats
@@ -116,6 +129,8 @@ All attributes of the `dmrpp:chunks` element are optional.
 
   A `dmrpp:chunks` element can contain, as child elements, either one or more
   `dmrpp:chunk` elements or one or more `dmrpp:block` elements, but not both.
+  If it contains `dmrpp:chunk` elements, some may be linked block chunks, but 
+  the `dmrpp:chunks` attribute `LBChunk` must be true.
 
 ---
 
@@ -191,16 +206,78 @@ complicates parsing, but can reduce XML document size when the number of
 
 The `dmrpp:chunk` element has no child elements.
 
-> [!NOTE]
-> A dmrpp:block element can contain `dmrpp:block` elements to cover the
-> case of HDF4 multi-link block chunks.
+---
+
+_Example 1. A Float32 100 x 100 array with four 50 x 50 element chunks_
+```xml
+<?xml version='1.0' encoding='UTF-8'?>
+<Dataset 
+    xmlns="http://xml.opendap.org/ns/DAP/4.0#" 
+    xmlns:dmrpp="http://xml.opendap.org/dap/dmrpp/1.0.0#"
+    dapVersion="4.0" 
+    dmrVersion="1.0" 
+    name="chunked_twoD.h5">
+  <Float32 name="d_4_chunks">
+    <Dim size="100"/>
+    <Dim size="100"/>
+    <dmrpp:chunks>
+      <dmrpp:chunkDimensionSizes>50 50</dmrpp:chunkDimensionSizes>
+      <dmrpp:chunk nBytes="10000" offset="4016" chunkPositionInArray="[0,0]"   href="data/dmrpp/chunked_twoD.h5" />
+      <dmrpp:chunk nBytes="10000" offset="14016" chunkPositionInArray="[0,50]"   href="data/dmrpp/chunked_twoD.h5" />
+      <dmrpp:chunk nBytes="10000" offset="24016" chunkPositionInArray="[50,0]"   href="data/dmrpp/chunked_twoD.h5" />
+      <dmrpp:chunk nBytes="10000" offset="34016" chunkPositionInArray="[50,50]"   href="data/dmrpp/chunked_twoD.h5" />
+    </dmrpp:chunks>
+  </Float32>
+</Dataset>
+```
+
+In Example 1., the DMR \<Datase\t> element lacks the `dmrpp:href` attribute but
+the `dmrpp:chunk` elements supply the needed information using that elements
+_optional_ `href` attribute. In this example, all the chunks use the same
+object/file, but the idea of providing `href` at the `dmrpp:chunk` level is to
+support Virtual datasets - different chunks from different sources.
+
+_Example 2. This dataset holds a number of compressed chunks_
+```xml
+<?xml version='1.0' encoding='UTF-8'?>
+<Dataset 
+    xmlns="http://xml.opendap.org/ns/DAP/4.0#" 
+    xmlns:dmrpp="http://xml.opendap.org/dap/dmrpp/1.0.0#"
+    dapVersion="4.0" 
+    dmrVersion="1.0" 
+    name="chunked_gzipped_fourD.h5"
+    dmrpp:href="data/dmrpp/chunked_gzipped_fourD.h5">
+
+  <Float32 name="d_16_gzipped_chunks">
+    <Dim size="40"/>
+    <Dim size="40"/>
+    <Dim size="40"/>
+    <Dim size="40"/>
+    <dmrpp:chunks deflate_level="6" compressionType="deflate">
+      <dmrpp:chunkDimensionSizes>20 20 20 20</dmrpp:chunkDimensionSizes>
+      <dmrpp:chunk offset="4728"  nBytes="170568" chunkPositionInArray="[0,0,0,0]" />
+      <dmrpp:chunk offset="175296"  nBytes="174124" chunkPositionInArray="[0,0,0,20]" />
+      <dmrpp:chunk offset="349420"  nBytes="170395" chunkPositionInArray="[0,0,20,0]" />
+          ...
+      <dmrpp:chunk offset="2312361"  nBytes="185511" chunkPositionInArray="[20,20,0,20]" />
+      <dmrpp:chunk offset="2497872"  nBytes="184573" chunkPositionInArray="[20,20,20,0]" />
+      <dmrpp:chunk offset="2684493"  nBytes="185594" chunkPositionInArray="[20,20,20,20]" />
+    </dmrpp:chunks>
+  </Float32>
+</Dataset>
+```
+
+In Example 2 the chunks are compressed using the _deflate_ filter; the
+`deflate_level` and `compressionType` attributes provide this information. Also
+note that an `href` attribute is used in the \<Dataset\> element instead of
+repeating the same information for each `dmrpp:chunk` elements.
 
 ---
 
 ### Element `dmrpp:block`
 
 Child of `dmrpp:chunks` used for **linked-block storage**, non-contiguous pieces
-of a variable stored as blocks that are assembled into a single chunk.
+of a variable stored as blocks that are assembled into a single piece of data.
 
 #### Attributes of `dmrpp:block`
 
@@ -334,21 +411,28 @@ In the example DMR++ document below, the string array _VLSArrayElements_ is a
 vector of twelve elements. The first two are _Parting_ and _is such_ while the
 remaining ten elements are all _sweet_.
 
+---
+
+_Example 3. How Varying Length Strings are Represented_
 ```xml
 <?xml version="1.0" encoding="ISO-8859-1"?>
-<Dataset xmlns="http://xml.opendap.org/ns/DAP/4.0#" xmlns:dmrpp="http://xml.opendap.org/dap/dmrpp/1.0.0#" dapVersion="4.0" dmrVersion="1.0" name="t_vl_string_1d.h5" dmrpp:href="OPeNDAP_DMRpp_DATA_ACCESS_URL" dmrpp:version="3.20.13">
+<Dataset xmlns="http://xml.opendap.org/ns/DAP/4.0#" 
+    xmlns:dmrpp="http://xml.opendap.org/dap/dmrpp/1.0.0#" 
+    dapVersion="4.0" dmrVersion="1.0" 
+    name="t_vl_string_1d.h5" dmrpp:href="OPeNDAP_DMRpp_DATA_ACCESS_URL" 
+    dmrpp:version="3.20.13">
     <String name="VLSArrayElements">
-        <Dim size="12"/>
+        <Dim size="10"/>
         <dmrpp:vlsa>
-            <v>Parting</v>
-            <v>is such</v>
-            <v c="10">sweet</v>
-            <v></v>
+            <v>Bannana</v>
+            <v>bread</v>
+            <v>is</v>
+            <v c="6">so</v>
+            <v>tasty!</v>
         </dmrpp:vlsa>
     </String>
 </Dataset>
 ```
-Example 1. How Varying Length Strings are Represented
 
 ---
 

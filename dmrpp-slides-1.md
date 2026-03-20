@@ -4,7 +4,6 @@
 
 - Based on the current repo content in `xml-schema/README-dmrpp.md` and `xml-schema/dmrpp.xsd`
 - Focus: what the attributes mean, when they are used, and what they control
-- Note: the schema element name is `dmrpp:chunks` (not `dmrpp:chnunks`)
 
 ---
 
@@ -37,6 +36,7 @@
   - Space-separated filter list, not limited to compression
   - Current repo text calls out `shuffle`, `deflate`, and `fletcher32`
   - Filter order matters: decode applies them in reverse order
+  - `deflate` may appear more than once.
 
 - `deflateLevel`
   - Optional
@@ -48,6 +48,7 @@
   - Optional
   - Declares endianness for the enclosed chunk data
   - Allowed values in the schema: `LE` or `BE`
+  - If not present, assume `LE`
 
 ---
 
