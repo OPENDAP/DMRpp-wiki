@@ -1,4 +1,7 @@
 
+// This was the original source for what is now dmprr-schema-narrative.adoc.
+// jhrg 3/23/26
+
 # DMR++ Documentation for the `dmrpp` Namespace
 
 The DMR++ `dmrpp` XML namespace elements were added to the DMR++ provide a way
