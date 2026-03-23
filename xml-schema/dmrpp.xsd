@@ -6,8 +6,6 @@
     attributeFormDefault="unqualified"
     version="1.0">
 
-    <!-- Is this namespace OK: xmlns:dmrpp="http://opendap.org/ns/dmrpp/1.0#" -->
-
     <!-- ==========
          Simple types
          ========== -->
@@ -43,9 +41,10 @@
     <!-- How fixed-length strings are padded -->
     <xs:simpleType name="PadKind">
         <xs:restriction base="xs:string">
-            <xs:enumeration value="null" />
-            <xs:enumeration value="space" />
-            <xs:enumeration value="zero" />
+            <xs:enumeration value="null_pad" />
+            <xs:enumeration value="null_term" />
+            <xs:enumeration value="space_pad" />
+            <xs:enumeration value="not_set" />
         </xs:restriction>
     </xs:simpleType>
 
@@ -128,7 +127,7 @@
 
     <xs:complexType name="FixedLengthStringArrayType">
         <xs:attribute name="string_length" type="xs:positiveInteger" use="required" />
-        <xs:attribute name="pad" type="dmrpp:PadKind" use="optional" default="null" />
+        <xs:attribute name="pad" type="dmrpp:PadKind" use="optional" default="not_set" />
     </xs:complexType>
 
     <!-- ==========
