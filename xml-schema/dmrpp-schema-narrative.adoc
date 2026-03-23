@@ -1,5 +1,8 @@
 = DMR++ Documentation for the `dmrpp` Namespace
 
+This document describes the DMR++ `dmrpp` XML namespace and its elements. It 
+is intended to be the start of a specification for the DMR++.
+
 The DMR++ `dmrpp` XML namespace elements were added to the DMR++ provide a way
 to describe the organization of 'chunks' used by a binary data format such as
 HDF5 to store the data values in an array. DMR++ supports both HDF5. HDF4 and
