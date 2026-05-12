@@ -124,7 +124,9 @@ The schema defines `dmrpp:vlsa` with zero or more DMR++-namespace `v` children, 
 
 The parser recognizes literal `dmrpp:vlsa` but reads literal unprefixed `v` children. That means the schema's namespace-qualified local `v` model does not match the parser.
 
-The parser also supports an additional optional `s` attribute on `v`. When `s` is present, the text is base64-encoded compressed data and `s` is the uncompressed string size. The schema does not define `s`.
+`vlsa_util.cc` confirms that `c` is a run-length count for consecutive duplicate values. The writer emits `c` only when the duplicate count is greater than one, and the reader defaults the count to one when `c` is absent. This matches the schema's optional `c` attribute.
+
+`vlsa_util.cc` also confirms an additional optional `s` attribute on `v`. The writer emits `s` only when the source string is longer than 512 bytes. In that case, the text content is zlib-compressed and then base64-encoded, and `s` records the uncompressed string size needed by the reader. When `s` is absent, the parser treats the text content as the literal string value, not as base64. The schema does not define `s`.
 
 ## Where They Do Match
 
@@ -145,7 +147,7 @@ There is meaningful overlap:
 5. Change `chunkPositionInArray` from `IndexList` to a bracketed comma-list lexical type, and make it optional for direct parser compatibility.
 6. Narrow `chunkDimensionSizes`, `deflateLevel`, and `structOffset` lexical descriptions to space-separated decimal numbers if matching the parser exactly.
 7. Add `dmrpp:trust` as a tolerated chunk/block trust spelling, or explicitly mark it as parser compatibility behavior.
-8. Add optional `s` to VLSA `v` values and make `v` unqualified if the parser remains the SSOT.
+8. Add optional `s` to VLSA `v` values, document that `s` marks zlib-compressed then base64-encoded text with the uncompressed size, and make `v` unqualified if the parser remains the SSOT.
 9. Document parser-only runtime constraints for `compact`, `missingdata`, `specialstructuredata`, fill values, linked blocks, and Direct I/O.
 
 ## Recommendation
