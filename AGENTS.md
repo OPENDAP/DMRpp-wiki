@@ -4,6 +4,24 @@
 
 These instructions apply to the entire `DMRpp-wiki` repository.
 
+## Communication
+
+- State what you validated and what you could not validate.
+- If you change publishing or CI behavior, call that out explicitly.
+- If a request appears to depend on archived material in `retired/`, confirm that intent before treating it as the source of truth.
+- Talk to me directly
+- Be concise and to the point
+- Be critical of my requests and your own work
+
+## Writing Documents
+
+- Do each of the following for every request unless explicitly told otherwise.
+- For all documents you write, use markdown and store them in the `docs` directory
+- For all work, write a log entry explaining your reasoning unless explicitly told otherwise
+- In the work log, start each new set of entries with a date/time stamp
+- In the work log, include the query/prompt leading to the work
+- For a plan, write the plan to a markdown document 
+
 ## Project Context
 
 - This repository contains the source for the published DMR++ documentation site and related schema/reference material.
@@ -82,13 +100,3 @@ When reviewing or self-checking changes, prioritize:
 3. CI/CD regressions in `.travis.yml` or `travis/deploy_to_gh_pages.sh`
 4. Inconsistencies between `DMRpp.adoc`, `README.md`, and `xml-schema/` reference material
 5. Accidental edits to retired or archival content
-
-## Communication
-
-- State what you validated and what you could not validate.
-- If you change publishing or CI behavior, call that out explicitly.
-- If a request appears to depend on archived material in `retired/`, confirm that intent before treating it as the source of truth.
-- Talk to me directly
-- Be concise and to the point
-- Be critical of my requests and your own work
-
