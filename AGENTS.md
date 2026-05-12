@@ -17,6 +17,7 @@ These instructions apply to the entire `DMRpp-wiki` repository.
 
 - Do each of the following for every request unless explicitly told otherwise.
 - For all documents you write, use markdown and store them in the `docs` directory
+- For all work, unless told otherwise, write a log. When writing a document, title the log <doc-title>-log.md
 - For all work, write a log entry explaining your reasoning unless explicitly told otherwise
 - In the work log, start each new set of entries with a date/time stamp
 - In the work log, include the query/prompt leading to the work
