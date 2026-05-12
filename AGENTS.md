@@ -88,3 +88,7 @@ When reviewing or self-checking changes, prioritize:
 - State what you validated and what you could not validate.
 - If you change publishing or CI behavior, call that out explicitly.
 - If a request appears to depend on archived material in `retired/`, confirm that intent before treating it as the source of truth.
+- Talk to me directly
+- Be concise and to the point
+- Be critical of my requests and your own work
+
