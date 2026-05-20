@@ -118,54 +118,143 @@
                  DMZ parser uses only the first. -->
             <!-- Typical element value looks like: 10 10 10 10 -->
             
-            <xs:element name="chunkDimensionSizes"
-                type="dmrpp:IndexList"
+            <xs:element ref="dmrpp:chunkDimensionSizes"
                 minOccurs="0"
-                maxOccurs="1" >
-                <xs:annotation>
-                    <xs:documentation>
-                        Sizes of the chunk dimensions, in order. For example, for a 4D variable 
-                        chunked in 10x10x10x10 element blocks, this would be "10 10 10 10".
-                        However, for HDF5 'contiguous' data (i.e., data that are not chunked 
-                        in the HDF5 sense but are stored in one contiguous region), this element
-                        is omitted. Similarly, for a 'chunk' that consists of only fill values, this element
-                        is also omitted.
-                    </xs:documentation>
-                </xs:annotation>
-            </xs:element>
+                maxOccurs="1" />
         
-            <!-- Either chunks or blocks (or, in linked-block mode, blocks plus chunks
-                 that reference them). Note that there can be zero chunks if the entire
-                 array is fill values. -->
-            <xs:choice minOccurs="0" maxOccurs="unbounded">
-                <xs:element name="chunk" type="dmrpp:ChunkType" />
-                <xs:element name="block" type="dmrpp:BlockType" />
+            <!-- Either chunks or blocks. Note that there can be zero chunks if the entire
+                 array is fill values. The blocks element is used only for HDF4 data. -->
+
+            <xs:choice minOccurs="0">
+                <xs:element ref="dmrpp:chunk" minOccurs="1" maxOccurs="unbounded" />
+                <xs:element ref="dmrpp:block" minOccurs="1" maxOccurs="unbounded" />
+                <!-- linked-block mode branch, if still valid -->
             </xs:choice>
         </xs:sequence>
 
-        <xs:attribute name="compressionType" type="xs:string" use="optional" />
-        <xs:attribute name="deflateLevel" type="dmrpp:DeflateLevelList" use="optional" />
-        <xs:attribute name="fillValue" type="xs:string" use="optional" />
-        <!-- By default, byte order is assumed to be little-endian, but there may be code in the
-         DIO case where it defaults big-endian -->
-        <!-- TODO It may be a bug in our compiler to have this as BE by default for DIO case. jhrg
-        12/4/25 -->
-        <xs:attribute name="byteOrder" type="dmrpp:ByteOrder" use="optional" />
-        <xs:attribute name="structOffset" type="dmrpp:StructOffsetList" use="optional" />
-        <!-- HDF4 multi-linked-block layout flag. Is this a 'linked block' chunk? -->
-        <xs:attribute name="LBChunk" type="xs:boolean" use="optional" />
+        <xs:attribute name="compressionType" type="xs:string" use="optional" >
+            <xs:annotation>
+                <xs:documentation>
+                    Compression type, e.g., "shuffle deflate". If provided, this applies to all chunks/blocks
+                    unless they explicitly provide their own 'compressionType' attribute. Note that this
+                    attribute lists the filters that were applied to the data in the order they were applied.
+                    To decode the data, you would apply the inverse filters in reverse order. For example, 
+                    if the value is "shuffle deflate", that means the data were first shuffled and then deflated, 
+                    so to decompress you would first apply inflate and then unshuffle the data.
+                </xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
+
+        <xs:attribute name="deflateLevel" type="dmrpp:DeflateLevelList" use="optional" >
+            <xs:annotation>
+                <xs:documentation>
+                    Space-separated list of deflate levels for each deflate filter in the 'compressionType' attribute. 
+                    For example, if 'compressionType' is "shuffle deflate", and the deflate level used was 5, then this
+                    attribute would be "5". If there are multiple deflate filters, this would list the levels for 
+                    each of them in order.
+                </xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
+
+        <xs:attribute name="fillValue" type="xs:string" use="optional" >
+            <xs:annotation>
+                <xs:documentation>
+                    Fill value for the variable, if applicable. The string interpreted according to the data type of the variable.
+                </xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
+
+        <xs:attribute name="byteOrder" type="dmrpp:ByteOrder" use="optional" >
+            <xs:annotation>
+                <xs:documentation>
+                    Byte order of the data. Valid values are "LE" for little-endian and "BE" for big-endian. If not specified, the default is "LE".
+                </xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
+
+        <xs:attribute name="structOffset" type="dmrpp:StructOffsetList" use="optional" >
+            <xs:annotation>
+                <xs:documentation>
+                    For structure variables, this attribute provides a space-separated list of byte offsets for each field in the structure. 
+                    The order of offsets corresponds to the order of fields in the structure definition. The first field has an offset of 0
+                    and so is not included in the list. The last number in the list is the total size of the structure (this is used for HDF 
+                    COMPOUND types0). For example, if a structure has three fields and the second field starts at byte offset 4 and the third 
+                    field starts at byte offset 12, then this attribute would be "4 12 16" for a structure that holds an int32, int64, float32 
+                    (4 bytes + 8 bytes + 4 bytes = 16 bytes total).
+                </xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
+
+        <xs:attribute name="LBChunk" type="xs:boolean" use="optional" >
+            <xs:annotation>
+                <xs:documentation>
+                    For HDF4 data, this flag indicates whether the chunk is a 'linked block' chunk, which means it consists of multiple blocks linked together. 
+                    If true, then the 'LinkedBlockIndex' attribute on each block indicates the index of that block in the linked-block chain for this chunk.
+
+                    FIXME!! jhrg 5/20/26
+                </xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
+
         <!-- Direct I/O control; implementation looks for DIO="off" -->
-        <xs:attribute name="DIO" type="xs:string" use="optional" />
+        <xs:attribute name="DIO" type="xs:string" use="optional" >
+            <xs:annotation>
+                <xs:documentation>
+                    Direct I/O control. If set to "off", this indicates that direct I/O should not be used for this variable, even if the server supports it. 
+                    This is a hint that the server can use to decide whether to use direct I/O or not when building certain types of responses using this variable.
+                    If this si not given, assume the value is false.
+                </xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
     </xs:complexType>
 
     <xs:complexType name="ChunkType">
-        <xs:attribute name="offset" type="dmrpp:UnsignedLong" use="required" />
-        <xs:attribute name="nBytes" type="dmrpp:UnsignedLong" use="required" />
+        <xs:attribute name="offset" type="dmrpp:UnsignedLong" use="required" >
+            <xs:annotation>
+                <xs:documentation>
+                    The byte offset of this chunk within the dataset.
+                </xs:documentation>
+            </xs:annotation>
+        </xs:attribute> 
+        <xs:attribute name="nBytes" type="dmrpp:UnsignedLong" use="required" >
+            <xs:annotation>
+                <xs:documentation>
+                    The size of this chunk in bytes.
+                </xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
         <!-- Position of this chunk in chunk-space, e.g., "[0,0,0]" -->
         <!-- TODO Our DMZ parser may not enforce this as a required attribute jhrg 12/4/25 -->
-        <xs:attribute name="chunkPositionInArray" type="dmrpp:IndexList" use="required" />
+        <xs:attribute name="chunkPositionInArray" type="dmrpp:IndexList" use="required" >
+            <xs:annotation>
+                <xs:documentation>
+                    The position of this chunk in chunk-space, represented as a comma-separated list of non-negative integers surrounded by square brackets. 
+                    The number of integers must match the number of chunk dimensions specified in the 'chunkDimensionSizes' element. The value of each integer
+                    indicates the index of this chunk along that dimension in chunk-space. Chunk-space is a logical grid where each chunk is indexed based 
+                    on its position in the overall array, with indices starting at 0. For example, for a 4D variable chunked in 10x10x10x10 element blocks, 
+                    the first chunk would have "[0,0,0,0]", the second chunk along the first dimension would have "[1,0,0,0]", and so on.
+                </xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
+
         <!-- Filter mask for per-chunk filters -->
-        <xs:attribute name="fm" type="xs:unsignedInt" use="optional" />
+        <xs:attribute name="fm" type="xs:unsignedInt" use="optional" >
+            <xs:annotation>
+                <xs:documentation>
+                    Filter mask for per-chunk filters. This is a bitmask where
+                    each bit indicates whether a particular filter in the
+                    'compressionType' attribute is applied to this chunk. For
+                    example, if 'compressionType' is "shuffle deflate", then bit
+                    0 (the least significant bit) corresponds to the shuffle
+                    filter and bit 1 corresponds to the deflate filter. If 'fm'
+                    is 0, that means neither filter is applied to this chunk. If
+                    'fm' is 1, that means only the shuffle filter is applied. If
+                    'fm' is 2, that means only the deflate filter is applied. If
+                    'fm' is 3, that means both filters are applied.
+                    </xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
+
         <!-- Optional override of dataset-level href -->
         <xs:attribute name="href" type="xs:anyURI" use="optional" />
         <xs:attribute name="trust" type="xs:boolean" use="optional" />
@@ -255,8 +344,30 @@
          (e.g., via xs:any or explicit element refs).
          ========== -->
 
-    <xs:element name="chunks" type="dmrpp:ChunksType" />
-    <xs:element name="chunkDimensionSizes" type="dmrpp:IndexList" />
+    <xs:element name="chunks" type="dmrpp:ChunksType">
+        <xs:annotation>
+            <xs:documentation>
+                This element is in the DMR++ namespace and is normally written as 'dmrpp:chunks'.
+                Hyrax deviation: the DMZ parser requires this element to literally use the
+                'dmrpp:' prefix.
+            </xs:documentation>
+        </xs:annotation>
+    </xs:element>
+    <xs:element name="chunkDimensionSizes" type="dmrpp:IndexList">
+        <xs:annotation>
+            <xs:documentation>
+                This element is in the DMR++ namespace and is normally written as
+                'dmrpp:chunkDimensionSizes'. Hyrax deviation: the DMZ parser requires this
+                element to literally use the 'dmrpp:' prefix.
+                Sizes of the chunk dimensions, in order. For example, for a 4D variable
+                chunked in 10x10x10x10 element blocks, this would be "10 10 10 10".
+                However, for HDF5 'contiguous' data (i.e., data that are not chunked
+                in the HDF5 sense but are stored in one contiguous region), this element
+                is omitted. Similarly, for a 'chunk' that consists of only fill values,
+                this element is also omitted.
+            </xs:documentation>
+        </xs:annotation>
+    </xs:element>
     <xs:element name="chunk" type="dmrpp:ChunkType" />
     <xs:element name="block" type="dmrpp:BlockType" />
 

@@ -20,6 +20,30 @@ Prompt: "Apply this change to the 'dmrpp.xsd' document, preserving the documenta
 
 Changed `xml-schema/dmrpp.xsd` so `href`, `trust`, `version`, `s3`, and `s3credentials` are global attributes in the DMR++ target namespace, then changed `DatasetExtensionAttributes` to reference those attributes as `dmrpp:*`. Preserved the attribute documentation by moving the existing annotations from the local attribute declarations to the global declarations. This addresses the schema-side namespace issue for dataset extension attributes while keeping the parser's literal-prefix limitation as a separate implementation concern.
 
+## 2026-05-20 11:33:39 MDT
+
+Prompt: "Update the 'dmrpp.xsd' schema so that the 'chunks' and 'chunkDimensionSizes' elements are documented as requiring the 'dmrpp:' prefix."
+
+Updated `xml-schema/dmrpp.xsd` documentation for `chunks` and `chunkDimensionSizes` to say that the elements are in the DMR++ namespace and are normally written with the `dmrpp:` prefix. Also documented the Hyrax DMZ parser deviation: it requires the literal `dmrpp:` prefix. Preserved the existing occurrence constraints and the explanatory documentation already added for `chunkDimensionSizes`.
+
+## 2026-05-20 11:36:15 MDT
+
+Prompt: "You cannot use the same scheme as with the attributes 'dmrpp:href', et cetera?"
+
+Revised the `chunkDimensionSizes` model to use the same global declaration/reference pattern as the namespace-qualified attributes: the `ChunksType` content model now references `dmrpp:chunkDimensionSizes`, and the full documentation lives on the global `chunkDimensionSizes` element declaration. This is clearer than relying on a local qualified element declaration and avoids duplicating the prefix documentation.
+
+## 2026-05-20 12:22:15 MDT
+
+Prompt: "In practice, the 'chunk' and 'block' elements are mutually exclusive. How best to indicate that in the schema?"
+
+Recommended modeling the mutually exclusive storage layouts as a choice between homogeneous repeated `chunk` elements and homogeneous repeated `block` elements, rather than the current repeated choice that permits arbitrary interleaving. Noted that if the schema must preserve linked-block mode, where blocks plus chunks may appear together, that mode needs a separate explicit branch or must remain documented as a Hyrax deviation because a strict two-branch choice would reject mixed linked-block documents.
+
+## 2026-05-20 13:51:12 MDT
+
+Prompt: "In the schema 'dmrpp.xsd' chunkPositionInArray is documented correctly ... but the type 'dmrppInedxList' is wrong. How would I define a correct type given that the attribute value is a string formatted ats, e.g., [1,0,0,0] ?"
+
+Recommended defining a separate simple type for bracketed comma-separated chunk positions rather than reusing `IndexList`, because `IndexList` is an XSD list type for whitespace-separated unsigned integers. Suggested a string restriction with a pattern such as `\[[0-9]+(,[0-9]+)*\]`, then changing `chunkPositionInArray` to use that new type. Noted that XSD 1.0 can validate the lexical form but cannot enforce that the number of coordinates matches the number of dimensions listed in `chunkDimensionSizes`.
+
 Wrote the comparison to `docs/dmz-xsd-comparison.md`.
 
 ## 2026-05-12 17:31:07 MDT
