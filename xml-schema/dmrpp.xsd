@@ -98,7 +98,8 @@
 
     <!-- To be used by the DMR Dataset element (dmrpp:href, dmrpp:trust, dmrpp:version, ...) 
          Note that this schema requires namespace qualified attributes because it defines
-         information that is added to a DMR document.-->
+         information that is added to a DMR document. 
+         Hyrax deviation: The DMZ parser in Hyrax requires these to _literally_ use 'dmrpp:...'.-->
     <xs:attributeGroup name="DatasetExtensionAttributes">
         <xs:attribute ref="dmrpp:href" use="required" />
         <xs:attribute ref="dmrpp:trust" use="optional" />
@@ -113,16 +114,26 @@
 
     <xs:complexType name="ChunksType">
         <xs:sequence>
-            <!-- There may be one or more chunkDimensionSizes elements, but the
-                 implementation uses the first. -->
+            <!-- Hyrax deviation: There may be one or more chunkDimensionSizes elements, but the
+                 DMZ parser uses only the first. -->
             <!-- Typical element value looks like: 10 10 10 10 -->
-            <!-- TODO This is a bug. There should be exactly one chunkDimensionSizes element.
-                 The DMZ should flag this. jhrg 12/4/25 -->
+            
             <xs:element name="chunkDimensionSizes"
                 type="dmrpp:IndexList"
-                minOccurs="1"
-                maxOccurs="unbounded" />
-
+                minOccurs="0"
+                maxOccurs="1" >
+                <xs:annotation>
+                    <xs:documentation>
+                        Sizes of the chunk dimensions, in order. For example, for a 4D variable 
+                        chunked in 10x10x10x10 element blocks, this would be "10 10 10 10".
+                        However, for HDF5 'contiguous' data (i.e., data that are not chunked 
+                        in the HDF5 sense but are stored in one contiguous region), this element
+                        is omitted. Similarly, for a 'chunk' that consists of only fill values, this element
+                        is also omitted.
+                    </xs:documentation>
+                </xs:annotation>
+            </xs:element>
+        
             <!-- Either chunks or blocks (or, in linked-block mode, blocks plus chunks
                  that reference them). Note that there can be zero chunks if the entire
                  array is fill values. -->

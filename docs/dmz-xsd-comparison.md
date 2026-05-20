@@ -21,6 +21,7 @@ Important consequences:
 ## Major Mismatches
 
 ### Namespace Model
+Fixed jhtg 5/20/26
 
 `dmrpp.xsd` declares a real namespace:
 
@@ -33,6 +34,7 @@ The parser does not compare that URI. It compares literal names like `dmrpp:chun
 This is the most important difference. The schema says the namespace URI is what matters; the parser says the literal prefix spelling is what matters.
 
 ### Dataset Attributes
+fixed jhrg 5/20/26
 
 The schema defines `DatasetExtensionAttributes` with unqualified attributes named `href`, `trust`, and `version`.
 
