@@ -14,6 +14,12 @@ Prompt: "In 'Namespace Model' of [dmz-xsd-comparison.md](docs/dmz-xsd-comparison
 
 Reviewed the Namespace Model finding against the current `xml-schema/dmrpp.xsd`. The URI has already been updated to `http://xml.opendap.org/dap/dmrpp/1.0.0#`. The remaining namespace-model mismatch cannot be fully fixed in a normal namespace-aware XSD because XML Schema validates expanded names, not the literal prefix spelling used by the DMZ parser. The practical schema-side fix is to make DMR++ attributes namespace-qualified with global attribute declarations and references, while documenting that the parser's literal-prefix requirement remains a parser/schema compatibility gap unless the parser becomes namespace-aware.
 
+## 2026-05-20 11:08:33 MDT
+
+Prompt: "Apply this change to the 'dmrpp.xsd' document, preserving the documentation information I have added."
+
+Changed `xml-schema/dmrpp.xsd` so `href`, `trust`, `version`, `s3`, and `s3credentials` are global attributes in the DMR++ target namespace, then changed `DatasetExtensionAttributes` to reference those attributes as `dmrpp:*`. Preserved the attribute documentation by moving the existing annotations from the local attribute declarations to the global declarations. This addresses the schema-side namespace issue for dataset extension attributes while keeping the parser's literal-prefix limitation as a separate implementation concern.
+
 Wrote the comparison to `docs/dmz-xsd-comparison.md`.
 
 ## 2026-05-12 17:31:07 MDT

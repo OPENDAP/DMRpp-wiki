@@ -52,48 +52,59 @@
          Dataset-level attributes
          ========== -->
 
-    <!-- To be used by the DMR Dataset element (dmrpp:href, dmrpp:trust, dmrpp:version, ...) -->
+    <xs:attribute name="href" type="xs:anyURI">
+        <xs:annotation>
+            <xs:documentation>
+                Location of the data for all data referenced by a 'chunk' or 'block' unless those
+                explicitly provide their own 'href' attribute. For example,
+                "https://archive.podaac.earthdata.nasa.gov/podaac-ops-cumulus-protected/MUR-JPL-L4-GLOB-v4.1/20260519090000-JPL-L4_GHRSST-SSTfnd-MUR-GLOB-v02.0-fv04.1.nc"
+            </xs:documentation>
+        </xs:annotation>
+    </xs:attribute>
+
+    <xs:attribute name="trust" type="xs:boolean" default="false">
+        <xs:annotation>
+            <xs:documentation>
+                If true, ...
+            </xs:documentation>
+        </xs:annotation>
+    </xs:attribute>
+
+    <xs:attribute name="version" type="xs:string">
+        <xs:annotation>
+            <xs:documentation>
+                Version of the DMR++ software used to generate this DMR++. For example, "3.21.1-1090".
+            </xs:documentation>
+        </xs:annotation>
+    </xs:attribute>
+
+    <xs:attribute name="s3" type="xs:anyURI">
+        <xs:annotation>
+            <xs:documentation>
+                S3 URI for the data, e.g., "s3://podaac-ops-cumulus-protected/MUR-JPL-L4-GLOB-v4.1/20260519090000-JPL-L4_GHRSST-SSTfnd-MUR-GLOB-v02.0-fv04.1.nc".
+                If provided, this provides an alternative data source to the 'href' attribute.
+            </xs:documentation>
+        </xs:annotation>
+    </xs:attribute>
+
+    <xs:attribute name="s3credentials" type="xs:anyURI">
+        <xs:annotation>
+            <xs:documentation>
+                URI for S3 credentials, e.g., "https://archive.podaac.earthdata.nasa.gov/s3credentials".
+                If provided, this provides the necessary credentials to access the S3 URI specified in the 's3' attribute.
+            </xs:documentation>
+        </xs:annotation>
+    </xs:attribute>
+
+    <!-- To be used by the DMR Dataset element (dmrpp:href, dmrpp:trust, dmrpp:version, ...) 
+         Note that this schema requires namespace qualified attributes because it defines
+         information that is added to a DMR document.-->
     <xs:attributeGroup name="DatasetExtensionAttributes">
-        <xs:attribute name="href" type="xs:anyURI" use="required">
-            <xs:annotation>
-                <xs:documentation>
-                    Location of the data for all data referenced by a 'chunk' or 'block' unless those 
-                    explicitly provide their own 'href' attribute. For example,
-                    "https://archive.podaac.earthdata.nasa.gov/podaac-ops-cumulus-protected/MUR-JPL-L4-GLOB-v4.1/20260519090000-JPL-L4_GHRSST-SSTfnd-MUR-GLOB-v02.0-fv04.1.nc"
-                </xs:documentation>
-            </xs:annotation>
-        </xs:attribute>
-        <xs:attribute name="trust" type="xs:boolean" use="optional" default="false" >
-            <xs:annotation>
-                <xs:documentation>
-                    If true, ...
-                </xs:documentation>
-            </xs:annotation>
-        </xs:attribute>
-        <xs:attribute name="version" type="xs:string" use="optional" >
-            <xs:annotation>
-                <xs:documentation>
-                    Version of the DMR++ software used to generate this DMR++. For example, "3.21.1-1090".
-                </xs:documentation>
-            </xs:annotation>
-        </xs:attribute>
-         <!-- Optional S3 location and credentials for the data. If provided, these override the '-->
-         <xs:attribute name="s3" type="xs:anyURI" use="optional" >
-            <xs:annotation>
-                <xs:documentation>
-                    S3 URI for the data, e.g., "s3://podaac-ops-cumulus-protected/MUR-JPL-L4-GLOB-v4.1/20260519090000-JPL-L4_GHRSST-SSTfnd-MUR-GLOB-v02.0-fv04.1.nc". 
-                    If provided, this provides an alternative data source to the 'href' attribute.
-                </xs:documentation>
-            </xs:annotation>
-        </xs:attribute>
-         <xs:attribute name="s3credentials" type="xs:anyURI" use="optional" >
-            <xs:annotation>
-                <xs:documentation>
-                    URI for S3 credentials, e.g., "https://archive.podaac.earthdata.nasa.gov/s3credentials". 
-                    If provided, this provides the necessary credentials to access the S3 URI specified in the 's3' attribute.
-                </xs:documentation>
-            </xs:annotation>
-        </xs:attribute>
+        <xs:attribute ref="dmrpp:href" use="required" />
+        <xs:attribute ref="dmrpp:trust" use="optional" />
+        <xs:attribute ref="dmrpp:version" use="optional" />
+        <xs:attribute ref="dmrpp:s3" use="optional" />
+        <xs:attribute ref="dmrpp:s3credentials" use="optional" />
     </xs:attributeGroup>
 
     <!-- ==========
