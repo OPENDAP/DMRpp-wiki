@@ -55,8 +55,9 @@
     <xs:attribute name="href" type="xs:anyURI">
         <xs:annotation>
             <xs:documentation>
-                Location of the data for all data referenced by a 'chunk' or 'block' unless those
-                explicitly provide their own 'href' attribute. For example,
+                Location of the data for all data referenced by a 'chunk' or
+                'block' unless those explicitly provide their own 'href'
+                attribute. For example,
                 "https://archive.podaac.earthdata.nasa.gov/podaac-ops-cumulus-protected/MUR-JPL-L4-GLOB-v4.1/20260519090000-JPL-L4_GHRSST-SSTfnd-MUR-GLOB-v02.0-fv04.1.nc"
             </xs:documentation>
         </xs:annotation>
@@ -73,7 +74,8 @@
     <xs:attribute name="version" type="xs:string">
         <xs:annotation>
             <xs:documentation>
-                Version of the DMR++ software used to generate this DMR++. For example, "3.21.1-1090".
+                Version of the DMR++ software used to generate this DMR++. For
+                example, "3.21.1-1090". 
             </xs:documentation>
         </xs:annotation>
     </xs:attribute>
@@ -81,8 +83,10 @@
     <xs:attribute name="s3" type="xs:anyURI">
         <xs:annotation>
             <xs:documentation>
-                S3 URI for the data, e.g., "s3://podaac-ops-cumulus-protected/MUR-JPL-L4-GLOB-v4.1/20260519090000-JPL-L4_GHRSST-SSTfnd-MUR-GLOB-v02.0-fv04.1.nc".
-                If provided, this provides an alternative data source to the 'href' attribute.
+                S3 URI for the data, e.g.,
+                "s3://podaac-ops-cumulus-protected/MUR-JPL-L4-GLOB-v4.1/20260519090000-JPL-L4_GHRSST-SSTfnd-MUR-GLOB-v02.0-fv04.1.nc".
+                If provided, this provides an alternative data source to the
+                'href' attribute. 
             </xs:documentation>
         </xs:annotation>
     </xs:attribute>
@@ -90,8 +94,10 @@
     <xs:attribute name="s3credentials" type="xs:anyURI">
         <xs:annotation>
             <xs:documentation>
-                URI for S3 credentials, e.g., "https://archive.podaac.earthdata.nasa.gov/s3credentials".
-                If provided, this provides the necessary credentials to access the S3 URI specified in the 's3' attribute.
+                URI for S3 credentials, e.g.,
+                "https://archive.podaac.earthdata.nasa.gov/s3credentials". If
+                provided, this provides the necessary credentials to access the
+                S3 URI specified in the 's3' attribute. 
             </xs:documentation>
         </xs:annotation>
     </xs:attribute>
@@ -135,12 +141,15 @@
         <xs:attribute name="compressionType" type="xs:string" use="optional" >
             <xs:annotation>
                 <xs:documentation>
-                    Compression type, e.g., "shuffle deflate". If provided, this applies to all chunks/blocks
-                    unless they explicitly provide their own 'compressionType' attribute. Note that this
-                    attribute lists the filters that were applied to the data in the order they were applied.
-                    To decode the data, you would apply the inverse filters in reverse order. For example, 
-                    if the value is "shuffle deflate", that means the data were first shuffled and then deflated, 
-                    so to decompress you would first apply inflate and then unshuffle the data.
+                    Compression type, e.g., "shuffle deflate". If provided, this
+                    applies to all chunks/blocks unless they explicitly provide
+                    their own 'compressionType' attribute. Note that this
+                    attribute lists the filters that were applied to the data in
+                    the order they were applied. To decode the data, you would
+                    apply the inverse filters in reverse order. For example, if
+                    the value is "shuffle deflate", that means the data were
+                    first shuffled and then deflated, so to decompress you would
+                    first apply inflate and then unshuffle the data.
                 </xs:documentation>
             </xs:annotation>
         </xs:attribute>
@@ -148,10 +157,12 @@
         <xs:attribute name="deflateLevel" type="dmrpp:DeflateLevelList" use="optional" >
             <xs:annotation>
                 <xs:documentation>
-                    Space-separated list of deflate levels for each deflate filter in the 'compressionType' attribute. 
-                    For example, if 'compressionType' is "shuffle deflate", and the deflate level used was 5, then this
-                    attribute would be "5". If there are multiple deflate filters, this would list the levels for 
-                    each of them in order.
+                    Space-separated list of deflate levels for each deflate
+                    filter in the 'compressionType' attribute. For example, if
+                    'compressionType' is "shuffle deflate", and the deflate
+                    level used was 5, then this attribute would be "5". If there
+                    are multiple deflate filters, this would list the levels for
+                    each of them in order. 
                 </xs:documentation>
             </xs:annotation>
         </xs:attribute>
@@ -159,7 +170,8 @@
         <xs:attribute name="fillValue" type="xs:string" use="optional" >
             <xs:annotation>
                 <xs:documentation>
-                    Fill value for the variable, if applicable. The string interpreted according to the data type of the variable.
+                    Fill value for the variable, if applicable. The string
+                    interpreted according to the data type of the variable.
                 </xs:documentation>
             </xs:annotation>
         </xs:attribute>
@@ -167,7 +179,9 @@
         <xs:attribute name="byteOrder" type="dmrpp:ByteOrder" use="optional" >
             <xs:annotation>
                 <xs:documentation>
-                    Byte order of the data. Valid values are "LE" for little-endian and "BE" for big-endian. If not specified, the default is "LE".
+                    Byte order of the data. Valid values are "LE" for
+                    little-endian and "BE" for big-endian. If not specified, the
+                    default is "LE". 
                 </xs:documentation>
             </xs:annotation>
         </xs:attribute>
@@ -175,12 +189,18 @@
         <xs:attribute name="structOffset" type="dmrpp:StructOffsetList" use="optional" >
             <xs:annotation>
                 <xs:documentation>
-                    For structure variables, this attribute provides a space-separated list of byte offsets for each field in the structure. 
-                    The order of offsets corresponds to the order of fields in the structure definition. The first field has an offset of 0
-                    and so is not included in the list. The last number in the list is the total size of the structure (this is used for HDF 
-                    COMPOUND types0). For example, if a structure has three fields and the second field starts at byte offset 4 and the third 
-                    field starts at byte offset 12, then this attribute would be "4 12 16" for a structure that holds an int32, int64, float32 
-                    (4 bytes + 8 bytes + 4 bytes = 16 bytes total).
+                    For structure variables, this attribute provides a
+                    space-separated list of byte offsets for each field in the
+                    structure. The order of offsets corresponds to the order of
+                    fields in the structure definition. The first field has an
+                    offset of 0 and so is not included in the list. The last
+                    number in the list is the total size of the structure (this
+                    is used for HDF COMPOUND types0). For example, if a
+                    structure has three fields and the second field starts at
+                    byte offset 4 and the third field starts at byte offset 12,
+                    then this attribute would be "4 12 16" for a structure that
+                    holds an int32, int64, float32 (4 bytes + 8 bytes + 4 bytes
+                    = 16 bytes total). 
                 </xs:documentation>
             </xs:annotation>
         </xs:attribute>
@@ -188,8 +208,11 @@
         <xs:attribute name="LBChunk" type="xs:boolean" use="optional" >
             <xs:annotation>
                 <xs:documentation>
-                    For HDF4 data, this flag indicates whether the chunk is a 'linked block' chunk, which means it consists of multiple blocks linked together. 
-                    If true, then the 'LinkedBlockIndex' attribute on each block indicates the index of that block in the linked-block chain for this chunk.
+                    For HDF4 data, this flag indicates whether the chunk is a
+                    'linked block' chunk, which means it consists of multiple
+                    blocks linked together. If true, then the 'LinkedBlockIndex'
+                    attribute on each block indicates the index of that block in
+                    the linked-block chain for this chunk.
 
                     FIXME!! jhrg 5/20/26
                 </xs:documentation>
@@ -200,9 +223,12 @@
         <xs:attribute name="DIO" type="xs:string" use="optional" >
             <xs:annotation>
                 <xs:documentation>
-                    Direct I/O control. If set to "off", this indicates that direct I/O should not be used for this variable, even if the server supports it. 
-                    This is a hint that the server can use to decide whether to use direct I/O or not when building certain types of responses using this variable.
-                    If this si not given, assume the value is false.
+                    Direct I/O control. If set to "off", this indicates that
+                    direct I/O should not be used for this variable, even if the
+                    server supports it. This is a hint that the server can use
+                    to decide whether to use direct I/O or not when building
+                    certain types of responses using this variable. If this si
+                    not given, assume the value is false. 
                 </xs:documentation>
             </xs:annotation>
         </xs:attribute>
@@ -228,11 +254,18 @@
         <xs:attribute name="chunkPositionInArray" type="dmrpp:IndexList" use="required" >
             <xs:annotation>
                 <xs:documentation>
-                    The position of this chunk in chunk-space, represented as a comma-separated list of non-negative integers surrounded by square brackets. 
-                    The number of integers must match the number of chunk dimensions specified in the 'chunkDimensionSizes' element. The value of each integer
-                    indicates the index of this chunk along that dimension in chunk-space. Chunk-space is a logical grid where each chunk is indexed based 
-                    on its position in the overall array, with indices starting at 0. For example, for a 4D variable chunked in 10x10x10x10 element blocks, 
-                    the first chunk would have "[0,0,0,0]", the second chunk along the first dimension would have "[1,0,0,0]", and so on.
+                    The position of this chunk in chunk-space, represented as a
+                    comma-separated list of non-negative integers surrounded by
+                    square brackets. The number of integers must match the
+                    number of chunk dimensions specified in the
+                    'chunkDimensionSizes' element. The value of each integer
+                    indicates the index of this chunk along that dimension in
+                    chunk-space. Chunk-space is a logical grid where each chunk
+                    is indexed based on its position in the overall array, with
+                    indices starting at 0. For example, for a 4D variable
+                    chunked in 10x10x10x10 element blocks, the first chunk would
+                    have "[0,0,0,0]", the second chunk along the first dimension
+                    would have "[1,0,0,0]", and so on. 
                 </xs:documentation>
             </xs:annotation>
         </xs:attribute>
@@ -241,25 +274,49 @@
         <xs:attribute name="fm" type="xs:unsignedInt" use="optional" >
             <xs:annotation>
                 <xs:documentation>
-                    Filter mask for per-chunk filters. This is a bitmask where
-                    each bit indicates whether a particular filter in the
-                    'compressionType' attribute is applied to this chunk. For
-                    example, if 'compressionType' is "shuffle deflate", then bit
-                    0 (the least significant bit) corresponds to the shuffle
-                    filter and bit 1 corresponds to the deflate filter. If 'fm'
-                    is 0, that means neither filter is applied to this chunk. If
-                    'fm' is 1, that means only the shuffle filter is applied. If
-                    'fm' is 2, that means only the deflate filter is applied. If
-                    'fm' is 3, that means both filters are applied.
-                    </xs:documentation>
+                    Filter mask for per-chunk filters. This is a 32-bit bitmask
+                    where each bit indicates whether a particular filter in the
+                    'compressionType' attribute was applied to this chunk. In
+                    some cases, filters failed when the data were written. This
+                    mask can be used to determine which filters were actually
+                    applied to this chunk. It is also used with the Direct I/O
+                    optimization since the HDF5 chunk writer API requires this
+                    information. 
+                </xs:documentation>
             </xs:annotation>
         </xs:attribute>
 
         <!-- Optional override of dataset-level href -->
-        <xs:attribute name="href" type="xs:anyURI" use="optional" />
-        <xs:attribute name="trust" type="xs:boolean" use="optional" />
+        <xs:attribute name="href" type="xs:anyURI" use="optional" >
+            <xs:annotation>
+                <xs:documentation>
+                    Optional override of dataset-level dmrpp:href attribute. If
+                    provided, this is the location of the data for this chunk,
+                    and it overrides any dataset-level 'href' attribute. This
+                    allows different chunks to reference data in multiple files if needed.
+                </xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
+
+        <xs:attribute name="trust" type="xs:boolean" use="optional" >
+            <xs:annotation>
+                <xs:documentation>
+                    Optional override of dataset-level dmrpp:trust attribute.
+                </xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
+
         <!-- For multi-block chunks, index of this block in the linked-block chain -->
-        <xs:attribute name="LinkedBlockIndex" type="xs:unsignedInt" use="optional" />
+        <xs:attribute name="LinkedBlockIndex" type="xs:unsignedInt" use="optional" >
+            <xs:annotation>
+                <xs:documentation>
+                    For HDF4 data, if this chunk is a linked block chunk
+                    (indicated by the 'LBChunk' attribute), then this attribute
+                    indicates the index of this block in the linked-block chain
+                    for this chunk. The first block in the chain has index 0.
+                </xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
     </xs:complexType>
 
     <xs:complexType name="BlockType">
