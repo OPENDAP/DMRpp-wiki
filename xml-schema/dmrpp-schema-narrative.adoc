@@ -1,7 +1,7 @@
 = DMR++ Documentation for the `dmrpp` Namespace
 
-This document describes the DMR++ `dmrpp` XML namespace and its elements. It 
-is intended to be the start of a specification for the DMR++.
+This document describes the DMR++ `dmrpp` XML namespace and its elements. It is intended to be the start of a
+specification for the DMR++.
 
 The DMR++ `dmrpp` XML namespace elements were added to the DMR++ provide a way
 to describe the organization of 'chunks' used by a binary data format such as
@@ -321,6 +321,44 @@ de-pads each one appropriately, extracting an array of strings.
 
 The `dmrpp:FixedLengthStringArray` element has no child elements.
 
+._Example 3. How Fixed Length Strings are Represented_
+[source,xml]
+----
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<Dataset xmlns="http://xml.opendap.org/ns/DAP/4.0#" 
+    xmlns:dmrpp="http://xml.opendap.org/dap/dmrpp/1.0.0#"
+    dapVersion="4.0" dmrVersion="2.0" name="oco2_Ephem_63191_260519_B11220_260519154035.h5"
+    dmrpp:href="https://data....260519154035.h5"
+    dmrpp:s3="..."
+    dmrpp:s3credentials="https://data.gesdisc.earthdata.nasa.gov/s3credentials" dmrpp:trust="true"
+    dmrpp:version="3.21.1-1090">
+    <Attribute name="gesdisc_collection" type="String">
+        <Value>11</Value>
+    </Attribute>
+        ...
+    <Group name="Ephemeris">
+        ...
+        <String name="EquatorCrossingTime">
+            <Dim size="1"/>
+            <Attribute name="Description" type="String">
+                <Value>The time of the equator crossing of the spacecraft ground track in the descending direction.</Value>
+            </Attribute>
+            <Attribute name="Shape" type="String">
+                <Value>Scalar</Value>
+            </Attribute>
+            <Attribute name="Type" type="String">
+                <Value>FixLenStr</Value>
+            </Attribute>
+            <dmrpp:chunks compressionType="shuffle deflate" deflateLevel="9" fillValue="">
+                <dmrpp:chunkDimensionSizes>1</dmrpp:chunkDimensionSizes>
+                <dmrpp:chunk offset="20212" nBytes="22" chunkPositionInArray="[0]"/>
+            </dmrpp:chunks>
+            <dmrpp:FixedLengthStringArray string_length="14" pad="null_term"/>
+        </String>
+    </Group>
+</Dataset>
+----
+
 === Element `dmrpp:compact`
 
 Child element of a DMR variable element indicating *HDF5 COMPACT storage* --
@@ -399,25 +437,41 @@ In the example DMR++ document below, the string array _VLSArrayElements_ is a
 vector of twelve elements. The first two are _Parting_ and _is such_ while the
 remaining ten elements are all _sweet_.
 
-._Example 3. How Varying Length Strings are Represented_
+._Example 4. How Varying Length Strings are Represented_
 [source,xml]
 ----
 <?xml version="1.0" encoding="ISO-8859-1"?>
-<Dataset xmlns="http://xml.opendap.org/ns/DAP/4.0#"
+<Dataset xmlns="http://xml.opendap.org/ns/DAP/4.0#" 
     xmlns:dmrpp="http://xml.opendap.org/dap/dmrpp/1.0.0#"
-    dapVersion="4.0" dmrVersion="1.0"
-    name="t_vl_string_1d.h5" dmrpp:href="OPeNDAP_DMRpp_DATA_ACCESS_URL"
-    dmrpp:version="3.20.13">
-    <String name="VLSArrayElements">
-        <Dim size="10"/>
-        <dmrpp:vlsa>
-            <v>Bannana</v>
-            <v>bread</v>
-            <v>is</v>
-            <v c="6">so</v>
-            <v>tasty!</v>
-        </dmrpp:vlsa>
-    </String>
+    dapVersion="4.0" dmrVersion="2.0" name="oco2_Ephem_63191_260519_B11220_260519154035.h5"
+    dmrpp:href="https://data....260519154035.h5"
+    dmrpp:s3="..."
+    dmrpp:s3credentials="https://data.gesdisc.earthdata.nasa.gov/s3credentials" dmrpp:trust="true"
+    dmrpp:version="3.21.1-1090">
+    <Attribute name="gesdisc_collection" type="String">
+        <Value>11</Value>
+    </Attribute>
+        ...
+    <Group name="Ephemeris">
+        ...
+       <String name="InputPointer">
+            <Dim size="3"/>
+            <Attribute name="Description" type="String">
+                <Value>A pointer to one or more data granules that provide the major input that was used to generate this product.</Value>
+            </Attribute>
+            <Attribute name="Shape" type="String">
+                <Value>InputPtr_Array</Value>
+            </Attribute>
+            <Attribute name="Type" type="String">
+                <Value>VarLenStr</Value>
+            </Attribute>
+            <dmrpp:vlsa>
+                <v>oco2_Orbit_B11220_260514232543.txt</v>
+                <v>R0620020TR32613915360700.RBD</v>
+                <v>R0620020AS12613911324200.RBD</v>
+            </dmrpp:vlsa>
+        </String>
+    </Group>
 </Dataset>
 ----
 

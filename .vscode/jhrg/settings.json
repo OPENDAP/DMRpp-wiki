@@ -9,9 +9,16 @@
     "files.associations": {
         "*.xsd": "xml"
     },
+
     "[xml]": {
         "editor.wordWrap": "wordWrapColumn",
         "editor.wordWrapColumn": 120,
+        "editor.rulers": [80, 120]
+    },
+
+    "[asciidoc]": {
+        "editor.wordWrap": "wordWrapColumn",
+        "editor.wordWrapColumn": 80,
         "editor.rulers": [80, 120]
     },
     
