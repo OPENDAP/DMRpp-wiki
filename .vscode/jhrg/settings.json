@@ -1,6 +1,19 @@
 {
     "rewrap.wrappingColumn": 120,
+    "rewrap.autoWrap.enabled": true,
+
+    "editor.wordWrap": "wordWrapColumn",
+    "editor.wordWrapColumn": 120,
     "editor.rulers": [80, 120],
+    
+    "files.associations": {
+        "*.xsd": "xml"
+    },
+    "[xml]": {
+        "editor.wordWrap": "wordWrapColumn",
+        "editor.wordWrapColumn": 120,
+        "editor.rulers": [80, 120]
+    },
     
     "cSpell.words": [
         "adoc",

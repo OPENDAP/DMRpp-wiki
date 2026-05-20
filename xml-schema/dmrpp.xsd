@@ -28,6 +28,13 @@
         <xs:list itemType="xs:unsignedLong" />
     </xs:simpleType>
 
+    <!-- Bracketed, comma-separated chunk coordinates, e.g., [1,0,0,0] -->
+<xs:simpleType name="ChunkPositionInArrayExpr">
+    <xs:restriction base="xs:string">
+        <xs:pattern value="\[[0-9]+(,[0-9]+)*\]" />
+    </xs:restriction>
+</xs:simpleType>
+
     <!-- Space-separated list of deflate levels -->
     <xs:simpleType name="DeflateLevelList">
         <xs:list itemType="xs:nonNegativeInteger" />
@@ -251,22 +258,17 @@
         </xs:attribute>
         <!-- Position of this chunk in chunk-space, e.g., "[0,0,0]" -->
         <!-- TODO Our DMZ parser may not enforce this as a required attribute jhrg 12/4/25 -->
-        <xs:attribute name="chunkPositionInArray" type="dmrpp:IndexList" use="required" >
+        <xs:attribute name="chunkPositionInArray" type="dmrpp:ChunkPositionInArrayExpr" use="required" >
             <xs:annotation>
                 <xs:documentation>
-                    The position of this chunk in chunk-space, represented as a
-                    comma-separated list of non-negative integers surrounded by
-                    square brackets. The number of integers must match the
-                    number of chunk dimensions specified in the
-                    'chunkDimensionSizes' element. The value of each integer
-                    indicates the index of this chunk along that dimension in
-                    chunk-space. Chunk-space is a logical grid where each chunk
-                    is indexed based on its position in the overall array, with
-                    indices starting at 0. For example, for a 4D variable
-                    chunked in 10x10x10x10 element blocks, the first chunk would
-                    have "[0,0,0,0]", the second chunk along the first dimension
-                    would have "[1,0,0,0]", and so on. 
-                </xs:documentation>
+                    The position of this chunk in chunk-space, represented as a comma-separated list of non-negative
+                    integers surrounded by square brackets. The number of integers must match the number of chunk
+                    dimensions specified in the 'chunkDimensionSizes' element. The value of each integer indicates the
+                    index of this chunk along that dimension in chunk-space. Chunk-space is a logical grid where each
+                    chunk is indexed based on its position in the overall array, with indices starting at 0. For
+                    example, for a 4D variable chunked in 10x10x10x10 element blocks, the first chunk would have
+                    "[0,0,0,0]", the second chunk along the first dimension would have "[1,0,0,0]", and so on.
+                    </xs:documentation>
             </xs:annotation>
         </xs:attribute>
 
@@ -274,15 +276,11 @@
         <xs:attribute name="fm" type="xs:unsignedInt" use="optional" >
             <xs:annotation>
                 <xs:documentation>
-                    Filter mask for per-chunk filters. This is a 32-bit bitmask
-                    where each bit indicates whether a particular filter in the
-                    'compressionType' attribute was applied to this chunk. In
-                    some cases, filters failed when the data were written. This
-                    mask can be used to determine which filters were actually
-                    applied to this chunk. It is also used with the Direct I/O
-                    optimization since the HDF5 chunk writer API requires this
-                    information. 
-                </xs:documentation>
+                    Filter mask for per-chunk filters. This is a 32-bit bitmask where each bit indicates whether a
+                    particular filter in the 'compressionType' attribute was applied to this chunk. In some cases,
+                    filters failed when the data were written. This mask can be used to determine which filters were
+                    actually applied to this chunk. It is also used with the Direct I/O optimization since the HDF5
+                    chunk writer API requires this information. </xs:documentation>
             </xs:annotation>
         </xs:attribute>
 
@@ -290,11 +288,9 @@
         <xs:attribute name="href" type="xs:anyURI" use="optional" >
             <xs:annotation>
                 <xs:documentation>
-                    Optional override of dataset-level dmrpp:href attribute. If
-                    provided, this is the location of the data for this chunk,
-                    and it overrides any dataset-level 'href' attribute. This
-                    allows different chunks to reference data in multiple files if needed.
-                </xs:documentation>
+                    Optional override of dataset-level dmrpp:href attribute. If provided, this is the location of the
+                    data for this chunk, and it overrides any dataset-level 'href' attribute. This allows different
+                    chunks to reference data in multiple files if needed. </xs:documentation>
             </xs:annotation>
         </xs:attribute>
 
@@ -310,11 +306,9 @@
         <xs:attribute name="LinkedBlockIndex" type="xs:unsignedInt" use="optional" >
             <xs:annotation>
                 <xs:documentation>
-                    For HDF4 data, if this chunk is a linked block chunk
-                    (indicated by the 'LBChunk' attribute), then this attribute
-                    indicates the index of this block in the linked-block chain
-                    for this chunk. The first block in the chain has index 0.
-                </xs:documentation>
+                    For HDF4 data, if this chunk is a linked block chunk (indicated by the 'LBChunk' attribute), then
+                    this attribute indicates the index of this block in the linked-block chain for this chunk. The first
+                    block in the chain has index 0. </xs:documentation>
             </xs:annotation>
         </xs:attribute>
     </xs:complexType>
@@ -404,25 +398,19 @@
     <xs:element name="chunks" type="dmrpp:ChunksType">
         <xs:annotation>
             <xs:documentation>
-                This element is in the DMR++ namespace and is normally written as 'dmrpp:chunks'.
-                Hyrax deviation: the DMZ parser requires this element to literally use the
-                'dmrpp:' prefix.
-            </xs:documentation>
+                This element is in the DMR++ namespace and is normally written as 'dmrpp:chunks'. Hyrax deviation: the
+                DMZ parser requires this element to literally use the 'dmrpp:' prefix. </xs:documentation>
         </xs:annotation>
     </xs:element>
     <xs:element name="chunkDimensionSizes" type="dmrpp:IndexList">
         <xs:annotation>
             <xs:documentation>
-                This element is in the DMR++ namespace and is normally written as
-                'dmrpp:chunkDimensionSizes'. Hyrax deviation: the DMZ parser requires this
-                element to literally use the 'dmrpp:' prefix.
-                Sizes of the chunk dimensions, in order. For example, for a 4D variable
-                chunked in 10x10x10x10 element blocks, this would be "10 10 10 10".
-                However, for HDF5 'contiguous' data (i.e., data that are not chunked
-                in the HDF5 sense but are stored in one contiguous region), this element
-                is omitted. Similarly, for a 'chunk' that consists of only fill values,
-                this element is also omitted.
-            </xs:documentation>
+                This element is in the DMR++ namespace and is normally written as 'dmrpp:chunkDimensionSizes'. Hyrax
+                deviation: the DMZ parser requires this element to literally use the 'dmrpp:' prefix. Sizes of the chunk
+                dimensions, in order. For example, for a 4D variable chunked in 10x10x10x10 element blocks, this would
+                be "10 10 10 10". However, for HDF5 'contiguous' data (i.e., data that are not chunked in the HDF5 sense
+                but are stored in one contiguous region), this element is omitted. Similarly, for a 'chunk' that
+                consists of only fill values, this element is also omitted. </xs:documentation>
         </xs:annotation>
     </xs:element>
     <xs:element name="chunk" type="dmrpp:ChunkType" />
