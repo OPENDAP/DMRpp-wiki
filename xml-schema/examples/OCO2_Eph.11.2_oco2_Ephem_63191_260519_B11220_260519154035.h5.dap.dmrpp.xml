@@ -1,0 +1,1128 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<Dataset xmlns="http://xml.opendap.org/ns/DAP/4.0#" xmlns:dmrpp="http://xml.opendap.org/dap/dmrpp/1.0.0#"
+dapVersion="4.0" dmrVersion="2.0" name="oco2_Ephem_63191_260519_B11220_260519154035.h5"
+dmrpp:href="https://data.gesdisc.earthdata.nasa.gov/data/OCO2_DATA/OCO2_Eph.11.2/2026/139/oco2_Ephem_63191_260519_B11220_260519154035.h5"
+dmrpp:s3="s3://gesdisc-cumulus-prod-protected/OCO2_DATA/OCO2_Eph.11.2/2026/139/oco2_Ephem_63191_260519_B11220_260519154035.h5"
+dmrpp:s3credentials="https://data.gesdisc.earthdata.nasa.gov/s3credentials" dmrpp:trust="true"
+dmrpp:version="3.21.1-1090">
+    <Attribute name="gesdisc_collection" type="String">
+        <Value>11</Value>
+    </Attribute>
+    <Attribute name="build_dmrpp_metadata" type="Container">
+        <Attribute name="created" type="String">
+            <Value>2026-05-20T02:13:39Z</Value>
+        </Attribute>
+        <Attribute name="build_dmrpp" type="String">
+            <Value>3.21.1-1090</Value>
+        </Attribute>
+        <Attribute name="bes" type="String">
+            <Value>3.21.1-1090</Value>
+        </Attribute>
+        <Attribute name="libdap" type="String">
+            <Value>libdap-3.21.1-389</Value>
+        </Attribute>
+        <Attribute name="invocation" type="String">
+            <Value>build_dmrpp -f /tmp/tmp5spdk5gs/oco2_Ephem_63191_260519_B11220_260519154035.h5 -r oco2_Ephem_63191_260519_B11220_260519154035.h5.dmr -u OPeNDAP_DMRpp_DATA_ACCESS_URL -M</Value>
+        </Attribute>
+    </Attribute>
+    <Group name="Dimensions">
+        <Group name="AncFile">
+            <Attribute name="Description" type="String">
+                <Value>Number of ancillary input files.</Value>
+            </Attribute>
+            <Attribute name="Size" type="UInt32">
+                <Value>3</Value>
+            </Attribute>
+        </Group>
+        <Group name="EphemerisElement">
+            <Attribute name="Description" type="String">
+                <Value>Ephemeris element.</Value>
+            </Attribute>
+            <Attribute name="Size" type="UInt32">
+                <Value>6034</Value>
+            </Attribute>
+        </Group>
+        <Group name="Gap">
+            <Attribute name="Description" type="String">
+                <Value>Number of gaps in data.</Value>
+            </Attribute>
+            <Attribute name="Size" type="UInt32">
+                <Value>1</Value>
+            </Attribute>
+        </Group>
+        <Group name="InputPtr">
+            <Attribute name="Description" type="String">
+                <Value>Number of primary input files.</Value>
+            </Attribute>
+            <Attribute name="Size" type="UInt32">
+                <Value>3</Value>
+            </Attribute>
+        </Group>
+    </Group>
+    <Group name="Ephemeris">
+        <UInt16 name="eph_qual_flag">
+            <Dim size="6034"/>
+            <Attribute name="Description" type="String">
+                <Value>Bitfield qual flag, bit pos:  0: data incomplete, 1: pkt length error, 2: non-nominal rate, 3: gap detected, 4: long gap.</Value>
+            </Attribute>
+            <Attribute name="Shape" type="String">
+                <Value>EphemerisElement_Array</Value>
+            </Attribute>
+            <Attribute name="Type" type="String">
+                <Value>IntBitfield16</Value>
+            </Attribute>
+            <dmrpp:chunks compressionType="shuffle deflate" deflateLevel="9" fillValue="0" byteOrder="LE">
+                <dmrpp:chunkDimensionSizes>6034</dmrpp:chunkDimensionSizes>
+                <dmrpp:chunk offset="13848" nBytes="44" chunkPositionInArray="[0]"/>
+            </dmrpp:chunks>
+        </UInt16>
+        <String name="eph_time_string">
+            <Dim size="6034"/>
+            <Attribute name="Description" type="String">
+                <Value>Date and time of the ephemeris measurement (yyyy-mm-ddThh:mm:ss.mmmZ).</Value>
+            </Attribute>
+            <Attribute name="Shape" type="String">
+                <Value>EphemerisElement_Array</Value>
+            </Attribute>
+            <Attribute name="Type" type="String">
+                <Value>FixLenStr</Value>
+            </Attribute>
+            <dmrpp:chunks compressionType="shuffle deflate" deflateLevel="9" fillValue="">
+                <dmrpp:chunkDimensionSizes>378</dmrpp:chunkDimensionSizes>
+                <dmrpp:chunk offset="13892" nBytes="131" chunkPositionInArray="[0]"/>
+                <dmrpp:chunk offset="14023" nBytes="130" chunkPositionInArray="[378]"/>
+                <dmrpp:chunk offset="14153" nBytes="136" chunkPositionInArray="[756]"/>
+                <dmrpp:chunk offset="14289" nBytes="136" chunkPositionInArray="[1134]"/>
+                <dmrpp:chunk offset="14425" nBytes="135" chunkPositionInArray="[1512]"/>
+                <dmrpp:chunk offset="14560" nBytes="137" chunkPositionInArray="[1890]"/>
+                <dmrpp:chunk offset="14697" nBytes="135" chunkPositionInArray="[2268]"/>
+                <dmrpp:chunk offset="14832" nBytes="130" chunkPositionInArray="[2646]"/>
+                <dmrpp:chunk offset="14962" nBytes="135" chunkPositionInArray="[3024]"/>
+                <dmrpp:chunk offset="15097" nBytes="134" chunkPositionInArray="[3402]"/>
+                <dmrpp:chunk offset="15231" nBytes="131" chunkPositionInArray="[3780]"/>
+                <dmrpp:chunk offset="15362" nBytes="133" chunkPositionInArray="[4158]"/>
+                <dmrpp:chunk offset="15495" nBytes="136" chunkPositionInArray="[4536]"/>
+                <dmrpp:chunk offset="15631" nBytes="135" chunkPositionInArray="[4914]"/>
+                <dmrpp:chunk offset="18568" nBytes="137" chunkPositionInArray="[5292]"/>
+                <dmrpp:chunk offset="18705" nBytes="164" chunkPositionInArray="[5670]"/>
+            </dmrpp:chunks>
+            <dmrpp:FixedLengthStringArray string_length="25" pad="null_term"/>
+        </String>
+        <Float64 name="eph_time_tai93">
+            <Dim size="6034"/>
+            <Attribute name="Description" type="String">
+                <Value>Date and time of the ephemeris measurement in seconds since Jan. 1, 1993.</Value>
+            </Attribute>
+            <Attribute name="Shape" type="String">
+                <Value>EphemerisElement_Array</Value>
+            </Attribute>
+            <Attribute name="Type" type="String">
+                <Value>Float64</Value>
+            </Attribute>
+            <Attribute name="Units" type="String">
+                <Value>Seconds</Value>
+            </Attribute>
+            <dmrpp:chunks compressionType="shuffle deflate" deflateLevel="9" fillValue="0" byteOrder="LE">
+                <dmrpp:chunkDimensionSizes>1509</dmrpp:chunkDimensionSizes>
+                <dmrpp:chunk offset="18869" nBytes="642" chunkPositionInArray="[0]"/>
+                <dmrpp:chunk offset="19511" nBytes="653" chunkPositionInArray="[1509]"/>
+                <dmrpp:chunk offset="23376" nBytes="641" chunkPositionInArray="[3018]"/>
+                <dmrpp:chunk offset="24017" nBytes="664" chunkPositionInArray="[4527]"/>
+            </dmrpp:chunks>
+        </Float64>
+        <Float64 name="x_pos">
+            <Dim size="6034"/>
+            <Attribute name="Description" type="String">
+                <Value>X coordinate position of spacecraft, ECI frame.</Value>
+            </Attribute>
+            <Attribute name="Shape" type="String">
+                <Value>EphemerisElement_Array</Value>
+            </Attribute>
+            <Attribute name="Type" type="String">
+                <Value>Float64</Value>
+            </Attribute>
+            <Attribute name="Units" type="String">
+                <Value>Meters</Value>
+            </Attribute>
+            <dmrpp:chunks compressionType="shuffle deflate" deflateLevel="9" fillValue="0" byteOrder="LE">
+                <dmrpp:chunkDimensionSizes>1509</dmrpp:chunkDimensionSizes>
+                <dmrpp:chunk offset="28184" nBytes="9085" chunkPositionInArray="[0]"/>
+                <dmrpp:chunk offset="37269" nBytes="9525" chunkPositionInArray="[1509]"/>
+                <dmrpp:chunk offset="46794" nBytes="9085" chunkPositionInArray="[3018]"/>
+                <dmrpp:chunk offset="55879" nBytes="9500" chunkPositionInArray="[4527]"/>
+            </dmrpp:chunks>
+        </Float64>
+        <Float64 name="x_vel">
+            <Dim size="6034"/>
+            <Attribute name="Description" type="String">
+                <Value>X coordinate velocity of spacecraft, ECI frame.</Value>
+            </Attribute>
+            <Attribute name="Shape" type="String">
+                <Value>EphemerisElement_Array</Value>
+            </Attribute>
+            <Attribute name="Type" type="String">
+                <Value>Float64</Value>
+            </Attribute>
+            <Attribute name="Units" type="String">
+                <Value>Meters Second^{-1}</Value>
+            </Attribute>
+            <dmrpp:chunks compressionType="shuffle deflate" deflateLevel="9" fillValue="0" byteOrder="LE">
+                <dmrpp:chunkDimensionSizes>1509</dmrpp:chunkDimensionSizes>
+                <dmrpp:chunk offset="68139" nBytes="9517" chunkPositionInArray="[0]"/>
+                <dmrpp:chunk offset="77656" nBytes="9088" chunkPositionInArray="[1509]"/>
+                <dmrpp:chunk offset="86744" nBytes="9508" chunkPositionInArray="[3018]"/>
+                <dmrpp:chunk offset="96252" nBytes="9102" chunkPositionInArray="[4527]"/>
+            </dmrpp:chunks>
+        </Float64>
+        <Float64 name="y_pos">
+            <Dim size="6034"/>
+            <Attribute name="Description" type="String">
+                <Value>Y coordinate position of spacecraft, ECI frame.</Value>
+            </Attribute>
+            <Attribute name="Shape" type="String">
+                <Value>EphemerisElement_Array</Value>
+            </Attribute>
+            <Attribute name="Type" type="String">
+                <Value>Float64</Value>
+            </Attribute>
+            <Attribute name="Units" type="String">
+                <Value>Meters</Value>
+            </Attribute>
+            <dmrpp:chunks compressionType="shuffle deflate" deflateLevel="9" fillValue="0" byteOrder="LE">
+                <dmrpp:chunkDimensionSizes>1509</dmrpp:chunkDimensionSizes>
+                <dmrpp:chunk offset="108290" nBytes="9267" chunkPositionInArray="[0]"/>
+                <dmrpp:chunk offset="117557" nBytes="9275" chunkPositionInArray="[1509]"/>
+                <dmrpp:chunk offset="126832" nBytes="9340" chunkPositionInArray="[3018]"/>
+                <dmrpp:chunk offset="136172" nBytes="9213" chunkPositionInArray="[4527]"/>
+            </dmrpp:chunks>
+        </Float64>
+        <Float64 name="y_vel">
+            <Dim size="6034"/>
+            <Attribute name="Description" type="String">
+                <Value>Y coordinate velocity of spacecraft, ECI frame.</Value>
+            </Attribute>
+            <Attribute name="Shape" type="String">
+                <Value>EphemerisElement_Array</Value>
+            </Attribute>
+            <Attribute name="Type" type="String">
+                <Value>Float64</Value>
+            </Attribute>
+            <Attribute name="Units" type="String">
+                <Value>Meters Second^{-1}</Value>
+            </Attribute>
+            <dmrpp:chunks compressionType="shuffle deflate" deflateLevel="9" fillValue="0" byteOrder="LE">
+                <dmrpp:chunkDimensionSizes>1509</dmrpp:chunkDimensionSizes>
+                <dmrpp:chunk offset="148145" nBytes="9328" chunkPositionInArray="[0]"/>
+                <dmrpp:chunk offset="157473" nBytes="9301" chunkPositionInArray="[1509]"/>
+                <dmrpp:chunk offset="166774" nBytes="9235" chunkPositionInArray="[3018]"/>
+                <dmrpp:chunk offset="176009" nBytes="9386" chunkPositionInArray="[4527]"/>
+            </dmrpp:chunks>
+        </Float64>
+        <Float64 name="z_pos">
+            <Dim size="6034"/>
+            <Attribute name="Description" type="String">
+                <Value>Z coordinate position of spacecraft, ECI frame.</Value>
+            </Attribute>
+            <Attribute name="Shape" type="String">
+                <Value>EphemerisElement_Array</Value>
+            </Attribute>
+            <Attribute name="Type" type="String">
+                <Value>Float64</Value>
+            </Attribute>
+            <Attribute name="Units" type="String">
+                <Value>Meters</Value>
+            </Attribute>
+            <dmrpp:chunks compressionType="shuffle deflate" deflateLevel="9" fillValue="0" byteOrder="LE">
+                <dmrpp:chunkDimensionSizes>1509</dmrpp:chunkDimensionSizes>
+                <dmrpp:chunk offset="188155" nBytes="9358" chunkPositionInArray="[0]"/>
+                <dmrpp:chunk offset="197513" nBytes="9264" chunkPositionInArray="[1509]"/>
+                <dmrpp:chunk offset="206777" nBytes="9265" chunkPositionInArray="[3018]"/>
+                <dmrpp:chunk offset="216042" nBytes="9364" chunkPositionInArray="[4527]"/>
+            </dmrpp:chunks>
+        </Float64>
+        <Float64 name="z_vel">
+            <Dim size="6034"/>
+            <Attribute name="Description" type="String">
+                <Value>Z coordinate velocity of spacecraft, ECI frame.</Value>
+            </Attribute>
+            <Attribute name="Shape" type="String">
+                <Value>EphemerisElement_Array</Value>
+            </Attribute>
+            <Attribute name="Type" type="String">
+                <Value>Float64</Value>
+            </Attribute>
+            <Attribute name="Units" type="String">
+                <Value>Meters Second^{-1}</Value>
+            </Attribute>
+            <dmrpp:chunks compressionType="shuffle deflate" deflateLevel="9" fillValue="0" byteOrder="LE">
+                <dmrpp:chunkDimensionSizes>1509</dmrpp:chunkDimensionSizes>
+                <dmrpp:chunk offset="228494" nBytes="9224" chunkPositionInArray="[0]"/>
+                <dmrpp:chunk offset="237718" nBytes="9311" chunkPositionInArray="[1509]"/>
+                <dmrpp:chunk offset="247029" nBytes="9302" chunkPositionInArray="[3018]"/>
+                <dmrpp:chunk offset="256331" nBytes="9251" chunkPositionInArray="[4527]"/>
+            </dmrpp:chunks>
+        </Float64>
+    </Group>
+    <Group name="Metadata">
+        <String name="AncillaryDataDescriptors">
+            <Dim size="3"/>
+            <Attribute name="Description" type="String">
+                <Value>The file names of the ancillary data files that were used to generate this product (ancillary data sets include all input files except for the primary input files).</Value>
+            </Attribute>
+            <Attribute name="Shape" type="String">
+                <Value>AncFile_Array</Value>
+            </Attribute>
+            <Attribute name="Type" type="String">
+                <Value>VarLenStr</Value>
+            </Attribute>
+            <dmrpp:vlsa>
+                <v>oco2_Oco2L0Ane_260519111642_Ops_B11220_r01_260519154035.config</v>
+                <v>oco2_Ane_sfif_210617152646.xml</v>
+                <v>oco2_Ane_apf_150204153406.xml</v>
+            </dmrpp:vlsa>
+        </String>
+        <String name="AscendingEquatorCrossingDate">
+            <Dim size="1"/>
+            <Attribute name="Description" type="String">
+                <Value>The date of the equator crossing of the spacecraft ground track in the ascending direction.</Value>
+            </Attribute>
+            <Attribute name="Shape" type="String">
+                <Value>Scalar</Value>
+            </Attribute>
+            <Attribute name="Type" type="String">
+                <Value>FixLenStr</Value>
+            </Attribute>
+            <dmrpp:chunks compressionType="shuffle deflate" deflateLevel="9" fillValue="">
+                <dmrpp:chunkDimensionSizes>1</dmrpp:chunkDimensionSizes>
+                <dmrpp:chunk offset="15790" nBytes="19" chunkPositionInArray="[0]"/>
+            </dmrpp:chunks>
+            <dmrpp:FixedLengthStringArray string_length="11" pad="null_term"/>
+        </String>
+        <Float32 name="AscendingEquatorCrossingLongitude">
+            <Dim size="1"/>
+            <Attribute name="Description" type="String">
+                <Value>The longitude of the equator crossing of the spacecraft ground track in the ascending direction.</Value>
+            </Attribute>
+            <Attribute name="Maximum" type="Float32">
+                <Value>180.</Value>
+            </Attribute>
+            <Attribute name="Minimum" type="Float32">
+                <Value>-180.</Value>
+            </Attribute>
+            <Attribute name="Shape" type="String">
+                <Value>Scalar</Value>
+            </Attribute>
+            <Attribute name="Type" type="String">
+                <Value>Float32</Value>
+            </Attribute>
+            <Attribute name="Units" type="String">
+                <Value>Degrees</Value>
+            </Attribute>
+            <dmrpp:chunks compressionType="shuffle deflate" deflateLevel="9" fillValue="0" byteOrder="LE">
+                <dmrpp:chunkDimensionSizes>1</dmrpp:chunkDimensionSizes>
+                <dmrpp:chunk offset="15809" nBytes="12" chunkPositionInArray="[0]"/>
+            </dmrpp:chunks>
+        </Float32>
+        <String name="AscendingEquatorCrossingTime">
+            <Dim size="1"/>
+            <Attribute name="Description" type="String">
+                <Value>The time of the equator crossing of the spacecraft ground track in the ascending direction.</Value>
+            </Attribute>
+            <Attribute name="Shape" type="String">
+                <Value>Scalar</Value>
+            </Attribute>
+            <Attribute name="Type" type="String">
+                <Value>FixLenStr</Value>
+            </Attribute>
+            <dmrpp:chunks compressionType="shuffle deflate" deflateLevel="9" fillValue="">
+                <dmrpp:chunkDimensionSizes>1</dmrpp:chunkDimensionSizes>
+                <dmrpp:chunk offset="15821" nBytes="22" chunkPositionInArray="[0]"/>
+            </dmrpp:chunks>
+            <dmrpp:FixedLengthStringArray string_length="14" pad="null_term"/>
+        </String>
+        <String name="BuildId">
+            <Dim size="1"/>
+            <Attribute name="Description" type="String">
+                <Value>The ID of build in which included the software that created this product.</Value>
+            </Attribute>
+            <Attribute name="Shape" type="String">
+                <Value>Scalar</Value>
+            </Attribute>
+            <Attribute name="Type" type="String">
+                <Value>VarLenStr</Value>
+            </Attribute>
+            <dmrpp:vlsa>
+                <v>B11.2.05</v>
+            </dmrpp:vlsa>
+        </String>
+        <String name="CollectionLabel">
+            <Dim size="1"/>
+            <Attribute name="Description" type="String">
+                <Value>Label of the data collection containing this product.</Value>
+            </Attribute>
+            <Attribute name="Shape" type="String">
+                <Value>Scalar</Value>
+            </Attribute>
+            <Attribute name="Type" type="String">
+                <Value>VarLenStr</Value>
+            </Attribute>
+            <dmrpp:vlsa>
+                <v>Ops_B11220_r01</v>
+            </dmrpp:vlsa>
+        </String>
+        <String name="DataFormatType">
+            <Dim size="1"/>
+            <Attribute name="Description" type="String">
+                <Value>A character string that describes the internal format of the data product.</Value>
+            </Attribute>
+            <Attribute name="Shape" type="String">
+                <Value>Scalar</Value>
+            </Attribute>
+            <Attribute name="Type" type="String">
+                <Value>VarLenStr</Value>
+            </Attribute>
+            <dmrpp:vlsa>
+                <v>NCSA HDF</v>
+            </dmrpp:vlsa>
+        </String>
+        <String name="EphemerisType">
+            <Dim size="1"/>
+            <Attribute name="Description" type="String">
+                <Value>The source of the spacecraft ephemeris data that were utilized to generate this data file.</Value>
+            </Attribute>
+            <Attribute name="Shape" type="String">
+                <Value>Scalar</Value>
+            </Attribute>
+            <Attribute name="Type" type="String">
+                <Value>VarLenStr</Value>
+            </Attribute>
+            <dmrpp:vlsa>
+                <v>GPS</v>
+            </dmrpp:vlsa>
+        </String>
+        <String name="EquatorCrossingDate">
+            <Dim size="1"/>
+            <Attribute name="Description" type="String">
+                <Value>The date of the equator crossing of the spacecraft ground track in the descending direction.</Value>
+            </Attribute>
+            <Attribute name="Shape" type="String">
+                <Value>Scalar</Value>
+            </Attribute>
+            <Attribute name="Type" type="String">
+                <Value>FixLenStr</Value>
+            </Attribute>
+            <dmrpp:chunks compressionType="shuffle deflate" deflateLevel="9" fillValue="">
+                <dmrpp:chunkDimensionSizes>1</dmrpp:chunkDimensionSizes>
+                <dmrpp:chunk offset="20181" nBytes="19" chunkPositionInArray="[0]"/>
+            </dmrpp:chunks>
+            <dmrpp:FixedLengthStringArray string_length="11" pad="null_term"/>
+        </String>
+        <Float32 name="EquatorCrossingLongitude">
+            <Dim size="1"/>
+            <Attribute name="Description" type="String">
+                <Value>The longitude of the equator crossing of the spacecraft ground track in the descending direction.</Value>
+            </Attribute>
+            <Attribute name="Maximum" type="Float32">
+                <Value>180.</Value>
+            </Attribute>
+            <Attribute name="Minimum" type="Float32">
+                <Value>-180.</Value>
+            </Attribute>
+            <Attribute name="Shape" type="String">
+                <Value>Scalar</Value>
+            </Attribute>
+            <Attribute name="Type" type="String">
+                <Value>Float32</Value>
+            </Attribute>
+            <Attribute name="Units" type="String">
+                <Value>Degrees</Value>
+            </Attribute>
+            <dmrpp:chunks compressionType="shuffle deflate" deflateLevel="9" fillValue="0" byteOrder="LE">
+                <dmrpp:chunkDimensionSizes>1</dmrpp:chunkDimensionSizes>
+                <dmrpp:chunk offset="20200" nBytes="12" chunkPositionInArray="[0]"/>
+            </dmrpp:chunks>
+        </Float32>
+        <String name="EquatorCrossingTime">
+            <Dim size="1"/>
+            <Attribute name="Description" type="String">
+                <Value>The time of the equator crossing of the spacecraft ground track in the descending direction.</Value>
+            </Attribute>
+            <Attribute name="Shape" type="String">
+                <Value>Scalar</Value>
+            </Attribute>
+            <Attribute name="Type" type="String">
+                <Value>FixLenStr</Value>
+            </Attribute>
+            <dmrpp:chunks compressionType="shuffle deflate" deflateLevel="9" fillValue="">
+                <dmrpp:chunkDimensionSizes>1</dmrpp:chunkDimensionSizes>
+                <dmrpp:chunk offset="20212" nBytes="22" chunkPositionInArray="[0]"/>
+            </dmrpp:chunks>
+            <dmrpp:FixedLengthStringArray string_length="14" pad="null_term"/>
+        </String>
+        <String name="GapStartTime">
+            <Dim size="1"/>
+            <Attribute name="Description" type="String">
+                <Value>The timestamp after which a nonexistent, unnecessary, spurious, questionable, or erroneous data segment begins.</Value>
+            </Attribute>
+            <Attribute name="Shape" type="String">
+                <Value>Gap_Array</Value>
+            </Attribute>
+            <Attribute name="Type" type="String">
+                <Value>FixLenStr</Value>
+            </Attribute>
+            <dmrpp:chunks compressionType="shuffle deflate" deflateLevel="9" fillValue="">
+                <dmrpp:chunkDimensionSizes>1</dmrpp:chunkDimensionSizes>
+                <dmrpp:chunk offset="20234" nBytes="28" chunkPositionInArray="[0]"/>
+            </dmrpp:chunks>
+            <dmrpp:FixedLengthStringArray string_length="25" pad="null_term"/>
+        </String>
+        <String name="GapStopTime">
+            <Dim size="1"/>
+            <Attribute name="Description" type="String">
+                <Value>The timestamp before which a nonexistent, unnecessary, spurious, questionable, or erroneous data segment ends.</Value>
+            </Attribute>
+            <Attribute name="Shape" type="String">
+                <Value>Gap_Array</Value>
+            </Attribute>
+            <Attribute name="Type" type="String">
+                <Value>FixLenStr</Value>
+            </Attribute>
+            <dmrpp:chunks compressionType="shuffle deflate" deflateLevel="9" fillValue="">
+                <dmrpp:chunkDimensionSizes>1</dmrpp:chunkDimensionSizes>
+                <dmrpp:chunk offset="20262" nBytes="28" chunkPositionInArray="[0]"/>
+            </dmrpp:chunks>
+            <dmrpp:FixedLengthStringArray string_length="25" pad="null_term"/>
+        </String>
+        <String name="GranulePointer">
+            <Dim size="1"/>
+            <Attribute name="Description" type="String">
+                <Value>The filename of this product.</Value>
+            </Attribute>
+            <Attribute name="Shape" type="String">
+                <Value>Scalar</Value>
+            </Attribute>
+            <Attribute name="Type" type="String">
+                <Value>VarLenStr</Value>
+            </Attribute>
+            <dmrpp:vlsa>
+                <v>oco2_Ephem_63191_260519_B11220_260519154035.h5</v>
+            </dmrpp:vlsa>
+        </String>
+        <String name="HDFVersionId">
+            <Dim size="1"/>
+            <Attribute name="Description" type="String">
+                <Value>A character string that identifies the version of the HDF (Hierarchical Data Format) software that was used to generate this data file.</Value>
+            </Attribute>
+            <Attribute name="Shape" type="String">
+                <Value>Scalar</Value>
+            </Attribute>
+            <Attribute name="Type" type="String">
+                <Value>VarLenStr</Value>
+            </Attribute>
+            <dmrpp:vlsa>
+                <v>HDF5 1.8.22</v>
+            </dmrpp:vlsa>
+        </String>
+        <String name="InputPointer">
+            <Dim size="3"/>
+            <Attribute name="Description" type="String">
+                <Value>A pointer to one or more data granules that provide the major input that was used to generate this product.</Value>
+            </Attribute>
+            <Attribute name="Shape" type="String">
+                <Value>InputPtr_Array</Value>
+            </Attribute>
+            <Attribute name="Type" type="String">
+                <Value>VarLenStr</Value>
+            </Attribute>
+            <dmrpp:vlsa>
+                <v>oco2_Orbit_B11220_260514232543.txt</v>
+                <v>R0620020TR32613915360700.RBD</v>
+                <v>R0620020AS12613911324200.RBD</v>
+            </dmrpp:vlsa>
+        </String>
+        <String name="InstrumentShortName">
+            <Dim size="1"/>
+            <Attribute name="Description" type="String">
+                <Value>The name of the instrument that collected the telemetry data.</Value>
+            </Attribute>
+            <Attribute name="Shape" type="String">
+                <Value>Scalar</Value>
+            </Attribute>
+            <Attribute name="Type" type="String">
+                <Value>VarLenStr</Value>
+            </Attribute>
+            <dmrpp:vlsa>
+                <v>OCO-2</v>
+            </dmrpp:vlsa>
+        </String>
+        <String name="LongName">
+            <Dim size="1"/>
+            <Attribute name="Description" type="String">
+                <Value>A complete descriptive name for the data type of this product.</Value>
+            </Attribute>
+            <Attribute name="Shape" type="String">
+                <Value>Scalar</Value>
+            </Attribute>
+            <Attribute name="Type" type="String">
+                <Value>VarLenStr</Value>
+            </Attribute>
+            <dmrpp:vlsa>
+                <v>OCO-2 orbit based determined ephemeris extracted from telemetry</v>
+            </dmrpp:vlsa>
+        </String>
+        <Float32 name="OrbitEccentricity">
+            <Dim size="1"/>
+            <Attribute name="Description" type="String">
+                <Value>The eccentricity of the spacecraft orbital path.</Value>
+            </Attribute>
+            <Attribute name="Shape" type="String">
+                <Value>Scalar</Value>
+            </Attribute>
+            <Attribute name="Type" type="String">
+                <Value>Float32</Value>
+            </Attribute>
+            <dmrpp:chunks compressionType="shuffle deflate" deflateLevel="9" fillValue="0" byteOrder="LE">
+                <dmrpp:chunkDimensionSizes>1</dmrpp:chunkDimensionSizes>
+                <dmrpp:chunk offset="20400" nBytes="12" chunkPositionInArray="[0]"/>
+            </dmrpp:chunks>
+        </Float32>
+        <Float32 name="OrbitInclination">
+            <Dim size="1"/>
+            <Attribute name="Description" type="String">
+                <Value>The angle between the plane of the spacecraft orbital path and the Earth equatorial plane.</Value>
+            </Attribute>
+            <Attribute name="Maximum" type="Float32">
+                <Value>180.</Value>
+            </Attribute>
+            <Attribute name="Minimum" type="Float32">
+                <Value>0.</Value>
+            </Attribute>
+            <Attribute name="Shape" type="String">
+                <Value>Scalar</Value>
+            </Attribute>
+            <Attribute name="Type" type="String">
+                <Value>Float32</Value>
+            </Attribute>
+            <Attribute name="Units" type="String">
+                <Value>Degrees</Value>
+            </Attribute>
+            <dmrpp:chunks compressionType="shuffle deflate" deflateLevel="9" fillValue="0" byteOrder="LE">
+                <dmrpp:chunkDimensionSizes>1</dmrpp:chunkDimensionSizes>
+                <dmrpp:chunk offset="20412" nBytes="12" chunkPositionInArray="[0]"/>
+            </dmrpp:chunks>
+        </Float32>
+        <Float32 name="OrbitPeriod">
+            <Dim size="1"/>
+            <Attribute name="Description" type="String">
+                <Value>The time span between two consecutive descending node crossings.</Value>
+            </Attribute>
+            <Attribute name="Shape" type="String">
+                <Value>Scalar</Value>
+            </Attribute>
+            <Attribute name="Type" type="String">
+                <Value>Float32</Value>
+            </Attribute>
+            <Attribute name="Units" type="String">
+                <Value>Seconds</Value>
+            </Attribute>
+            <dmrpp:chunks compressionType="shuffle deflate" deflateLevel="9" fillValue="0" byteOrder="LE">
+                <dmrpp:chunkDimensionSizes>1</dmrpp:chunkDimensionSizes>
+                <dmrpp:chunk offset="20424" nBytes="12" chunkPositionInArray="[0]"/>
+            </dmrpp:chunks>
+        </Float32>
+        <Float32 name="OrbitSemiMajorAxis">
+            <Dim size="1"/>
+            <Attribute name="Description" type="String">
+                <Value>The length of the semimajor axis of the spacecraft orbit.</Value>
+            </Attribute>
+            <Attribute name="Shape" type="String">
+                <Value>Scalar</Value>
+            </Attribute>
+            <Attribute name="Type" type="String">
+                <Value>Float32</Value>
+            </Attribute>
+            <Attribute name="Units" type="String">
+                <Value>Meters</Value>
+            </Attribute>
+            <dmrpp:chunks compressionType="shuffle deflate" deflateLevel="9" fillValue="0" byteOrder="LE">
+                <dmrpp:chunkDimensionSizes>1</dmrpp:chunkDimensionSizes>
+                <dmrpp:chunk offset="20436" nBytes="12" chunkPositionInArray="[0]"/>
+            </dmrpp:chunks>
+        </Float32>
+        <String name="OrbitStartDate">
+            <Dim size="1"/>
+            <Attribute name="Description" type="String">
+                <Value>The date of the equator crossing of the spacecraft nadir track in the decending direction.</Value>
+            </Attribute>
+            <Attribute name="Shape" type="String">
+                <Value>Scalar</Value>
+            </Attribute>
+            <Attribute name="Type" type="String">
+                <Value>FixLenStr</Value>
+            </Attribute>
+            <dmrpp:chunks compressionType="shuffle deflate" deflateLevel="9" fillValue="">
+                <dmrpp:chunkDimensionSizes>1</dmrpp:chunkDimensionSizes>
+                <dmrpp:chunk offset="20448" nBytes="19" chunkPositionInArray="[0]"/>
+            </dmrpp:chunks>
+            <dmrpp:FixedLengthStringArray string_length="11" pad="null_term"/>
+        </String>
+        <Float32 name="OrbitStartLongitude">
+            <Dim size="1"/>
+            <Attribute name="Description" type="String">
+                <Value>The longitude of the equator crossing of the spacecraft ground track in the decending direction.</Value>
+            </Attribute>
+            <Attribute name="Maximum" type="Float32">
+                <Value>180.</Value>
+            </Attribute>
+            <Attribute name="Minimum" type="Float32">
+                <Value>-180.</Value>
+            </Attribute>
+            <Attribute name="Shape" type="String">
+                <Value>Scalar</Value>
+            </Attribute>
+            <Attribute name="Type" type="String">
+                <Value>Float32</Value>
+            </Attribute>
+            <Attribute name="Units" type="String">
+                <Value>Degrees</Value>
+            </Attribute>
+            <dmrpp:chunks compressionType="shuffle deflate" deflateLevel="9" fillValue="0" byteOrder="LE">
+                <dmrpp:chunkDimensionSizes>1</dmrpp:chunkDimensionSizes>
+                <dmrpp:chunk offset="20467" nBytes="12" chunkPositionInArray="[0]"/>
+            </dmrpp:chunks>
+        </Float32>
+        <String name="OrbitStartTime">
+            <Dim size="1"/>
+            <Attribute name="Description" type="String">
+                <Value>The time of the equator crossing of the spacecraft ground track in the decending direction.</Value>
+            </Attribute>
+            <Attribute name="Shape" type="String">
+                <Value>Scalar</Value>
+            </Attribute>
+            <Attribute name="Type" type="String">
+                <Value>FixLenStr</Value>
+            </Attribute>
+            <dmrpp:chunks compressionType="shuffle deflate" deflateLevel="9" fillValue="">
+                <dmrpp:chunkDimensionSizes>1</dmrpp:chunkDimensionSizes>
+                <dmrpp:chunk offset="20479" nBytes="22" chunkPositionInArray="[0]"/>
+            </dmrpp:chunks>
+            <dmrpp:FixedLengthStringArray string_length="14" pad="null_term"/>
+        </String>
+        <String name="PlatformLongName">
+            <Dim size="1"/>
+            <Attribute name="Description" type="String">
+                <Value>A descriptive name of the platform which acquires the accompanying data.</Value>
+            </Attribute>
+            <Attribute name="Shape" type="String">
+                <Value>Scalar</Value>
+            </Attribute>
+            <Attribute name="Type" type="String">
+                <Value>VarLenStr</Value>
+            </Attribute>
+            <dmrpp:vlsa>
+                <v>Orbiting Carbon Observatory 2</v>
+            </dmrpp:vlsa>
+        </String>
+        <String name="PlatformShortName">
+            <Dim size="1"/>
+            <Attribute name="Description" type="String">
+                <Value>The short name of platform which acquires the accompanying data.</Value>
+            </Attribute>
+            <Attribute name="Shape" type="String">
+                <Value>Scalar</Value>
+            </Attribute>
+            <Attribute name="Type" type="String">
+                <Value>VarLenStr</Value>
+            </Attribute>
+            <dmrpp:vlsa>
+                <v>OCO-2</v>
+            </dmrpp:vlsa>
+        </String>
+        <String name="PlatformType">
+            <Dim size="1"/>
+            <Attribute name="Description" type="String">
+                <Value>The type of platform associated with the instrument which acquires the accompanying data.</Value>
+            </Attribute>
+            <Attribute name="Shape" type="String">
+                <Value>Scalar</Value>
+            </Attribute>
+            <Attribute name="Type" type="String">
+                <Value>VarLenStr</Value>
+            </Attribute>
+            <dmrpp:vlsa>
+                <v>spacecraft</v>
+            </dmrpp:vlsa>
+        </String>
+        <String name="ProcessingLevel">
+            <Dim size="1"/>
+            <Attribute name="Description" type="String">
+                <Value>Indicates data level (Level 0, Level 1A, Level 1B, Level 2) in this product.</Value>
+            </Attribute>
+            <Attribute name="Shape" type="String">
+                <Value>Scalar</Value>
+            </Attribute>
+            <Attribute name="Type" type="String">
+                <Value>VarLenStr</Value>
+            </Attribute>
+            <dmrpp:vlsa>
+                <v>Level 1A</v>
+            </dmrpp:vlsa>
+        </String>
+        <String name="ProducerAgency">
+            <Dim size="1"/>
+            <Attribute name="Description" type="String">
+                <Value>Identification of the agency that provides the project funding.</Value>
+            </Attribute>
+            <Attribute name="Shape" type="String">
+                <Value>Scalar</Value>
+            </Attribute>
+            <Attribute name="Type" type="String">
+                <Value>VarLenStr</Value>
+            </Attribute>
+            <dmrpp:vlsa>
+                <v>NASA</v>
+            </dmrpp:vlsa>
+        </String>
+        <String name="ProducerInstitution">
+            <Dim size="1"/>
+            <Attribute name="Description" type="String">
+                <Value>Identification of the institution that provides project management.</Value>
+            </Attribute>
+            <Attribute name="Shape" type="String">
+                <Value>Scalar</Value>
+            </Attribute>
+            <Attribute name="Type" type="String">
+                <Value>VarLenStr</Value>
+            </Attribute>
+            <dmrpp:vlsa>
+                <v>JPL</v>
+            </dmrpp:vlsa>
+        </String>
+        <String name="ProductionDateTime">
+            <Dim size="1"/>
+            <Attribute name="Description" type="String">
+                <Value>The date and time at which the product was created  (yyyy-mm-ddThh:mm:ss.mmmZ).</Value>
+            </Attribute>
+            <Attribute name="Shape" type="String">
+                <Value>Scalar</Value>
+            </Attribute>
+            <Attribute name="Type" type="String">
+                <Value>FixLenStr</Value>
+            </Attribute>
+            <dmrpp:chunks compressionType="shuffle deflate" deflateLevel="9" fillValue="">
+                <dmrpp:chunkDimensionSizes>1</dmrpp:chunkDimensionSizes>
+                <dmrpp:chunk offset="24701" nBytes="33" chunkPositionInArray="[0]"/>
+            </dmrpp:chunks>
+            <dmrpp:FixedLengthStringArray string_length="25" pad="null_term"/>
+        </String>
+        <String name="ProductionLocation">
+            <Dim size="1"/>
+            <Attribute name="Description" type="String">
+                <Value>Facility in which this file was produced, typically:  'Operations Pipeline', 'Operations Pipeline 2', 'Science Computing Facility', 'Test Pipeline', 'Test Pipeline 2'.</Value>
+            </Attribute>
+            <Attribute name="Shape" type="String">
+                <Value>Scalar</Value>
+            </Attribute>
+            <Attribute name="Type" type="String">
+                <Value>VarLenStr</Value>
+            </Attribute>
+            <dmrpp:vlsa>
+                <v>Operations Pipeline</v>
+            </dmrpp:vlsa>
+        </String>
+        <String name="ProductionLocationCode">
+            <Dim size="1"/>
+            <Attribute name="Description" type="String">
+                <Value>One-letter code indicating the ProductionLocation, typically: ' ' - Operations Pipelines (1) or 2, 's' - Science Computing Facility, 't' - Test Pipelines (1) or 2.</Value>
+            </Attribute>
+            <Attribute name="Shape" type="String">
+                <Value>Scalar</Value>
+            </Attribute>
+            <Attribute name="Type" type="String">
+                <Value>FixLenStr</Value>
+            </Attribute>
+            <dmrpp:chunks compressionType="shuffle deflate" deflateLevel="9" fillValue="">
+                <dmrpp:chunkDimensionSizes>1</dmrpp:chunkDimensionSizes>
+                <dmrpp:chunk offset="20601" nBytes="10" chunkPositionInArray="[0]"/>
+            </dmrpp:chunks>
+            <dmrpp:FixedLengthStringArray string_length="2" pad="null_term"/>
+        </String>
+        <String name="ProjectId">
+            <Dim size="1"/>
+            <Attribute name="Description" type="String">
+                <Value>The project identification string.</Value>
+            </Attribute>
+            <Attribute name="Shape" type="String">
+                <Value>Scalar</Value>
+            </Attribute>
+            <Attribute name="Type" type="String">
+                <Value>VarLenStr</Value>
+            </Attribute>
+            <dmrpp:vlsa>
+                <v>OCO-2</v>
+            </dmrpp:vlsa>
+        </String>
+        <String name="QAGranulePointer">
+            <Dim size="1"/>
+            <Attribute name="Description" type="String">
+                <Value>A pointer to the quality assessment product that was generated with this product.</Value>
+            </Attribute>
+            <Attribute name="Shape" type="String">
+                <Value>Scalar</Value>
+            </Attribute>
+            <Attribute name="Type" type="String">
+                <Value>VarLenStr</Value>
+            </Attribute>
+            <dmrpp:vlsa>
+                <v>oco2_qEphem_63191_260519_B11220_260519154035.txt</v>
+            </dmrpp:vlsa>
+        </String>
+        <String name="RangeBeginningDate">
+            <Dim size="1"/>
+            <Attribute name="Description" type="String">
+                <Value>The date on which the earliest data contained in the product were acquired (yyyy-mm-dd).</Value>
+            </Attribute>
+            <Attribute name="Shape" type="String">
+                <Value>Scalar</Value>
+            </Attribute>
+            <Attribute name="Type" type="String">
+                <Value>FixLenStr</Value>
+            </Attribute>
+            <dmrpp:chunks compressionType="shuffle deflate" deflateLevel="9" fillValue="">
+                <dmrpp:chunkDimensionSizes>1</dmrpp:chunkDimensionSizes>
+                <dmrpp:chunk offset="24794" nBytes="19" chunkPositionInArray="[0]"/>
+            </dmrpp:chunks>
+            <dmrpp:FixedLengthStringArray string_length="11" pad="null_term"/>
+        </String>
+        <String name="RangeBeginningTime">
+            <Dim size="1"/>
+            <Attribute name="Description" type="String">
+                <Value>The time at which the earliest data contained in the product were acquired (hh:mm:ss.mmmZ).</Value>
+            </Attribute>
+            <Attribute name="Shape" type="String">
+                <Value>Scalar</Value>
+            </Attribute>
+            <Attribute name="Type" type="String">
+                <Value>FixLenStr</Value>
+            </Attribute>
+            <dmrpp:chunks compressionType="shuffle deflate" deflateLevel="9" fillValue="">
+                <dmrpp:chunkDimensionSizes>1</dmrpp:chunkDimensionSizes>
+                <dmrpp:chunk offset="24813" nBytes="22" chunkPositionInArray="[0]"/>
+            </dmrpp:chunks>
+            <dmrpp:FixedLengthStringArray string_length="14" pad="null_term"/>
+        </String>
+        <String name="RangeEndingDate">
+            <Dim size="1"/>
+            <Attribute name="Description" type="String">
+                <Value>The date on which the latest data contained in the product were acquired (yyyy-mm-dd).</Value>
+            </Attribute>
+            <Attribute name="Shape" type="String">
+                <Value>Scalar</Value>
+            </Attribute>
+            <Attribute name="Type" type="String">
+                <Value>FixLenStr</Value>
+            </Attribute>
+            <dmrpp:chunks compressionType="shuffle deflate" deflateLevel="9" fillValue="">
+                <dmrpp:chunkDimensionSizes>1</dmrpp:chunkDimensionSizes>
+                <dmrpp:chunk offset="24835" nBytes="19" chunkPositionInArray="[0]"/>
+            </dmrpp:chunks>
+            <dmrpp:FixedLengthStringArray string_length="11" pad="null_term"/>
+        </String>
+        <String name="RangeEndingTime">
+            <Dim size="1"/>
+            <Attribute name="Description" type="String">
+                <Value>The time at which the latest data contained in the product were acquired (hh:mm:ss.mmmZ).</Value>
+            </Attribute>
+            <Attribute name="Shape" type="String">
+                <Value>Scalar</Value>
+            </Attribute>
+            <Attribute name="Type" type="String">
+                <Value>FixLenStr</Value>
+            </Attribute>
+            <dmrpp:chunks compressionType="shuffle deflate" deflateLevel="9" fillValue="">
+                <dmrpp:chunkDimensionSizes>1</dmrpp:chunkDimensionSizes>
+                <dmrpp:chunk offset="24854" nBytes="22" chunkPositionInArray="[0]"/>
+            </dmrpp:chunks>
+            <dmrpp:FixedLengthStringArray string_length="14" pad="null_term"/>
+        </String>
+        <String name="SISName">
+            <Dim size="1"/>
+            <Attribute name="Description" type="String">
+                <Value>The name of the document describing the contents of the product.</Value>
+            </Attribute>
+            <Attribute name="Shape" type="String">
+                <Value>Scalar</Value>
+            </Attribute>
+            <Attribute name="Type" type="String">
+                <Value>VarLenStr</Value>
+            </Attribute>
+            <dmrpp:vlsa>
+                <v>OCO-2 Data Bible</v>
+            </dmrpp:vlsa>
+        </String>
+        <String name="SISVersion">
+            <Dim size="1"/>
+            <Attribute name="Description" type="String">
+                <Value>The version of the document describing the contents of the product.</Value>
+            </Attribute>
+            <Attribute name="Shape" type="String">
+                <Value>Scalar</Value>
+            </Attribute>
+            <Attribute name="Type" type="String">
+                <Value>VarLenStr</Value>
+            </Attribute>
+            <dmrpp:vlsa>
+                <v>11.0.00</v>
+            </dmrpp:vlsa>
+        </String>
+        <String name="ShortName">
+            <Dim size="1"/>
+            <Attribute name="Description" type="String">
+                <Value>The short name identifying the data type of this product.</Value>
+            </Attribute>
+            <Attribute name="Shape" type="String">
+                <Value>Scalar</Value>
+            </Attribute>
+            <Attribute name="Type" type="String">
+                <Value>VarLenStr</Value>
+            </Attribute>
+            <dmrpp:vlsa>
+                <v>OCO2_Eph</v>
+            </dmrpp:vlsa>
+        </String>
+        <Float32 name="SizeMBECSDataGranule">
+            <Dim size="1"/>
+            <Attribute name="Description" type="String">
+                <Value>The size of this data granule in Megabytes, before final compression.</Value>
+            </Attribute>
+            <Attribute name="Shape" type="String">
+                <Value>Scalar</Value>
+            </Attribute>
+            <Attribute name="Type" type="String">
+                <Value>Float32</Value>
+            </Attribute>
+            <Attribute name="Units" type="String">
+                <Value>Megabytes</Value>
+            </Attribute>
+            <dmrpp:chunks compressionType="shuffle deflate" deflateLevel="9" fillValue="0" byteOrder="LE">
+                <dmrpp:chunkDimensionSizes>1</dmrpp:chunkDimensionSizes>
+                <dmrpp:chunk offset="24936" nBytes="12" chunkPositionInArray="[0]"/>
+            </dmrpp:chunks>
+        </Float32>
+        <Int32 name="StartOrbitNumber">
+            <Dim size="1"/>
+            <Attribute name="Description" type="String">
+                <Value>The first orbit on which data contained in the product were acquired.</Value>
+            </Attribute>
+            <Attribute name="Shape" type="String">
+                <Value>Scalar</Value>
+            </Attribute>
+            <Attribute name="Type" type="String">
+                <Value>Signed32</Value>
+            </Attribute>
+            <dmrpp:chunks compressionType="shuffle deflate" deflateLevel="9" fillValue="0" byteOrder="LE">
+                <dmrpp:chunkDimensionSizes>1</dmrpp:chunkDimensionSizes>
+                <dmrpp:chunk offset="24948" nBytes="12" chunkPositionInArray="[0]"/>
+            </dmrpp:chunks>
+        </Int32>
+        <Int32 name="StartPathNumber">
+            <Dim size="1"/>
+            <Attribute name="Description" type="String">
+                <Value>The first WRS path on which data contained in the product was collected.</Value>
+            </Attribute>
+            <Attribute name="Maximum" type="Int32">
+                <Value>233</Value>
+            </Attribute>
+            <Attribute name="Minimum" type="Int32">
+                <Value>1</Value>
+            </Attribute>
+            <Attribute name="Shape" type="String">
+                <Value>Scalar</Value>
+            </Attribute>
+            <Attribute name="Type" type="String">
+                <Value>Signed32</Value>
+            </Attribute>
+            <dmrpp:chunks compressionType="shuffle deflate" deflateLevel="9" fillValue="0" byteOrder="LE">
+                <dmrpp:chunkDimensionSizes>1</dmrpp:chunkDimensionSizes>
+                <dmrpp:chunk offset="24960" nBytes="12" chunkPositionInArray="[0]"/>
+            </dmrpp:chunks>
+        </Int32>
+        <Int32 name="StopOrbitNumber">
+            <Dim size="1"/>
+            <Attribute name="Description" type="String">
+                <Value>The last orbit on which data contained in the product were acquired.</Value>
+            </Attribute>
+            <Attribute name="Shape" type="String">
+                <Value>Scalar</Value>
+            </Attribute>
+            <Attribute name="Type" type="String">
+                <Value>Signed32</Value>
+            </Attribute>
+            <dmrpp:chunks compressionType="shuffle deflate" deflateLevel="9" fillValue="0" byteOrder="LE">
+                <dmrpp:chunkDimensionSizes>1</dmrpp:chunkDimensionSizes>
+                <dmrpp:chunk offset="24972" nBytes="12" chunkPositionInArray="[0]"/>
+            </dmrpp:chunks>
+        </Int32>
+        <Int32 name="StopPathNumber">
+            <Dim size="1"/>
+            <Attribute name="Description" type="String">
+                <Value>The last WRS path on which data contained in the product was collected.</Value>
+            </Attribute>
+            <Attribute name="Maximum" type="Int32">
+                <Value>233</Value>
+            </Attribute>
+            <Attribute name="Minimum" type="Int32">
+                <Value>1</Value>
+            </Attribute>
+            <Attribute name="Shape" type="String">
+                <Value>Scalar</Value>
+            </Attribute>
+            <Attribute name="Type" type="String">
+                <Value>Signed32</Value>
+            </Attribute>
+            <dmrpp:chunks compressionType="shuffle deflate" deflateLevel="9" fillValue="0" byteOrder="LE">
+                <dmrpp:chunkDimensionSizes>1</dmrpp:chunkDimensionSizes>
+                <dmrpp:chunk offset="24984" nBytes="12" chunkPositionInArray="[0]"/>
+            </dmrpp:chunks>
+        </Int32>
+    </Group>
+    <Group name="Shapes">
+        <Group name="AncFile_Array">
+            <Attribute name="Dimensions" type="String">
+                <Value>AncFile</Value>
+            </Attribute>
+            <Attribute name="Rank" type="UInt32">
+                <Value>1</Value>
+            </Attribute>
+        </Group>
+        <Group name="EphemerisElement_Array">
+            <Attribute name="Dimensions" type="String">
+                <Value>EphemerisElement</Value>
+            </Attribute>
+            <Attribute name="Rank" type="UInt32">
+                <Value>1</Value>
+            </Attribute>
+        </Group>
+        <Group name="Gap_Array">
+            <Attribute name="Dimensions" type="String">
+                <Value>Gap</Value>
+            </Attribute>
+            <Attribute name="Rank" type="UInt32">
+                <Value>1</Value>
+            </Attribute>
+        </Group>
+        <Group name="InputPtr_Array">
+            <Attribute name="Dimensions" type="String">
+                <Value>InputPtr</Value>
+            </Attribute>
+            <Attribute name="Rank" type="UInt32">
+                <Value>1</Value>
+            </Attribute>
+        </Group>
+        <Group name="Scalar">
+            <Attribute name="Rank" type="UInt32">
+                <Value>0</Value>
+            </Attribute>
+        </Group>
+    </Group>
+</Dataset>

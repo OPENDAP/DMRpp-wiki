@@ -125,14 +125,45 @@
             <!-- Hyrax deviation: There may be one or more chunkDimensionSizes elements, but the
                  DMZ parser uses only the first. -->
             <!-- Typical element value looks like: 10 10 10 10 -->
-            <xs:element ref="dmrpp:chunkDimensionSizes" minOccurs="0" maxOccurs="1" />
+            <xs:element ref="dmrpp:chunkDimensionSizes" minOccurs="0" maxOccurs="1" >
+                <xs:annotation>
+                    <xs:documentation>
+                        Sizes of the chunk dimensions, in order. For example, for a 4D variable chunked in 10x10x10x10
+                        element blocks, this would be "10 10 10 10". However, for HDF5 'contiguous' data (i.e., data
+                        that are not chunked in the HDF5 sense but are stored in one contiguous region), this element is
+                        omitted. Similarly, for a 'chunk' that consists of only fill values, this element is also
+                        omitted. </xs:documentation>
+                </xs:annotation>
+            </xs:element>
         
             <!-- Either chunks or blocks. Note that there can be zero chunks if the entire
                  array is fill values. The blocks element is used only for HDF4 data. -->
             <xs:choice minOccurs="0">
-                <xs:element ref="dmrpp:chunk" minOccurs="1" maxOccurs="unbounded" />
-                <xs:element ref="dmrpp:block" minOccurs="1" maxOccurs="unbounded" />
-                <!-- linked-block mode branch, if still valid -->
+                <xs:element ref="dmrpp:chunk" minOccurs="1" maxOccurs="unbounded" >
+                    <xs:annotation>
+                        <xs:documentation>
+                            The 'chunk' element provides metadata for a single chunk of data for this variable. There
+                            may be multiple 'chunk' elements, each describing a different chunk. The presence of 'chunk'
+                            elements indicates that the variable is chunked in the HDF5 sense, meaning that its data are
+                            stored in one or more chunks that may be compressed and/or stored in separate files. Chunks
+                            are atomic units of storage in HDF5 (and these elements can store the location of 'chunks'
+                            for HDF5 and any other format that decomposes data into atomic units). When we say 'atomic'
+                            we mean that each chunk is indivisible. Client programs read each chunk and then apply the
+                            filters (inflate, de-shuffle, etc.) before assembling the chunks to form the complete data
+                            objet. See the 'block' element. If there are no 'chunk' elements, it means the variable is
+                            not chunked in the HDF5 sense and its data are stored contiguously in one region.
+                            </xs:documentation>
+                    </xs:annotation>
+                </xs:element>
+                <xs:element ref="dmrpp:block" minOccurs="1" maxOccurs="unbounded" >
+                    <xs:annotation>
+                        <xs:documentation>
+                            The 'block' element provides metadata for a single block of data for this variable. This is
+                            used for HDF4 data or any data where the data are stored in non-atomic blocks. When a client
+                            program reads blocks, it assembles the blocks and then applies the filtering operations to
+                            the result of that assemblage. See the 'chunk' element. </xs:documentation>
+                    </xs:annotation>
+                </xs:element>
             </xs:choice>
         </xs:sequence>
 
@@ -144,7 +175,7 @@
                     filters that were applied to the data in the order they were applied. To decode the data, you would
                     apply the inverse filters in reverse order. For example, if the value is "shuffle deflate", that
                     means the data were first shuffled and then deflated, so to decompress you would first apply inflate
-                    and then unshuffle the data. </xs:documentation>
+                    and then de-shuffle the data. </xs:documentation>
             </xs:annotation>
         </xs:attribute>
 
@@ -194,7 +225,12 @@
                     consists of multiple blocks linked together. If true, then the 'LinkedBlockIndex' attribute on each
                     block indicates the index of that block in the linked-block chain for this chunk.
 
-                    FIXME!! jhrg 5/20/26
+                    This is a workaround for the fact that in HDF4 some chunks are not atomic, and the pieces are joined
+                    before the chunk can be considered compete and decoded. This happens even though there are other
+                    chunks (usually the majority of chunks) _are_ atomic. 
+                    
+                    The LBChunk attribute is a hint to the DMR++ client that it should be prepared to read multiple
+                    'chunks' and treat them as blocks, assemble them together before applying the filters for this chunk.
                 </xs:documentation>
             </xs:annotation>
         </xs:attribute>
@@ -226,8 +262,9 @@
                 </xs:documentation>
             </xs:annotation>
         </xs:attribute>
-        <!-- Position of this chunk in chunk-space, e.g., "[0,0,0]" -->
-        <!-- TODO Our DMZ parser may not enforce this as a required attribute jhrg 12/4/25 -->
+ 
+        <!-- We need to look at the linked block case to determine if this attribute is required in all cases. jhrg
+        5/21/26 -->
         <xs:attribute name="chunkPositionInArray" type="dmrpp:ChunkPositionInArrayExpr" use="required" >
             <xs:annotation>
                 <xs:documentation>
@@ -276,9 +313,10 @@
         <xs:attribute name="LinkedBlockIndex" type="xs:unsignedInt" use="optional" >
             <xs:annotation>
                 <xs:documentation>
-                    For HDF4 data, if this chunk is a linked block chunk (indicated by the 'LBChunk' attribute), then
+                    For HDF4 data, if this chunk is a linked block chunk, then
                     this attribute indicates the index of this block in the linked-block chain for this chunk. The first
-                    block in the chain has index 0. </xs:documentation>
+                    block in the chain has index 0. The 'dmrpp:chunks element that holds this chunk _should_ have the
+                    LBChunk attribute set to true.'  </xs:documentation>
             </xs:annotation>
         </xs:attribute>
     </xs:complexType>
@@ -295,8 +333,22 @@
          ========== -->
 
     <xs:complexType name="FixedLengthStringArrayType">
-        <xs:attribute name="string_length" type="xs:positiveInteger" use="required" />
-        <xs:attribute name="pad" type="dmrpp:PadKind" use="optional" default="not_set" />
+        <xs:attribute name="string_length" type="xs:positiveInteger" use="required" >
+            <xs:annotation>
+                <xs:documentation>
+                    Length of each string in the array. For example, if this is 14, then each string in the array is 14
+                    characters long (including padding). </xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
+
+        <xs:attribute name="pad" type="dmrpp:PadKind" use="optional" default="not_set" >
+            <xs:annotation>
+                <xs:documentation>
+                    How the strings are padded. Valid values are "null_pad" for null character padding, "null_term" for
+                    null-terminated strings, "space_pad" for space padding, and "not_set" if the padding kind is not
+                    specified. If not specified, the default is "not_set". </xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
     </xs:complexType>
 
     <!-- ==========
@@ -343,21 +395,46 @@
             </vlsa>
          ========== -->
 
+    <xs:complexType name="VlenStringArrayType">
+        <xs:sequence>
+            <xs:element name="v" type="dmrpp:VLSASingleValueType" minOccurs="0" maxOccurs="unbounded" >
+                <xs:annotation>
+                    <xs:documentation>
+                        A single string value in the variable-length string array. The content of this element is the
+                        string value itself. The optional 'c' attribute indicates the count for run-length encoding
+                        (RLE) of repeated values. If 'c' is provided, it means this string value is repeated 'c' times
+                        in the array. If 'c' is not provided, it means this string value occurs once. For example,
+                        if you have three strings "string1", "string2", and "string3" where "string3" is repeated 3
+                        times, you would represent this as:
+                        <vlsa>
+                            <v>string1</v>
+                            <v>string2</v>
+                            <v c="3">string3</v>
+                        </vlsa>
+                    </xs:documentation>
+                </xs:annotation>
+            </xs:element>   
+        </xs:sequence>
+    </xs:complexType>
+
+
     <xs:complexType name="VLSASingleValueType">
         <xs:simpleContent>
             <xs:extension base="xs:string">
-                <xs:attribute name="c" type="dmrpp:UnsignedLong" use="optional" />
+                <xs:attribute name="c" type="dmrpp:UnsignedLong" use="optional" >
+                    <xs:annotation>
+                        <xs:documentation>
+                            The count for run-length encoding (RLE) of repeated values in a variable-length string
+                            array. If this attribute is provided, it means the string value of this element is repeated
+                            'c' times in the array. If this attribute is not provided, it means the string value occurs
+                            once. </xs:documentation>
+                    </xs:annotation>
+                </xs:attribute>
             </xs:extension>
         </xs:simpleContent>
     </xs:complexType>
 
-    <xs:complexType name="VlenStringArrayType">
-        <xs:sequence>
-            <xs:element name="v" type="dmrpp:VLSASingleValueType" minOccurs="0"
-                maxOccurs="unbounded" />
-        </xs:sequence>
-    </xs:complexType>
-
+ 
     <!-- ==========
          Global element declarations
          ==========
@@ -391,19 +468,97 @@
                 consists of only fill values, this element is also omitted. </xs:documentation>
         </xs:annotation>
     </xs:element>
-    
-    <xs:element name="chunk" type="dmrpp:ChunkType" />
-    <xs:element name="block" type="dmrpp:BlockType" />
 
-    <xs:element name="FixedLengthStringArray"
-        type="dmrpp:FixedLengthStringArrayType" />
+    <xs:element name="chunk" type="dmrpp:ChunkType" >
+        <xs:annotation>
+            <xs:documentation>
+                The 'chunk' element provides metadata for a single chunk of data for a variable. There may be multiple
+                'chunk' elements, each describing a different chunk. The presence of 'chunk' elements indicates that the
+                variable is chunked in the HDF5 sense, meaning that its data are stored in one or more chunks that may
+                be compressed and/or stored in separate files. Chunks are atomic units of storage in HDF5 (and these
+                elements can store the location of 'chunks' for HDF5 and any other format that decomposes data into
+                atomic units). When we say 'atomic' we mean that each chunk is indivisible. Client programs read each
+                chunk and then apply the filters (inflate, de-shuffle, etc.) before assembling the chunks to form the
+                complete data objet. See the 'block' element for an alternative way to represent chunked data. If there
+                are no 'chunk' elements, it means the variable data are stored contiguously in one region.
 
-    <xs:element name="compact" type="dmrpp:CompactType" />
-    <xs:element name="missingdata" type="dmrpp:MissingDataType" />
-    <xs:element name="specialstructuredata"
-        type="dmrpp:SpecialStructureDataType" />
+                This element is in the DMR++ namespace and is normally written as 'dmrpp:chunk'. Hyrax deviation: the
+                DMZ parser requires this element to literally use the 'dmrpp:' prefix. </xs:documentation>
+        </xs:annotation>
+    </xs:element>
 
-    <xs:element name="vlsa"
-        type="dmrpp:VlenStringArrayType" />
+    <xs:element name="block" type="dmrpp:BlockType" >
+        <xs:annotation>
+            <xs:documentation>
+                The 'block' element provides metadata for a single block of data for a variable. This is used for HDF4
+                data or any data where the data are stored in non-atomic blocks. When a client program reads blocks, it
+                assembles the blocks and then applies the filtering operations to the result of that assemblage. See
+                the 'chunk' element for an alternative way to represent chunked data. 
 
+                This element is in the DMR++ namespace and is normally written as 'dmrpp:block'. Hyrax deviation: the
+                DMZ parser requires this element to literally use the 'dmrpp:' prefix. </xs:documentation>
+        </xs:annotation>
+    </xs:element>
+
+    <xs:element name="FixedLengthStringArray" type="dmrpp:FixedLengthStringArrayType" >
+        <xs:annotation>
+            <xs:documentation>
+                The 'FixedLengthStringArray' element is a marker element that indicates a variable-length array of
+                fixed-length strings. The attributes of this element specify the length of each string and how they are
+                padded. The content of this element is not used; it serves only as a marker for the variable-length
+                array of fixed-length strings. This is needed because DMR does not have a native way to represent
+                variable-length arrays of fixed-length strings, so we use this marker element to indicate that the
+                variable is actually an array of fixed-length strings. This element is used in conjunction with the
+                dmrpp:chunk element. The 'dmrpp:chunk' elements provide the location of the data and this element
+                provides metadata about the internal organization of that data.
+
+                This element is in the DMR++ namespace and is normally written as 'dmrpp:FixedLengthStringArray'. Hyrax deviation: the DMZ parser requires this element to literally use the 'dmrpp:' prefix. </xs:documentation>
+        </xs:annotation>
+    </xs:element>
+
+    <xs:element name="vlsa" type="dmrpp:VlenStringArrayType" >
+        <xs:annotation>
+            <xs:documentation>
+                The 'vlsa' element holds the data values fora variable-length array of variable-length strings. The content of this element consists of one or more 'v' elements, each representing a single string value in the array. The optional 'c' attribute on the 'v' element indicates the count for run-length encoding (RLE) of repeated values. If 'c' is provided, it means this string value is repeated 'c' times in the array. If 'c' is not provided, it means this string value occurs once.
+
+                This element is in the DMR++ namespace and is normally written as 'dmrpp:vlsa'. Hyrax deviation: the DMZ parser requires this element to literally use the 'dmrpp:' prefix. </xs:documentation>
+        </xs:annotation>
+    </xs:element>
+
+    <xs:element name="compact" type="dmrpp:CompactType" >
+        <xs:annotation>
+            <xs:documentation>
+                The 'compact' element holds the data values for a variable that are stored in compact form directly in the DMR++. The content of this element is a base64-encoded string that represents the binary data values. This is used for small variables where it is more efficient to include the data directly in the DMR++ rather than referencing it in an external file. The interpretation of the binary data depends on the data type of the variable and any relevant attributes (e.g., byte order, fill value). 
+
+                This element is in the DMR++ namespace and is normally written as 'dmrpp:compact'. Hyrax deviation: the DMZ parser requires this element to literally use the 'dmrpp:' prefix. </xs:documentation>
+        </xs:annotation>
+    </xs:element>
+
+    <xs:element name="missingdata" type="dmrpp:MissingDataType" >
+        <xs:annotation>
+            <xs:documentation>
+                The 'missingdata' element holds the data values for a variable that are missing (i.e., fill values). The content of this element is a base64-encoded string that represents the binary data values for the missing data. This allows the DMR++ to explicitly represent missing data values in cases where they are not implicitly defined by a fill value attribute or where it is useful to have the actual missing data values available in the DMR++. The interpretation of the binary data depends on the data type of the variable and any relevant attributes (e.g., byte order, fill value).
+
+                Missing data values are (usually) variables that are needed to interpret the data values (e.g.,
+                latitude and longitude data in some NAS Level 2 data granules) but are not included in the original
+                granule. These values were generated by API libraries (e.g., HDFEOS2). Because cloud object store does
+                not support the use of those APIs, we compute that values and supply them in the DMR++. 
+
+                This element is in the DMR++ namespace and is normally written as 'dmrpp:missingdata'. Hyrax deviation: the DMZ parser requires this element to literally use the 'dmrpp:' prefix. </xs:documentation>
+        </xs:annotation>
+    </xs:element>
+
+    <xs:element name="specialstructuredata" type="dmrpp:SpecialStructureDataType" >
+        <xs:annotation>
+            <xs:documentation>
+                The 'specialstructuredata' element holds the data values for a structure variable that has special
+                handling requirements. The content of this element is a base64-encoded string that represents the binary
+                data values for the structure variable. The DMR++ stores data for some structures locally because it can
+                be more efficient to store small amounts of data that way.
+
+                This element is in the DMR++ namespace and is normally written as 'dmrpp:specialstructuredata'. Hyrax deviation: the DMZ parser requires this element to literally use the 'dmrpp:' prefix. </xs:documentation>
+        </xs:annotation>
+    </xs:element>
+
+ 
 </xs:schema>
