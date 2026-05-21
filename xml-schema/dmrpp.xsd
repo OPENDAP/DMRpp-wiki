@@ -6,6 +6,9 @@
     attributeFormDefault="unqualified"
     version="1.0">
 
+    <!-- generate reference documentation using xs3p.xsl using the command:
+     xsltproc ../tools/xs3p/xs3p.xsl dmrpp.xsd > ../docs/dmrpp-reference.html -->
+
     <!-- ==========
          Simple types
          ========== -->
