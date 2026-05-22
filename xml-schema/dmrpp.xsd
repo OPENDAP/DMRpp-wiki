@@ -75,8 +75,13 @@
     <xs:attribute name="trust" type="xs:boolean" default="false">
         <xs:annotation>
             <xs:documentation>
-                FIXME!!! jhrg 5/20/26
-            </xs:documentation>
+                The 'dmrpp:trust' attribute has a tortured history. It was originally intended as a hint that URL(s)
+                associated with this DMR++ did not need to be vetted using a list of allowed hosts. In its initial use,
+                DMR++ _always_ used URLs received from the NASA CMR database, and those URLs were always trusted. The
+                attribute thus to the software processing the DMR++ that it could skip vetting the URLs against a list
+                of allowed hosts. This attribute should be ignored by most users of the DMR++ documents. Other software
+                that interprets these documents should avoid using this for access control decisions.
+                </xs:documentation>
         </xs:annotation>
     </xs:attribute>
 
