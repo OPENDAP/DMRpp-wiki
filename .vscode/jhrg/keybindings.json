@@ -2,6 +2,6 @@
     {
         "key": "alt+q",
         "command": "rewrap.rewrapComment",
-        "when": "editorTextFocus && !editorReadonly"
+        "when": "editorTextFocus && !editorReadonly",
     }
 ]
