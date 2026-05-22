@@ -19,7 +19,7 @@ list of integer values that are the dimensions of each chunk. The `chunk`
 elements hold information unique to each chunk that makes up the variable.
 
 While the most variables in a dataset describe by a DMR++ document will contain
-`chunks`, `chunkDimensionSizes` and `chink` elements, it is possible for a
+`chunks`, `chunkDimensionSizes` and `chunk` elements, it is possible for a
 DMR++ document to contain variables that have neither `chunks` nor
 `chunkDimensionSizes` elements. Some variables' data is stored in a single
 place in the HDF5 file. If only the attributes defined for `chunk` are needed,
@@ -411,7 +411,7 @@ remaining ten elements are all _sweet_.
     <String name="VLSArrayElements">
         <Dim size="10"/>
         <dmrpp:vlsa>
-            <v>Bannana</v>
+            <v>Banana</v>
             <v>bread</v>
             <v>is</v>
             <v c="6">so</v>
